@@ -25,3 +25,98 @@ body {
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
   border-color: #00f0ff;
 }
+
+/* Article Heading 2 Styling */
+.article-content h2 {
+  border-left: 4px solid #ff007f; /* neon-pink accent */
+  padding-left: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  color: #ffffff;
+}
+
+.article-content p, .guide-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+  color: rgba(243, 244, 246, 0.85);
+}
+
+/* Guide Heading 2 Styling with Auto Step Numbers */
+.guide-content {
+  counter-reset: h2-step-counter;
+}
+
+.guide-content h2 {
+  counter-increment: h2-step-counter;
+  border-left: 4px solid #00f0ff; /* neon-blue accent */
+  padding-left: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guide-content h2::before {
+  content: "Step " counter(h2-step-counter) ":";
+  color: #00f0ff;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Collapse Spoiler Warning boxes details/summary styling */
+details.spoiler-box {
+  background-color: #15131a;
+  border: 1px solid #25212c;
+  border-radius: 0.375rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+details.spoiler-box[open] {
+  border-color: #9b51e0; /* purple accent on open */
+}
+
+details.spoiler-box summary {
+  padding: 1rem;
+  font-weight: 800;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: #ff007f; /* pink text */
+  background-color: rgba(255, 0, 127, 0.05);
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+details.spoiler-box summary::-webkit-details-marker {
+  display: none;
+}
+
+details.spoiler-box summary::after {
+  content: "▶";
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+details.spoiler-box[open] summary::after {
+  transform: rotate(90deg);
+  color: #9b51e0;
+}
+
+details.spoiler-box div.spoiler-content {
+  padding: 1.25rem;
+  border-top: 1px solid #25212c;
+  background-color: rgba(13, 12, 16, 0.5);
+}
