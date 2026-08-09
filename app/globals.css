@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #0d0c10;
+  color: #f3f4f6;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+.glow-pink-text {
+  text-shadow: 0 0 10px rgba(255, 0, 127, 0.6), 0 0 20px rgba(255, 0, 127, 0.4);
+}
+
+.glow-blue-text {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.glow-pink-border {
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+  border-color: #ff007f;
+}
+
+.glow-blue-border {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+  border-color: #00f0ff;
+}
