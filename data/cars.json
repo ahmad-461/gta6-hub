@@ -1,0 +1,106 @@
+[
+  {
+    "id": "pegassi-tempesta",
+    "name": "Pegassi Tempesta",
+    "category": "Super",
+    "stats": {
+      "topSpeed": 92,
+      "acceleration": 95,
+      "handling": 88,
+      "capacity": 2,
+      "armor": 45
+    },
+    "description": "An aerodynamic masterpiece of Italian engineering. Built for speed, precision cornering, and showing off on Vice Beach."
+  },
+  {
+    "id": "grotti-cheetah-classic",
+    "name": "Grotti Cheetah Classic",
+    "category": "Sports Classic",
+    "stats": {
+      "topSpeed": 85,
+      "acceleration": 80,
+      "handling": 82,
+      "capacity": 2,
+      "armor": 40
+    },
+    "description": "Retro styling meets modern performance. A direct throwback to 1980s Vice City luxury and high-speed pursuits."
+  },
+  {
+    "id": "bravado-banshee",
+    "name": "Bravado Banshee",
+    "category": "Sports",
+    "stats": {
+      "topSpeed": 88,
+      "acceleration": 86,
+      "handling": 78,
+      "capacity": 2,
+      "armor": 42
+    },
+    "description": "An icon of raw American muscle disguised as a sports car. Extremely fast but prone to wild oversteer."
+  },
+  {
+    "id": "vapid-dominator-asp",
+    "name": "Vapid Dominator ASP",
+    "category": "Muscle",
+    "stats": {
+      "topSpeed": 80,
+      "acceleration": 85,
+      "handling": 74,
+      "capacity": 2,
+      "armor": 50
+    },
+    "description": "Supercharged torque in a heavy frame. Sounds like a thunderstorm and tears up the asphalt in straight-line drags."
+  },
+  {
+    "id": "karin-sultan-rs",
+    "name": "Karin Sultan RS",
+    "category": "Sports",
+    "stats": {
+      "topSpeed": 82,
+      "acceleration": 88,
+      "handling": 90,
+      "capacity": 4,
+      "armor": 48
+    },
+    "description": "All-wheel-drive rally-bred tuner classic. Extremely agile on dirt roads and boasts a four-door chassis optimized for getaways."
+  },
+  {
+    "id": "declasse-granger-3600lx",
+    "name": "Declasse Granger 3600LX",
+    "category": "SUV",
+    "stats": {
+      "topSpeed": 70,
+      "acceleration": 65,
+      "handling": 68,
+      "capacity": 8,
+      "armor": 85
+    },
+    "description": "A heavy-duty tactical SUV designed for maximum safety. Features bullet-resistant glass and accommodates up to eight crew members."
+  },
+  {
+    "id": "pfister-comet-s2",
+    "name": "Pfister Comet S2",
+    "category": "Sports",
+    "stats": {
+      "topSpeed": 89,
+      "acceleration": 91,
+      "handling": 86,
+      "capacity": 2,
+      "armor": 44
+    },
+    "description": "The peak of German rear-engine design. Impeccable stability at high speeds and a beautiful sleek silhouette."
+  },
+  {
+    "id": "albany-emperor",
+    "name": "Albany Emperor",
+    "category": "Sedan",
+    "stats": {
+      "topSpeed": 60,
+      "acceleration": 50,
+      "handling": 60,
+      "capacity": 4,
+      "armor": 55
+    },
+    "description": "A long, heavy lowrider classic. Rides incredibly smooth and is the ultimate choice for a leisurely cruise down the neon strip."
+  }
+]
