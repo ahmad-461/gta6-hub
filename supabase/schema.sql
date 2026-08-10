@@ -338,3 +338,65 @@ ALTER TABLE public.guides ALTER COLUMN difficulty SET DEFAULT 'Beginner';
 
 -- 4. Add unique constraint to cheat_codes
 ALTER TABLE public.cheat_codes ADD CONSTRAINT unique_platform_code UNIQUE (platform, code);
+
+
+-- ==========================================
+-- PHASE 3 MIGRATIONS (APPLY ON EXISTING DB)
+-- ==========================================
+
+-- 1. Add featured column to articles
+ALTER TABLE public.articles ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false NOT NULL;
+
+-- 2. Full-Text Search Vector & GIN Index for ARTICLES
+ALTER TABLE public.articles ADD COLUMN IF NOT EXISTS search_vector tsvector;
+CREATE INDEX IF NOT EXISTS articles_search_idx ON public.articles USING gin(search_vector);
+
+CREATE OR REPLACE FUNCTION public.articles_search_trigger() RETURNS trigger AS $$
+BEGIN
+  new.search_vector :=
+    setweight(to_tsvector('english', coalesce(new.title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(new.excerpt, '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(new.content, '')), 'C');
+  return new;
+END
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tsvectorupdate ON public.articles;
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON public.articles
+FOR EACH ROW EXECUTE FUNCTION public.articles_search_trigger();
+
+
+-- 3. Full-Text Search Vector & GIN Index for GUIDES
+ALTER TABLE public.guides ADD COLUMN IF NOT EXISTS search_vector tsvector;
+CREATE INDEX IF NOT EXISTS guides_search_idx ON public.guides USING gin(search_vector);
+
+CREATE OR REPLACE FUNCTION public.guides_search_trigger() RETURNS trigger AS $$
+BEGIN
+  new.search_vector :=
+    setweight(to_tsvector('english', coalesce(new.title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(new.content, '')), 'C');
+  return new;
+END
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tsvectorupdate ON public.guides;
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON public.guides
+FOR EACH ROW EXECUTE FUNCTION public.guides_search_trigger();
+
+
+-- 4. Full-Text Search Vector & GIN Index for CHARACTERS
+ALTER TABLE public.characters ADD COLUMN IF NOT EXISTS search_vector tsvector;
+CREATE INDEX IF NOT EXISTS characters_search_idx ON public.characters USING gin(search_vector);
+
+CREATE OR REPLACE FUNCTION public.characters_search_trigger() RETURNS trigger AS $$
+BEGIN
+  new.search_vector :=
+    setweight(to_tsvector('english', coalesce(new.name, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(new.biography, '')), 'C');
+  return new;
+END
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tsvectorupdate ON public.characters;
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON public.characters
+FOR EACH ROW EXECUTE FUNCTION public.characters_search_trigger();

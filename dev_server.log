@@ -1,0 +1,25 @@
+
+> gta6-hub@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.16
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1816ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1246ms (127 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 7.3s (750 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ GET / 200 in 28470ms
+ GET / 200 in 29977ms
+ ✓ Compiled in 538ms (337 modules)
+ ✓ Compiled / in 318ms (413 modules)
+ GET / 200 in 619ms
+ ✓ Compiled /_not-found in 297ms (739 modules)
+ GET /og-image.jpg 404 in 408ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 136ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
