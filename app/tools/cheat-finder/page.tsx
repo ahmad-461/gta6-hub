@@ -1,15 +1,15 @@
 import React from "react"
 import Link from "next/link"
-import { ShieldAlert } from "lucide-react"
+import { ArrowLeft, ShieldAlert } from "lucide-react"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import CheatFinderClient, { CheatCode } from "../tools/cheat-finder/CheatFinderClient"
+import CheatFinderClient, { CheatCode } from "./CheatFinderClient"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 
 export const metadata = {
-  title: "Multi-Platform Cheat Codes | GTA VI Hub",
-  description: "Spawn supercars, trigger invincibility, obtain guns, and manipulate weather across PS5, Xbox Series X/S, and PC.",
+  title: "GTA 6 Cheat Code Finder",
+  description: "Search, filter, and find verified cheat codes for Grand Theft Auto VI across PS5, Xbox Series X/S, and PC.",
 }
 
 async function getCheatCodes(): Promise<CheatCode[]> {
@@ -21,7 +21,7 @@ async function getCheatCodes(): Promise<CheatCode[]> {
       .order("category", { ascending: true })
 
     if (error || !data || data.length === 0) {
-      console.warn("Using high-quality fallback cheat codes for directory testing...")
+      console.warn("Using high-quality fallback cheat codes for finder testing...")
       return [
         { id: "1", title: "Spawn Comet sports car", platform: "PS5", code: "R1, O, R2, RIGHT, L1, L2, X, X, SQUARE, R1", category: "Vehicles", effect: "Spawns a Pfister Comet sports car instantly.", verified: true },
         { id: "2", title: "Invincibility (5 Min)", platform: "PS5", code: "RIGHT, X, RIGHT, LEFT, RIGHT, R1, RIGHT, LEFT, X, TRIANGLE", category: "Player / Stats", effect: "Max health & five minutes of full invincibility.", verified: true },
@@ -33,30 +33,39 @@ async function getCheatCodes(): Promise<CheatCode[]> {
 
     return data as CheatCode[]
   } catch (err) {
-    console.warn("Error connecting to Supabase in cheats page:", err)
+    console.warn("Error connecting to Supabase in cheat-finder page:", err)
     return []
   }
 }
 
-export default async function CheatsPage() {
+export default async function CheatFinderPage() {
   const cheats = await getCheatCodes()
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow space-y-8">
-      {/* Page Header */}
-      <div className="space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white flex items-center gap-2">
-          <ShieldAlert className="w-8 h-8 sm:w-12 sm:h-12 text-neon-yellow" />
-          Cheat Codes Directory
-        </h1>
-        <p className="text-foreground/60 max-w-2xl leading-relaxed text-sm sm:text-base">
-          Unlock standard weapons, weather effects, player enhancements, and unique supercar spawns with our real-time verified inputs for PS5, Xbox, and PC.
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow">
+      <div className="mb-8">
+        <Link
+          href="/tools"
+          className="inline-flex items-center space-x-2 text-sm font-semibold text-neon-blue hover:text-neon-pink transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Tools</span>
+        </Link>
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-center space-x-3 mb-2">
+          <ShieldAlert className="w-8 h-8 text-neon-yellow animate-pulse" />
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            GTA 6 Cheat Code Finder
+          </h1>
+        </div>
+        <p className="text-foreground/60 max-w-2xl">
+          Instantly filter and discover multi-platform cheat inputs. Spawn high-end sports cars, toggle weapons and ammo, change ambient weather, or unlock invincibility in seconds.
         </p>
       </div>
 
-      <div className="w-full h-[1px] bg-gradient-to-r from-card-border/60 via-transparent to-transparent" />
-
-      {/* Interactive Cheat Finder Client Component */}
+      {/* Main interactive area */}
       <CheatFinderClient initialCheats={cheats} />
     </div>
   )

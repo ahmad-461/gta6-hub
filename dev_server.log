@@ -6,20 +6,91 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1816ms
+ ✓ Ready in 1744ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1246ms (127 modules)
+ ✓ Compiled /middleware in 1257ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.3s (750 modules)
+ ✓ Compiled / in 6.6s (750 modules)
+ HEAD / 200 in 7731ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 28470ms
- GET / 200 in 29977ms
- ✓ Compiled in 538ms (337 modules)
- ✓ Compiled / in 318ms (413 modules)
- GET / 200 in 619ms
- ✓ Compiled /_not-found in 297ms (739 modules)
- GET /og-image.jpg 404 in 408ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 136ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ○ Compiling /cheats ...
+ ✓ Compiled /cheats in 1400ms (703 modules)
+Failed to fetch cheat codes from Supabase, or table is empty: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ GET /cheats 200 in 8893ms
+ ✓ Compiled /tools/cheat-finder in 330ms (695 modules)
+Failed to fetch cheat codes from Supabase, or table is empty: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ GET /tools/cheat-finder 200 in 7537ms
+ ✓ Compiled /tools/comparison in 287ms (700 modules)
+ GET /tools/comparison 200 in 7400ms
+ ○ Compiling /tools/which-character ...
+ ✓ Compiled /tools/which-character in 554ms (723 modules)
+Failed to fetch characters from Supabase, or table is empty: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ GET /tools/which-character 200 in 7718ms
+ ○ Compiling /tools/car-compare ...
+ ✓ Compiled /tools/car-compare in 2.2s (749 modules)
+ GET /tools/car-compare 200 in 2421ms
+ ○ Compiling /tools/mission-tracker ...
+ ✓ Compiled /tools/mission-tracker in 1225ms (765 modules)
+ GET /tools/mission-tracker 200 in 1365ms
+ ○ Compiling /admin/login ...
+ ✓ Compiled /admin/login in 1609ms (1010 modules)
+ GET /admin/login 200 in 1993ms
+ ✓ Compiled in 1368ms (836 modules)
+ ✓ Compiled in 577ms (836 modules)
+Using high-quality fallback cheat codes for directory testing...
+ GET /cheats 200 in 7349ms
+Using high-quality fallback cheat codes for finder testing...
+ GET /tools/cheat-finder 200 in 7089ms
+ GET /tools/comparison 200 in 7080ms
+ ✓ Compiled /tools/which-character in 130ms (373 modules)
+Failed to fetch characters from Supabase, or table is empty: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ GET /tools/which-character 200 in 7365ms
+ ✓ Compiled /tools/car-compare in 219ms (389 modules)
+ GET /tools/car-compare 200 in 416ms
+ ○ Compiling /tools/mission-tracker ...
+ ✓ Compiled /tools/mission-tracker in 624ms (398 modules)
+ GET /tools/mission-tracker 200 in 832ms
+ ○ Compiling /admin/login ...
+ ✓ Compiled /admin/login in 506ms (547 modules)
+ GET /admin/login 200 in 884ms
