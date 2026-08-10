@@ -1,0 +1,49 @@
+{
+  "stats": {
+    "average_word_count": 1450,
+    "readability_score": 65,
+    "word_count_trend": {
+      "2026-05": 1200,
+      "2026-06": 1350,
+      "2026-07": 1500,
+      "2026-08": 1450
+    }
+  },
+  "seo": [
+    {
+      "type": "Article",
+      "title": "GTA 6 Trailer 2 Deep Dive Analysis",
+      "slug": "gta-6-trailer-2-deep-dive",
+      "word_count": 850,
+      "reasons": [
+        "Under the minimum word count threshold (1,200 words)",
+        "Missing meta description"
+      ]
+    },
+    {
+      "type": "Guide",
+      "title": "Vice City Hidden Packages Location Walkthrough",
+      "slug": "vice-city-hidden-packages",
+      "word_count": 2100,
+      "reasons": [
+        "Under the minimum word count threshold (2,500 words)",
+        "Missing alt text on featured image"
+      ]
+    }
+  ],
+  "topics": {
+    "well_covered": [
+      { "topic": "Lucia", "mentions": 15 },
+      { "topic": "Jason", "mentions": 12 },
+      { "topic": "Vice City", "mentions": 22 },
+      { "topic": "online", "mentions": 8 },
+      { "topic": "cars", "mentions": 6 }
+    ],
+    "under_covered": [
+      { "topic": "Leonida", "mentions": 3 },
+      { "topic": "heist", "mentions": 4 },
+      { "topic": "weapons", "mentions": 2 },
+      { "topic": "protagonist", "mentions": 1 }
+    ]
+  }
+}
