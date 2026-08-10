@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api
 
 Sitemap: https://gta6-hub.vercel.app/sitemap.xml

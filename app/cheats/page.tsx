@@ -4,6 +4,8 @@ import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ShieldAlert } from "lucide-react"
 import CheatsClient from "@/components/CheatsClient"
 
+export const revalidate = 3600
+
 export const metadata = {
   title: "Multi-Platform Cheat Codes | GTA VI Hub",
   description: "Spawn supercars, trigger invincibility, obtain guns, and manipulate weather across PS5, Xbox Series X/S, and PC.",

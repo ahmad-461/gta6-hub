@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const { data: guides } = await supabase
       .from("guides")
-      .select("slug, updated_at")
+      .select("slug, updated_at, guide_category")
       .eq("status", "published")
 
     const { data: characters } = await supabase
@@ -58,9 +58,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     if (guides && guides.length > 0) {
-      guides.forEach((item: { slug: string; updated_at?: string }) => {
+      guides.forEach((item: { slug: string; updated_at?: string; guide_category?: string }) => {
+        const catSlug = (item.guide_category || "Getting Started").toLowerCase().replace(/\s+/g, "-")
         dynamicPages.push({
-          url: `${baseUrl}/guides/${item.slug}`,
+          url: `${baseUrl}/guides/${catSlug}/${item.slug}`,
           lastModified: item.updated_at ? new Date(item.updated_at).toISOString() : new Date().toISOString(),
           changeFrequency: "weekly",
           priority: 0.8,

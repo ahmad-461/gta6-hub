@@ -8,6 +8,12 @@ import { Calendar, User, Clock, ChevronRight, Share2, Twitter, MessageCircle, Ar
 import ReadingProgressBar from "@/components/ReadingProgressBar"
 import ArticleComments from "@/components/ArticleComments"
 import CopyLinkButton from "@/components/CopyLinkButton"
+import JsonLd from "@/components/JsonLd"
+import AdSenseInitializer from "@/components/AdSenseInitializer"
+import { injectAdSenseAds } from "@/lib/adsense"
+import { parseAffiliateLinks } from "@/lib/affiliate"
+
+export const revalidate = 3600
 
 interface ArticlePageProps {
   params: {
@@ -19,7 +25,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const supabase = createSupabaseServerClient()
   const { data: article } = await supabase
     .from("articles")
-    .select("title, excerpt, seo_title, seo_description")
+    .select("title, excerpt, seo_title, seo_description, featured_image")
     .eq("slug", params.slug)
     .maybeSingle()
 
@@ -29,14 +35,25 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     }
   }
 
+  const title = article.seo_title || article.title
+  const description = article.seo_description || article.excerpt || "Read the latest news and updates on Grand Theft Auto VI."
+  const ogImage = article.featured_image || "/og-image.jpg"
+
   return {
-    title: article.seo_title || article.title,
-    description: article.seo_description || article.excerpt || "",
+    title,
+    description,
     openGraph: {
-      title: article.seo_title || article.title,
-      description: article.seo_description || article.excerpt || "",
+      title,
+      description,
       type: "article",
+      images: [{ url: ogImage }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    }
   }
 }
 
@@ -61,6 +78,14 @@ function getImageUrl(url?: string | null) {
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const supabase = createSupabaseServerClient()
 
+  // Fetch site setting for AdSense Publisher ID
+  const { data: adsenseSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "adsense_publisher_id")
+    .maybeSingle()
+  const publisherId = adsenseSetting?.value || null
+
   // 1. Fetch current article + author profile + category
   const { data: article } = await supabase
     .from("articles")
@@ -72,8 +97,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       excerpt,
       featured_image,
       published_at,
+      created_at,
       updated_at,
       author_id,
+      seo_description,
       category:categories(id, name, slug)
     `)
     .eq("slug", params.slug)
@@ -85,7 +112,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   // 2. Fetch author profile
-  let authorName = "GTA VI Team"
+  let authorName = "GTA6 Hub Staff"
   if (article.author_id) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -94,6 +121,35 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       .maybeSingle()
     if (profile?.name) {
       authorName = profile.name
+    }
+  }
+
+  // Inject AdSense ads into content if publisher ID is set
+  const articleContentWithAds = injectAdSenseAds(article.content, publisherId)
+
+  // Parse Affiliate Links in content
+  const { parsedContent: articleContentWithAffiliate, hasAffiliate } = parseAffiliateLinks(articleContentWithAds)
+
+  // Construct JSON-LD Article Schema
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.title,
+    "description": article.excerpt || article.seo_description || "Read the latest news and updates on Grand Theft Auto VI.",
+    "image": getImageUrl(article.featured_image),
+    "datePublished": article.published_at || article.created_at,
+    "dateModified": article.updated_at || article.published_at || article.created_at,
+    "author": {
+      "@type": "Person",
+      "name": authorName,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "GTA 6 Hub",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"}/logo.png`
+      }
     }
   }
 
@@ -161,6 +217,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="relative w-full">
+      {/* Google AdSense Initializer */}
+      <AdSenseInitializer publisherId={publisherId} />
+
+      {/* JSON-LD Structured Data */}
+      <JsonLd data={articleSchema} />
+
       {/* Reading Progress Bar */}
       <ReadingProgressBar />
 
@@ -246,10 +308,20 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               />
             </div>
 
+            {/* Affiliate Disclosure Notice */}
+            {hasAffiliate && (
+              <div className="bg-neon-blue/10 border border-neon-blue/20 p-4 rounded-xl text-xs text-foreground/80 flex items-start space-x-2.5 leading-relaxed">
+                <span className="text-base flex-shrink-0">🛍️</span>
+                <p>
+                  <strong className="text-white font-bold">Disclosure:</strong> This page contains affiliate links. If you make a purchase through them, we may earn a small commission at no extra cost to you.
+                </p>
+              </div>
+            )}
+
             {/* Article Content Area */}
             {/* H2 Headings styled with left border accent using theme's neon accent color */}
             <div className="prose prose-invert max-w-none prose-headings:font-black [&_h2]:border-l-4 [&_h2]:border-neon-pink [&_h2]:pl-4 [&_h2]:my-6 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:text-2xl [&_p]:leading-relaxed [&_p]:text-foreground/90 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4">
-              <div dangerouslySetInnerHTML={{ __html: article.content }} />
+              <div dangerouslySetInnerHTML={{ __html: articleContentWithAffiliate }} />
             </div>
 
             {/* Social Share Row */}
@@ -300,6 +372,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             >
               <ArrowLeft className="w-4 h-4" /> Back To All News
             </Link>
+
+            {/* AdSense Sidebar Slot */}
+            {publisherId && (
+              <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-md space-y-2">
+                <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-widest block text-center mb-1">
+                  Advertisement
+                </span>
+                <ins className="adsbygoogle"
+                     style={{ display: "block" }}
+                     data-ad-client={publisherId}
+                     data-ad-slot="4444444444"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+              </div>
+            )}
 
             {/* Related Articles Widgets */}
             <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-md space-y-4">
