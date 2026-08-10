@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import "@/app/globals.css"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: {
@@ -35,19 +36,25 @@ export const metadata: Metadata = {
   }
 }
 
+import { headers } from "next/headers"
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const pathname = headers().get("x-pathname") || ""
+  const isAdminRoute = pathname.startsWith("/admin")
+
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen bg-background text-foreground antialiased selection:bg-neon-pink selection:text-white">
-        <Header />
+        {!isAdminRoute && <Header />}
         <main className="flex-grow flex flex-col">
           {children}
         </main>
-        <Footer />
+        {!isAdminRoute && <Footer />}
+        <Toaster theme="dark" richColors closeButton position="top-right" />
       </body>
     </html>
   )
