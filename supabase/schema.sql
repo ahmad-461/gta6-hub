@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('admin', 'editor')) DEFAULT 'editor',
+    disabled BOOLEAN DEFAULT false NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -48,11 +49,13 @@ CREATE TABLE IF NOT EXISTS public.guides (
     slug TEXT UNIQUE NOT NULL,
     content TEXT NOT NULL,
     category UUID REFERENCES public.categories(id) ON DELETE SET NULL,
-    difficulty TEXT NOT NULL CHECK (difficulty IN ('easy', 'medium', 'hard', 'expert')) DEFAULT 'easy',
+    guide_category TEXT NOT NULL CHECK (guide_category IN ('Getting Started', 'Story', 'Online', 'Cheats', 'Secrets')) DEFAULT 'Getting Started',
+    difficulty TEXT NOT NULL CHECK (difficulty IN ('Beginner', 'Intermediate', 'Advanced')) DEFAULT 'Beginner',
     status TEXT NOT NULL CHECK (status IN ('draft', 'published', 'archived')) DEFAULT 'draft',
     author_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     featured_image TEXT,
     word_count INTEGER DEFAULT 0 NOT NULL,
+    toc JSONB NOT NULL DEFAULT '[]'::jsonb,
     published_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -81,7 +84,8 @@ CREATE TABLE IF NOT EXISTS public.cheat_codes (
     effect TEXT NOT NULL,
     verified BOOLEAN DEFAULT false NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT unique_platform_code UNIQUE (platform, code)
 );
 
 -- 7. MEDIA Table
@@ -309,8 +313,28 @@ CREATE POLICY "Allow admin manage site settings" ON public.site_settings
 -- Note: Supabase's SQL API doesn't support bucket manipulation directly inside user transactions easily,
 -- but the recommended query structure for inserting storage buckets and RLS is:
 --
--- INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true) ON CONFLICT DO NOTHING;
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('media', 'media', true) ON CONFLICT DO NOTHING;
 --
 -- Storage RLS policy instructions:
--- CREATE POLICY "Allow Public Image View" ON storage.objects FOR SELECT USING (bucket_id = 'images');
--- CREATE POLICY "Allow Auth User/Admin Image Upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'images');
+-- CREATE POLICY "Allow Public Image View" ON storage.objects FOR SELECT USING (bucket_id = 'media');
+-- CREATE POLICY "Allow Auth User/Admin Image Upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'media');
+
+
+-- ==========================================
+-- PHASE 2 MIGRATIONS (APPLY ON EXISTING DB)
+-- ==========================================
+
+-- 1. Add disabled column to profiles
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS disabled BOOLEAN DEFAULT false NOT NULL;
+
+-- 2. Add guide_category and toc columns to guides
+ALTER TABLE public.guides ADD COLUMN IF NOT EXISTS guide_category TEXT NOT NULL CHECK (guide_category IN ('Getting Started', 'Story', 'Online', 'Cheats', 'Secrets')) DEFAULT 'Getting Started';
+ALTER TABLE public.guides ADD COLUMN IF NOT EXISTS toc JSONB NOT NULL DEFAULT '[]'::jsonb;
+
+-- 3. Modify guides difficulty check constraint (drop old and add new)
+ALTER TABLE public.guides DROP CONSTRAINT IF EXISTS guides_difficulty_check;
+ALTER TABLE public.guides ADD CONSTRAINT guides_difficulty_check CHECK (difficulty IN ('Beginner', 'Intermediate', 'Advanced'));
+ALTER TABLE public.guides ALTER COLUMN difficulty SET DEFAULT 'Beginner';
+
+-- 4. Add unique constraint to cheat_codes
+ALTER TABLE public.cheat_codes ADD CONSTRAINT unique_platform_code UNIQUE (platform, code);
