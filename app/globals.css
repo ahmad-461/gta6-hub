@@ -25,3 +25,27 @@ body {
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
   border-color: #00f0ff;
 }
+
+/* Guide Content Spoiler Styling */
+span[data-spoiler] {
+  background-color: rgba(255, 0, 127, 0.2) !important;
+  color: transparent !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+  cursor: pointer !important;
+  border-radius: 4px;
+  padding: 0 4px;
+  transition: all 0.25s ease-in-out;
+  border: 1px dashed rgba(255, 0, 127, 0.4);
+  user-select: none;
+}
+span[data-spoiler]:hover {
+  background-color: rgba(255, 0, 127, 0.3) !important;
+}
+span[data-spoiler].revealed {
+  background-color: transparent !important;
+  color: inherit !important;
+  text-shadow: none !important;
+  cursor: default !important;
+  border-color: transparent !important;
+  user-select: text;
+}

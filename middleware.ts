@@ -8,6 +8,54 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set("x-pathname", url.pathname)
 
+  // Maintenance mode check
+  const isStaticFile =
+    url.pathname.startsWith("/_next") ||
+    url.pathname.includes(".") ||
+    url.pathname === "/favicon.ico"
+
+  const isAdmin = url.pathname.startsWith("/admin")
+  const isApi = url.pathname.startsWith("/api")
+  const isMaintenancePage = url.pathname === "/maintenance"
+
+  if (!isAdmin && !isApi && !isStaticFile && !isMaintenancePage) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (supabaseUrl && supabaseAnonKey) {
+      try {
+        const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll()
+            },
+            setAll() {
+              // Read-only in this block
+            },
+          },
+        })
+
+        const { data: setting } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "maintenance_mode")
+          .maybeSingle()
+
+        if (setting?.value === "true") {
+          url.pathname = "/maintenance"
+          requestHeaders.set("x-pathname", "/maintenance")
+          return NextResponse.rewrite(url, {
+            request: {
+              headers: requestHeaders,
+            },
+          })
+        }
+      } catch (err) {
+        console.error("Failed to check maintenance mode in middleware:", err)
+      }
+    }
+  }
+
   let response = NextResponse.next({
     request: {
       headers: requestHeaders,
