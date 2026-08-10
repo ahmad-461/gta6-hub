@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { supabase } from "@/lib/supabase"
+import NextImage from "next/image"
 import { toast } from "sonner"
 import {
   Upload,
@@ -274,12 +275,14 @@ export default function MediaLibraryPage() {
             >
               {/* Image Preview */}
               <div className="aspect-video bg-[#0b0a0e] relative overflow-hidden flex items-center justify-center border-b border-card-border">
-                <img
+                <NextImage
                   src={item.url}
                   alt={item.alt_text || "Uploaded image"}
-                  className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  className="object-contain group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="absolute bottom-2 right-2 bg-black/75 px-2 py-0.5 rounded text-[10px] font-bold text-neon-blue tracking-wide uppercase">
+                <span className="absolute bottom-2 right-2 bg-black/75 px-2 py-0.5 rounded text-[10px] font-bold text-neon-blue tracking-wide uppercase z-10">
                   {item.size_kb} KB
                 </span>
               </div>

@@ -1,45 +1,24 @@
 import React from "react"
 import Link from "next/link"
-import { ShieldAlert } from "lucide-react"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import CheatFinderClient, { CheatCode } from "../tools/cheat-finder/CheatFinderClient"
+import { ShieldAlert } from "lucide-react"
+import CheatsClient from "@/components/CheatsClient"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
+export const revalidate = 3600
 
 export const metadata = {
   title: "Multi-Platform Cheat Codes | GTA VI Hub",
   description: "Spawn supercars, trigger invincibility, obtain guns, and manipulate weather across PS5, Xbox Series X/S, and PC.",
 }
 
-async function getCheatCodes(): Promise<CheatCode[]> {
-  try {
-    const supabase = createSupabaseServerClient()
-    const { data, error } = await supabase
-      .from("cheat_codes")
-      .select("*")
-      .order("category", { ascending: true })
-
-    if (error || !data || data.length === 0) {
-      console.warn("Using high-quality fallback cheat codes for directory testing...")
-      return [
-        { id: "1", title: "Spawn Comet sports car", platform: "PS5", code: "R1, O, R2, RIGHT, L1, L2, X, X, SQUARE, R1", category: "Vehicles", effect: "Spawns a Pfister Comet sports car instantly.", verified: true },
-        { id: "2", title: "Invincibility (5 Min)", platform: "PS5", code: "RIGHT, X, RIGHT, LEFT, RIGHT, R1, RIGHT, LEFT, X, TRIANGLE", category: "Player / Stats", effect: "Max health & five minutes of full invincibility.", verified: true },
-        { id: "3", title: "Spawn Rapid GT sports car", platform: "PC", code: "RAPIDGT", category: "Vehicles", effect: "Spawns a high-speed sports car.", verified: false },
-        { id: "4", title: "Heavy Weapons & Ammo", platform: "Xbox Series X/S", code: "Y, RT, LEFT, LB, A, RIGHT, Y, DOWN, X, LB, LB, LB", category: "Weapons", effect: "Unlocks tier 4 rocket launchers, heavy pistols, and submachine guns with max ammo.", verified: true },
-        { id: "5", title: "Manipulate Ambient Weather", platform: "Xbox", code: "RT, A, LB, LB, L2, L2, L2, X", category: "Weather / World", effect: "Cycles through rain, sunny, overcast, and heavy storm weather effects.", verified: true }
-      ]
-    }
-
-    return data as CheatCode[]
-  } catch (err) {
-    console.warn("Error connecting to Supabase in cheats page:", err)
-    return []
-  }
-}
-
 export default async function CheatsPage() {
-  const cheats = await getCheatCodes()
+  const supabase = createSupabaseServerClient()
+
+  // Fetch all cheat codes from Supabase
+  const { data: cheats } = await supabase
+    .from("cheat_codes")
+    .select("id, title, platform, code, category, effect, verified")
+    .order("title")
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow space-y-8">
@@ -56,8 +35,8 @@ export default async function CheatsPage() {
 
       <div className="w-full h-[1px] bg-gradient-to-r from-card-border/60 via-transparent to-transparent" />
 
-      {/* Interactive Cheat Finder Client Component */}
-      <CheatFinderClient initialCheats={cheats} />
+      {/* Interactive Cheats Client Component */}
+      <CheatsClient initialCheats={cheats || []} />
     </div>
   )
 }

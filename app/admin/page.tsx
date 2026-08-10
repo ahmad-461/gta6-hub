@@ -14,6 +14,7 @@ import {
   XCircle,
   AlertTriangle
 } from "lucide-react"
+import SEOSummaryCard from "@/components/SEOSummaryCard"
 
 export const dynamic = "force-dynamic"
 
@@ -128,7 +129,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
@@ -149,6 +150,7 @@ export default async function AdminDashboardPage() {
             </Link>
           )
         })}
+        <SEOSummaryCard />
       </div>
 
       {/* Quick Action Shortcuts */}

@@ -23,8 +23,13 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-        <div className="text-center mt-6 text-xs text-foreground/40 max-w-2xl mx-auto">
-          GTA VI HUB is an unofficial fan site. GTA VI, Grand Theft Auto, Vice City, and all associated logos are trademarks of Take-Two Interactive and Rockstar Games.
+        <div className="text-center mt-6 text-xs text-foreground/40 max-w-2xl mx-auto space-y-2">
+          <p className="text-foreground/50 italic">
+            Disclosure: This page contains affiliate links. If you make a purchase through them, we may earn a small commission at no extra cost to you.
+          </p>
+          <p>
+            GTA VI HUB is an unofficial fan site. GTA VI, Grand Theft Auto, Vice City, and all associated logos are trademarks of Take-Two Interactive and Rockstar Games.
+          </p>
         </div>
       </div>
     </footer>

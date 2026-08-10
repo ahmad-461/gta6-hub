@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
 import Image from "@tiptap/extension-image"
+import NextImage from "next/image"
 import Youtube from "@tiptap/extension-youtube"
 import { Mark, mergeAttributes } from "@tiptap/core"
 import { supabase } from "@/lib/supabase"
@@ -379,11 +380,13 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
                       onClick={() => handleInsertImage(item.url, item.alt_text || item.filename)}
                       className="group border border-card-border hover:border-neon-blue bg-card-bg rounded-lg overflow-hidden cursor-pointer transition-all duration-150"
                     >
-                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-card-border">
-                        <img
+                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-card-border overflow-hidden">
+                        <NextImage
                           src={item.url}
-                          alt={item.alt_text}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition"
+                          alt={item.alt_text || "Tiptap image option"}
+                          fill
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                          className="object-contain group-hover:scale-105 transition"
                         />
                       </div>
                       <div className="p-2">

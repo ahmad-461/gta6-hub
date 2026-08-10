@@ -33,6 +33,8 @@ const guideSchema = z.object({
   status: z.enum(["draft", "published", "archived"]),
   publishedAt: z.string().optional(),
   featuredImage: z.string().optional(),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
 })
 
 interface GuideEditorFormProps {
@@ -58,6 +60,13 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
 
   // Live Table of Contents Preview State
   const [toc, setToc] = useState<any[]>([])
+
+  // SEO & FAQ State
+  const [seoTitle, setSeoTitle] = useState("")
+  const [seoDescription, setSeoDescription] = useState("")
+  const [faq, setFaq] = useState<{ question: string; answer: string }[]>([])
+  const [faqQuestion, setFaqQuestion] = useState("")
+  const [faqAnswer, setFaqAnswer] = useState("")
 
   // Media Picker inside the Editor
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
@@ -133,6 +142,9 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       setDifficulty(guide.difficulty || "Beginner")
       setStatus(guide.status || "draft")
       setFeaturedImage(guide.featured_image || "")
+      setSeoTitle(guide.seo_title || "")
+      setSeoDescription(guide.seo_description || "")
+      setFaq(Array.isArray(guide.faq) ? guide.faq : [])
 
       if (guide.published_at) {
         const dateObj = new Date(guide.published_at)
@@ -188,6 +200,8 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       status,
       publishedAt: publishedAt || undefined,
       featuredImage: featuredImage || undefined,
+      seoTitle: seoTitle || undefined,
+      seoDescription: seoDescription || undefined,
     }
 
     const validation = guideSchema.safeParse(formData)
@@ -215,6 +229,9 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         toc: toc, // save table of contents JSONB dynamically!
         published_at: publishedAt ? new Date(publishedAt).toISOString() : (status === "published" ? new Date().toISOString() : null),
         author_id: authorId,
+        seo_title: seoTitle || null,
+        seo_description: seoDescription || null,
+        faq: faq || [],
         updated_at: new Date().toISOString(),
       }
 
@@ -362,6 +379,99 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                 Add standard H2 headings inside the content editor to auto-populate the table of contents.
               </p>
             )}
+          </div>
+
+          {/* SEO Metadata Options */}
+          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+            <div className="border-b border-card-border pb-3 flex items-center space-x-2">
+              <FileText className="text-neon-pink" size={18} />
+              <h2 className="text-base font-bold text-white">SEO Meta Override</h2>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Custom Meta Title</label>
+              <input
+                type="text"
+                placeholder="Override default title for SEO tag..."
+                value={seoTitle}
+                onChange={(e) => setSeoTitle(e.target.value)}
+                className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-1 focus:ring-neon-pink text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Custom Meta Description</label>
+              <textarea
+                rows={3}
+                placeholder="Override default description for search engines..."
+                value={seoDescription}
+                onChange={(e) => setSeoDescription(e.target.value)}
+                className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-1 focus:ring-neon-pink text-sm resize-none"
+              />
+            </div>
+          </div>
+
+          {/* Interactive FAQ List Builder */}
+          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+            <div className="border-b border-card-border pb-3 flex items-center space-x-2">
+              <CheckCircle className="text-neon-blue" size={18} />
+              <h2 className="text-base font-bold text-white">Interactive FAQ Builder</h2>
+            </div>
+
+            {faq.length > 0 ? (
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                {faq.map((item, idx) => (
+                  <div key={idx} className="bg-[#100e16] p-3 rounded-lg border border-card-border/50 flex justify-between items-start">
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-white">Q: {item.question}</p>
+                      <p className="text-[11px] text-foreground/60">A: {item.answer}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFaq(faq.filter((_, i) => i !== idx))}
+                      className="text-neon-pink hover:text-neon-pink/80 p-1 rounded hover:bg-neon-pink/10 transition"
+                    >
+                      <Trash size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-foreground/40 italic">No FAQ items added yet. Added FAQs will generate beautiful JSON-LD Schema on this page!</p>
+            )}
+
+            <div className="border-t border-card-border/40 pt-3 space-y-3">
+              <div className="grid grid-cols-1 gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter Question..."
+                  value={faqQuestion}
+                  onChange={(e) => setFaqQuestion(e.target.value)}
+                  className="block w-full px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-1 focus:ring-neon-blue text-xs"
+                />
+                <textarea
+                  rows={2}
+                  placeholder="Enter Answer..."
+                  value={faqAnswer}
+                  onChange={(e) => setFaqAnswer(e.target.value)}
+                  className="block w-full px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-1 focus:ring-neon-blue text-xs resize-none"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!faqQuestion.trim() || !faqAnswer.trim()) {
+                    toast.error("Please enter both question and answer.")
+                    return
+                  }
+                  setFaq([...faq, { question: faqQuestion.trim(), answer: faqAnswer.trim() }])
+                  setFaqQuestion("")
+                  setFaqAnswer("")
+                  toast.success("FAQ item added!")
+                }}
+                className="w-full py-1.5 bg-neon-blue/10 hover:bg-neon-blue/20 text-neon-blue text-xs font-bold rounded uppercase tracking-wider transition"
+              >
+                Add FAQ Item
+              </button>
+            </div>
           </div>
         </div>
 

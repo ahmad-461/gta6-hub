@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
+import NextImage from "next/image"
 import { toast } from "sonner"
 import {
   Users,
@@ -133,10 +134,12 @@ export default function CharacterManagerPage() {
                 {/* Image Section */}
                 <div className="aspect-video bg-[#0b0a0e] relative overflow-hidden flex items-center justify-center border-b border-card-border">
                   {character.featured_image ? (
-                    <img
+                    <NextImage
                       src={character.featured_image}
                       alt={character.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <Users size={40} className="text-foreground/20" />

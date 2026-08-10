@@ -7,6 +7,12 @@ import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Calendar, Clock, ChevronRight, ArrowLeft, Eye } from "lucide-react"
 import GuideToc from "@/components/GuideToc"
 import GuideContentRenderer from "@/components/GuideContentRenderer"
+import JsonLd from "@/components/JsonLd"
+import AdSenseInitializer from "@/components/AdSenseInitializer"
+import { injectAdSenseAds } from "@/lib/adsense"
+import { parseAffiliateLinks } from "@/lib/affiliate"
+
+export const revalidate = 3600
 
 interface GuidePageProps {
   params: {
@@ -36,7 +42,7 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
   const supabase = createSupabaseServerClient()
   const { data: guide } = await supabase
     .from("guides")
-    .select("title, guide_category")
+    .select("title, guide_category, seo_title, seo_description, featured_image")
     .eq("slug", params.slug)
     .maybeSingle()
 
@@ -46,9 +52,24 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
     }
   }
 
+  const title = guide.seo_title || `${guide.title} (${guide.guide_category}) | GTA VI Hub`
+  const description = guide.seo_description || `Expert walkthrough and strategies for ${guide.title} on GTA VI Hub.`
+  const ogImage = guide.featured_image || "/og-image.jpg"
+
   return {
-    title: `${guide.title} (${guide.guide_category}) | GTA VI Hub`,
-    description: `Expert walkthrough and strategies for ${guide.title} on GTA VI Hub.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: ogImage }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    }
   }
 }
 
@@ -78,6 +99,14 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
   const supabase = createSupabaseServerClient()
 
+  // Fetch site setting for AdSense Publisher ID
+  const { data: adsenseSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "adsense_publisher_id")
+    .maybeSingle()
+  const publisherId = adsenseSetting?.value || null
+
   // Fetch guide detail
   const { data: guide } = await supabase
     .from("guides")
@@ -92,7 +121,10 @@ export default async function GuidePage({ params }: GuidePageProps) {
       toc,
       featured_image,
       published_at,
-      author_id
+      author_id,
+      seo_title,
+      seo_description,
+      faq
     `)
     .eq("slug", params.slug)
     .eq("guide_category", categoryName)
@@ -104,7 +136,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
   }
 
   // Fetch author
-  let authorName = "GTA VI Team"
+  let authorName = "GTA6 Hub Staff"
   if (guide.author_id) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -116,11 +148,63 @@ export default async function GuidePage({ params }: GuidePageProps) {
     }
   }
 
+  // Construct JSON-LD Structured Schemas
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": guide.title,
+    "description": guide.seo_description || `Expert walkthrough and strategies for ${guide.title} on GTA VI Hub.`,
+    "image": getImageUrl(guide.featured_image),
+    "datePublished": guide.published_at,
+    "dateModified": guide.published_at,
+    "author": {
+      "@type": "Person",
+      "name": authorName,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "GTA 6 Hub",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"}/logo.png`
+      }
+    }
+  }
+
+  let faqSchema: any = null
+  if (Array.isArray(guide.faq) && guide.faq.length > 0) {
+    faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": guide.faq.map((item: any) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
+        }
+      }))
+    }
+  }
+
+  // Inject AdSense ads into content if publisher ID is set
+  const guideContentWithAds = injectAdSenseAds(guide.content, publisherId)
+
+  // Parse Affiliate Links in content
+  const { parsedContent: guideContentWithAffiliate, hasAffiliate } = parseAffiliateLinks(guideContentWithAds)
+
   // Calculate read time based on word_count
   const readTime = Math.max(1, Math.ceil((guide.word_count || 1) / 200))
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow space-y-8">
+      {/* Google AdSense Initializer */}
+      <AdSenseInitializer publisherId={publisherId} />
+
+      {/* JSON-LD Structured Data */}
+      <JsonLd data={articleSchema} />
+      {faqSchema && <JsonLd data={faqSchema} />}
+
       {/* Breadcrumbs */}
       <nav className="flex items-center space-x-1 sm:space-x-2 text-xs font-bold uppercase tracking-wider text-foreground/40 overflow-x-auto whitespace-nowrap pb-2">
         <Link href="/" className="hover:text-neon-blue transition-colors">
@@ -189,8 +273,18 @@ export default async function GuidePage({ params }: GuidePageProps) {
             />
           </div>
 
+          {/* Affiliate Disclosure Notice */}
+          {hasAffiliate && (
+            <div className="bg-neon-blue/10 border border-neon-blue/20 p-4 rounded-xl text-xs text-foreground/80 flex items-start space-x-2.5 leading-relaxed">
+              <span className="text-base flex-shrink-0">🛍️</span>
+              <p>
+                <strong className="text-white font-bold">Disclosure:</strong> This page contains affiliate links. If you make a purchase through them, we may earn a small commission at no extra cost to you.
+              </p>
+            </div>
+          )}
+
           {/* Guide Content with spoiler clicks & step numbers */}
-          <GuideContentRenderer content={guide.content} />
+          <GuideContentRenderer content={guideContentWithAffiliate} />
         </main>
 
         {/* Sidebar Column (with sticky table of contents) */}
@@ -201,6 +295,21 @@ export default async function GuidePage({ params }: GuidePageProps) {
           >
             <ArrowLeft className="w-4 h-4" /> Back To {guide.guide_category}
           </Link>
+
+          {/* AdSense Sidebar Slot */}
+          {publisherId && (
+            <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-md space-y-2">
+              <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-widest block text-center mb-1">
+                Advertisement
+              </span>
+              <ins className="adsbygoogle"
+                   style={{ display: "block" }}
+                   data-ad-client={publisherId}
+                   data-ad-slot="5555555555"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+            </div>
+          )}
 
           {/* Table of Contents Widget */}
           <GuideToc toc={(guide.toc || []) as any[]} />

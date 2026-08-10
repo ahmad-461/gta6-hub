@@ -4,6 +4,8 @@ import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Swords, UserCheck } from "lucide-react"
 
+export const revalidate = 3600
+
 export const metadata = {
   title: "Meet the Characters | GTA VI Hub",
   description: "Explore backgrounds, statistics, voice actors, and deep lore for Lucia, Jason, and the Vice City cast.",
