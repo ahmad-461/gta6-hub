@@ -78,11 +78,13 @@ export async function middleware(request: NextRequest) {
       }
       console.log(`[AUTH REDIRECT SOURCE] middleware`)
       console.log(`requested pathname: ${url.pathname}`)
+      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
       console.log(`whether getUser() returned a user: false (missing env)`)
       console.log(`user ID only: none`)
       console.log(`profile result: none`)
       console.log(`role: none`)
       console.log(`authentication decision: redirect (missing env)`)
+      console.log(`redirect target: /admin/login`)
       url.pathname = "/admin/login"
       return NextResponse.redirect(url)
     }
@@ -92,7 +94,7 @@ export async function middleware(request: NextRequest) {
       const redirectResponse = NextResponse.redirect(targetUrl)
       response.cookies.getAll().forEach((cookie) => {
         redirectResponse.cookies.set(cookie.name, cookie.value, {
-          path: cookie.path,
+          path: "/",
           domain: cookie.domain,
           maxAge: cookie.maxAge,
           expires: cookie.expires,
@@ -148,11 +150,13 @@ export async function middleware(request: NextRequest) {
       const requestedPath = url.pathname
       console.log(`[AUTH REDIRECT SOURCE] middleware`)
       console.log(`requested pathname: ${requestedPath}`)
+      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
       console.log(`whether getUser() returned a user: false`)
       console.log(`user ID only: none`)
       console.log(`profile result: none`)
       console.log(`role: none`)
       console.log(`authentication decision: redirect (no user)`)
+      console.log(`redirect target: /admin/login`)
       url.pathname = "/admin/login"
       return createRedirectResponse(url)
     }
@@ -177,11 +181,13 @@ export async function middleware(request: NextRequest) {
     if (profile?.disabled) {
       console.log(`[AUTH REDIRECT SOURCE] middleware`)
       console.log(`requested pathname: ${url.pathname}`)
+      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
       console.log(`whether getUser() returned a user: true`)
       console.log(`user ID only: ${user.id}`)
       console.log(`profile result: ${JSON.stringify(profileResult)}`)
       console.log(`role: ${profile?.role || "none"}`)
       console.log(`authentication decision: redirect (profile disabled)`)
+      console.log(`redirect target: /admin/login?error=account_disabled`)
       await supabase.auth.signOut()
       const loginUrl = new URL("/admin/login", request.url)
       loginUrl.searchParams.set("error", "account_disabled")
