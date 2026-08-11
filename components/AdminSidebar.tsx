@@ -92,7 +92,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     <>
       {/* Mobile Header */}
       <header className="lg:hidden flex items-center justify-between bg-[#0b0a0e] border-b border-card-border px-4 py-4 sticky top-0 z-40">
-        <Link href="/admin" className="text-xl font-extrabold tracking-widest text-white uppercase font-mono">
+        <Link href="/admin" prefetch={false} className="text-xl font-extrabold tracking-widest text-white uppercase font-mono">
           GTA VI <span className="text-neon-pink font-sans font-black">HUB</span>
         </Link>
         <button
@@ -121,7 +121,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         <div className="flex flex-col flex-1 overflow-y-auto">
           {/* Logo Section */}
           <div className="hidden lg:flex items-center px-6 py-6 border-b border-card-border">
-            <Link href="/admin" className="text-2xl font-extrabold tracking-widest text-white uppercase font-mono group">
+            <Link href="/admin" prefetch={false} className="text-2xl font-extrabold tracking-widest text-white uppercase font-mono group">
               GTA VI <span className="text-neon-pink font-sans font-black transition-all group-hover:text-neon-pink/80">HUB</span>
             </Link>
           </div>
@@ -135,6 +135,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={false}
                   onClick={() => {
                     console.log(`[AUTH SIDEBAR CLICK] Clicking category: ${item.name} -> ${item.href}`)
                     setIsOpen(false)
