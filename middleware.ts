@@ -76,9 +76,14 @@ export async function middleware(request: NextRequest) {
       if (url.pathname === "/admin/login") {
         return response
       }
+      console.log(`[AUTH REDIRECT SOURCE] middleware`)
+      console.log(`requested pathname: ${url.pathname}`)
+      console.log(`whether getUser() returned a user: false (missing env)`)
+      console.log(`user ID only: none`)
+      console.log(`profile result: none`)
+      console.log(`role: none`)
+      console.log(`authentication decision: redirect (missing env)`)
       url.pathname = "/admin/login"
-      console.log(`[AUTH REDIRECT SOURCE] middleware (missing env)`)
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Redirecting to /admin/login`)
       return NextResponse.redirect(url)
     }
 
@@ -108,15 +113,8 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value)
           })
-          const requestHeaders = new Headers(request.headers)
-          const cookieString = request.cookies.getAll()
-            .map(c => `${c.name}=${c.value}`)
-            .join('; ')
-          requestHeaders.set('cookie', cookieString)
           response = NextResponse.next({
-            request: {
-              headers: requestHeaders,
-            },
+            request,
           })
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options)
@@ -148,9 +146,14 @@ export async function middleware(request: NextRequest) {
 
     if (!user) {
       const requestedPath = url.pathname
+      console.log(`[AUTH REDIRECT SOURCE] middleware`)
+      console.log(`requested pathname: ${requestedPath}`)
+      console.log(`whether getUser() returned a user: false`)
+      console.log(`user ID only: none`)
+      console.log(`profile result: none`)
+      console.log(`role: none`)
+      console.log(`authentication decision: redirect (no user)`)
       url.pathname = "/admin/login"
-      console.log(`[AUTH REDIRECT SOURCE] middleware (no user for path: ${requestedPath})`)
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No authenticated user for ${requestedPath}, redirecting to /admin/login`)
       return createRedirectResponse(url)
     }
 
@@ -172,8 +175,13 @@ export async function middleware(request: NextRequest) {
     const profile = profileResult.data
 
     if (profile?.disabled) {
-      console.log(`[AUTH REDIRECT SOURCE] middleware (disabled profile)`)
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Profile is disabled, signing out and redirecting to /admin/login?error=account_disabled`)
+      console.log(`[AUTH REDIRECT SOURCE] middleware`)
+      console.log(`requested pathname: ${url.pathname}`)
+      console.log(`whether getUser() returned a user: true`)
+      console.log(`user ID only: ${user.id}`)
+      console.log(`profile result: ${JSON.stringify(profileResult)}`)
+      console.log(`role: ${profile?.role || "none"}`)
+      console.log(`authentication decision: redirect (profile disabled)`)
       await supabase.auth.signOut()
       const loginUrl = new URL("/admin/login", request.url)
       loginUrl.searchParams.set("error", "account_disabled")
