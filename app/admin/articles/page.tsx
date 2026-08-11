@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 
 export default function ArticleManagerPage() {
+  console.log(`[AUTH REDIRECT SOURCE] destination-page (articles page rendering client-side)`)
   const [articles, setArticles] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [authors, setAuthors] = useState<any[]>([])
