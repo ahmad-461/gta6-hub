@@ -6,6 +6,8 @@ import type { Metadata } from "next"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ArrowLeft, User, ShieldAlert, Users, Mic, Landmark } from "lucide-react"
 
+export const revalidate = 3600
+
 interface CharacterPageProps {
   params: {
     slug: string

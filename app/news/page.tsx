@@ -4,6 +4,8 @@ import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Folder, Calendar } from "lucide-react"
 
+export const revalidate = 3600
+
 export const metadata = {
   title: "News & Leaks | GTA VI Hub",
   description: "Stay updated with standard breaking news, leaks, rumors, and announcements of Grand Theft Auto VI.",

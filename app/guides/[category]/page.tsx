@@ -5,6 +5,8 @@ import { notFound } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Compass, BookOpen, Globe, Zap, EyeOff, Calendar, ArrowLeft } from "lucide-react"
 
+export const revalidate = 3600
+
 interface CategoryPageProps {
   params: {
     category: string

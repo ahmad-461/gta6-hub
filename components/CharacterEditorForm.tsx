@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import NextImage from "next/image"
 import { z } from "zod"
 import { toast } from "sonner"
 import TiptapEditor from "@/components/TiptapEditor"
@@ -367,7 +368,7 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
             {featuredImage ? (
               <div className="space-y-3">
                 <div className="aspect-square max-w-[200px] mx-auto rounded-xl overflow-hidden border border-card-border relative group">
-                  <img src={featuredImage} alt="Portrait" className="w-full h-full object-cover" />
+                  <NextImage src={featuredImage} alt="Portrait" fill className="object-cover" />
                   <button
                     type="button"
                     onClick={() => setFeaturedImage("")}
@@ -425,11 +426,13 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
                       onClick={() => handleSelectFeaturedImage(item.url)}
                       className="group border border-card-border hover:border-neon-blue bg-card-bg rounded-lg overflow-hidden cursor-pointer transition-all duration-150"
                     >
-                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-card-border">
-                        <img
+                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-card-border overflow-hidden">
+                        <NextImage
                           src={item.url}
-                          alt={item.alt_text}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition"
+                          alt={item.alt_text || "Portrait option"}
+                          fill
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                          className="object-contain group-hover:scale-105 transition"
                         />
                       </div>
                       <div className="p-2">

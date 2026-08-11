@@ -3,6 +3,8 @@ import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Compass, BookOpen, Globe, Zap, EyeOff, Award, ChevronRight } from "lucide-react"
 
+export const revalidate = 3600
+
 export const metadata = {
   title: "Walkthroughs & Guides | GTA VI Hub",
   description: "Complete walkthroughs, missions, secrets, collectibles search, and multiplayer tips for Grand Theft Auto VI.",
