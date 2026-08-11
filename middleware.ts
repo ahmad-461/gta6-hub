@@ -4,9 +4,8 @@ import { NextResponse, type NextRequest } from "next/server"
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
 
-  // Inject x-pathname header
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set("x-pathname", url.pathname)
+  // Inject x-pathname header directly on request headers so it persists
+  request.headers.set("x-pathname", url.pathname)
 
   // Maintenance mode check
   const isStaticFile =
@@ -43,11 +42,9 @@ export async function middleware(request: NextRequest) {
 
         if (setting?.value === "true") {
           url.pathname = "/maintenance"
-          requestHeaders.set("x-pathname", "/maintenance")
+          request.headers.set("x-pathname", "/maintenance")
           return NextResponse.rewrite(url, {
-            request: {
-              headers: requestHeaders,
-            },
+            request,
           })
         }
       } catch (err) {
@@ -57,9 +54,7 @@ export async function middleware(request: NextRequest) {
   }
 
   let response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
+    request,
   })
 
   // Protect /admin routes
@@ -76,14 +71,36 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
+    // Helper to create redirect response with preserved/refreshed cookies copied over
+    const createRedirectResponse = (targetUrl: URL) => {
+      const redirectResponse = NextResponse.redirect(targetUrl)
+      response.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, {
+          path: cookie.path,
+          domain: cookie.domain,
+          maxAge: cookie.maxAge,
+          expires: cookie.expires,
+          secure: cookie.secure,
+          httpOnly: cookie.httpOnly,
+          sameSite: cookie.sameSite,
+        })
+      })
+      return redirectResponse
+    }
+
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value)
+          })
+          response = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options)
           })
         },
@@ -95,14 +112,14 @@ export async function middleware(request: NextRequest) {
     if (url.pathname === "/admin/login") {
       if (user) {
         url.pathname = "/admin"
-        return NextResponse.redirect(url)
+        return createRedirectResponse(url)
       }
       return response
     }
 
     if (!user) {
       url.pathname = "/admin/login"
-      return NextResponse.redirect(url)
+      return createRedirectResponse(url)
     }
 
     // Read user role and status from profiles
@@ -129,7 +146,7 @@ export async function middleware(request: NextRequest) {
     if (role === "editor" && (url.pathname.startsWith("/admin/users") || url.pathname.startsWith("/admin/settings"))) {
       url.pathname = "/admin"
       url.searchParams.set("error", "unauthorized")
-      return NextResponse.redirect(url)
+      return createRedirectResponse(url)
     }
   }
 
