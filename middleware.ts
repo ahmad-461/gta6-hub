@@ -107,8 +107,15 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value)
           })
+          const requestHeaders = new Headers(request.headers)
+          const cookieString = request.cookies.getAll()
+            .map(c => `${c.name}=${c.value}`)
+            .join('; ')
+          requestHeaders.set('cookie', cookieString)
           response = NextResponse.next({
-            request,
+            request: {
+              headers: requestHeaders,
+            },
           })
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options)
@@ -139,8 +146,9 @@ export async function middleware(request: NextRequest) {
     }
 
     if (!user) {
+      const requestedPath = url.pathname
       url.pathname = "/admin/login"
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No authenticated user for ${url.pathname}, redirecting to /admin/login`)
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No authenticated user for ${requestedPath}, redirecting to /admin/login`)
       return createRedirectResponse(url)
     }
 
