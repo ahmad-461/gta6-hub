@@ -77,6 +77,7 @@ export async function middleware(request: NextRequest) {
         return response
       }
       url.pathname = "/admin/login"
+      console.log(`[AUTH REDIRECT SOURCE] middleware (missing env)`)
       console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Redirecting to /admin/login`)
       return NextResponse.redirect(url)
     }
@@ -148,6 +149,7 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       const requestedPath = url.pathname
       url.pathname = "/admin/login"
+      console.log(`[AUTH REDIRECT SOURCE] middleware (no user for path: ${requestedPath})`)
       console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No authenticated user for ${requestedPath}, redirecting to /admin/login`)
       return createRedirectResponse(url)
     }
@@ -170,6 +172,7 @@ export async function middleware(request: NextRequest) {
     const profile = profileResult.data
 
     if (profile?.disabled) {
+      console.log(`[AUTH REDIRECT SOURCE] middleware (disabled profile)`)
       console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Profile is disabled, signing out and redirecting to /admin/login?error=account_disabled`)
       await supabase.auth.signOut()
       const loginUrl = new URL("/admin/login", request.url)

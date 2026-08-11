@@ -126,7 +126,10 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    console.log(`[AUTH SIDEBAR CLICK] Clicking category: ${item.name} -> ${item.href}`)
+                    setIsOpen(false)
+                  }}
                   className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition duration-150 ${
                     isActive
                       ? "bg-neon-pink/10 text-neon-pink border-l-2 border-neon-pink"
