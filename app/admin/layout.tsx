@@ -1,6 +1,6 @@
 import React from "react"
 import { redirect } from "next/navigation"
-import { headers } from "next/headers"
+import { headers, cookies } from "next/headers"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import AdminSidebar from "@/components/AdminSidebar"
 
@@ -24,38 +24,61 @@ export default async function AdminLayout({
   // Retrieve user session and role server-side
   const supabase = createSupabaseServerClient()
   console.log(`[AUTH DEBUG] AdminLayout calling supabase.auth.getUser()...`)
-  const { data: { user } } = await supabase.auth.getUser()
-  console.log(`[AUTH DEBUG] AdminLayout getUser() returned: ${user ? user.id : "null"}`)
+
+  const cookiesList = cookies().getAll().map(c => c.name)
+  const hasAuthCookie = cookiesList.some(name => name.includes("auth-token") || name.startsWith("sb-"))
+  console.log(`[AUTH DEBUG] AdminLayout Auth Cookie Exist: ${hasAuthCookie} (Found cookies: ${JSON.stringify(cookiesList)})`)
+
+  let userResult;
+  try {
+    userResult = await supabase.auth.getUser()
+    console.log(`[AUTH DEBUG] AdminLayout getUser success. Result: ${JSON.stringify(userResult)}`)
+  } catch (e: any) {
+    console.error(`[AUTH DEBUG] AdminLayout getUser threw exception:`, e?.message || e)
+    userResult = { data: { user: null }, error: e }
+  }
+  const user = userResult.data?.user
 
   if (!user) {
     console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
     console.log(`requested pathname: ${pathname}`)
-    console.log(`whether getUser() returned a user: false`)
-    console.log(`user ID only: none`)
+    console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
+    console.log(`getUser() result: ${JSON.stringify(userResult)}`)
+    console.log(`user ID if authenticated: none`)
     console.log(`profile result: none`)
     console.log(`role: none`)
     console.log(`authentication decision: redirect (no user)`)
+    console.log(`redirect target: /admin/login`)
     redirect("/admin/login")
   }
 
   // Fetch the user's profile
   console.log(`[AUTH DEBUG] AdminLayout fetching profile for: ${user.id}`)
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, name, disabled")
-    .eq("id", user.id)
-    .single()
-  console.log(`[AUTH DEBUG] AdminLayout profile response: ${JSON.stringify(profile)}`)
+  let profileResult;
+  try {
+    profileResult = await supabase
+      .from("profiles")
+      .select("role, name, disabled")
+      .eq("id", user.id)
+      .single()
+    console.log(`[AUTH DEBUG] AdminLayout profile response: ${JSON.stringify(profileResult)}`)
+  } catch (e: any) {
+    console.error(`[AUTH DEBUG] AdminLayout profile query threw exception:`, e?.message || e)
+    profileResult = { data: null, error: e }
+  }
+  const profile = profileResult.data
 
   if (!profile || profile.disabled) {
     // If no profile or disabled, force log out
     console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
     console.log(`requested pathname: ${pathname}`)
-    console.log(`whether getUser() returned a user: true`)
-    console.log(`user ID only: ${user.id}`)
-    console.log(`profile result: ${JSON.stringify(profile)}`)
+    console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
+    console.log(`getUser() result: ${JSON.stringify(userResult)}`)
+    console.log(`user ID if authenticated: ${user.id}`)
+    console.log(`profile result: ${JSON.stringify(profileResult)}`)
     console.log(`role: ${profile?.role || "none"}`)
     console.log(`authentication decision: redirect (disabled or missing profile)`)
+    console.log(`redirect target: /admin/login?error=account_disabled`)
     await supabase.auth.signOut()
     redirect("/admin/login?error=account_disabled")
   }
