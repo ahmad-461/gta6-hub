@@ -48,7 +48,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-background text-foreground">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-background text-foreground animate-fade-in">
       <AdminSidebar user={adminUser} />
       <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto w-full">
