@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { z } from "zod"
 import { toast } from "sonner"
@@ -14,6 +14,7 @@ const loginSchema = z.object({
 
 export default function AdminLoginPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
@@ -60,8 +61,8 @@ export default function AdminLoginPage() {
       }
 
       toast.success("Login successful! Redirecting to dashboard...")
-      // Force reload to let middleware capture cookie
-      window.location.href = "/admin"
+      router.refresh()
+      router.push("/admin")
     } catch (err: any) {
       toast.error("An unexpected error occurred during login.")
       setIsLoading(false)
