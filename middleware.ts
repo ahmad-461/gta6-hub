@@ -66,9 +66,46 @@ export async function middleware(request: NextRequest) {
     const cookiesList = request.cookies.getAll().map(c => c.name)
     const hasAuthCookie = cookiesList.some(name => name.includes("auth-token") || name.startsWith("sb-"))
 
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Request Path: ${url.pathname}`)
+    // Helper to create redirect response with preserved/refreshed cookies copied over
+    const createRedirectResponse = (targetUrl: URL) => {
+      const redirectResponse = NextResponse.redirect(targetUrl)
+      response.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, {
+          path: "/",
+          domain: cookie.domain,
+          maxAge: cookie.maxAge,
+          expires: cookie.expires,
+          secure: cookie.secure,
+          httpOnly: cookie.httpOnly,
+          sameSite: cookie.sameSite,
+        })
+      })
+      return redirectResponse
+    }
+
+    const isPrefetch =
+      request.headers.get("x-next-router-prefetch") === "1" ||
+      request.headers.get("purpose") === "prefetch" ||
+      request.headers.get("sec-fetch-purpose") === "prefetch"
+
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Request Path: ${url.pathname} | isPrefetch: ${isPrefetch}`)
     console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Env Present: Url=${!!supabaseUrl}, AnonKey=${!!supabaseAnonKey}`)
     console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Auth Cookie Exist: ${hasAuthCookie} (Found cookies: ${JSON.stringify(cookiesList)})`)
+
+    // Safely bypass full session refresh / database profile lookup for Next.js prefetch requests
+    // to prevent concurrent token refresh race conditions (session desync) and reduce database load.
+    // To prevent spoofing bypasses, we still enforce that an auth cookie MUST exist; otherwise we redirect.
+    // If an auth cookie exists, we allow the prefetch to pass through to the Server Layout (AdminLayout),
+    // which does the strict, secure, cryptographic session and signature validation.
+    if (isPrefetch) {
+      if (!hasAuthCookie) {
+        console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Prefetch request missing auth cookie. Redirecting to /admin/login`)
+        url.pathname = "/admin/login"
+        return createRedirectResponse(url)
+      }
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Bypassing full auth/profile check for prefetch request with cookie: ${url.pathname}`)
+      return response
+    }
 
     // If Supabase environment variables are missing, fallback to avoid crash
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -87,23 +124,6 @@ export async function middleware(request: NextRequest) {
       console.log(`redirect target: /admin/login`)
       url.pathname = "/admin/login"
       return NextResponse.redirect(url)
-    }
-
-    // Helper to create redirect response with preserved/refreshed cookies copied over
-    const createRedirectResponse = (targetUrl: URL) => {
-      const redirectResponse = NextResponse.redirect(targetUrl)
-      response.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, {
-          path: "/",
-          domain: cookie.domain,
-          maxAge: cookie.maxAge,
-          expires: cookie.expires,
-          secure: cookie.secure,
-          httpOnly: cookie.httpOnly,
-          sameSite: cookie.sameSite,
-        })
-      })
-      return redirectResponse
     }
 
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {

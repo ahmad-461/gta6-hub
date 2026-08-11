@@ -233,6 +233,7 @@ export default async function AdminDashboardPage() {
             <Link
               key={stat.name}
               href={stat.href}
+              prefetch={false}
               className={`group relative bg-[#15131a] border border-card-border p-5 rounded-xl transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-md ${stat.borderColor} ${stat.glowColor} hover:-translate-y-1`}
             >
               {/* Colored top indicator */}
@@ -280,6 +281,7 @@ export default async function AdminDashboardPage() {
               {/* Shortcut 1: Article */}
               <Link
                 href="/admin/articles/new"
+                prefetch={false}
                 className="flex items-start justify-between p-4 bg-[#0d0c10]/60 border border-card-border rounded-xl hover:border-neon-pink/40 hover:bg-neon-pink/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
@@ -297,6 +299,7 @@ export default async function AdminDashboardPage() {
               {/* Shortcut 2: Guide */}
               <Link
                 href="/admin/guides/new"
+                prefetch={false}
                 className="flex items-start justify-between p-4 bg-[#0d0c10]/60 border border-card-border rounded-xl hover:border-neon-blue/40 hover:bg-neon-blue/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
@@ -314,6 +317,7 @@ export default async function AdminDashboardPage() {
               {/* Shortcut 3: Character */}
               <Link
                 href="/admin/characters/new"
+                prefetch={false}
                 className="flex items-start justify-between p-4 bg-[#0d0c10]/60 border border-card-border rounded-xl hover:border-neon-purple/40 hover:bg-neon-purple/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
@@ -331,6 +335,7 @@ export default async function AdminDashboardPage() {
               {/* Shortcut 4: Cheats */}
               <Link
                 href="/admin/cheats"
+                prefetch={false}
                 className="flex items-start justify-between p-4 bg-[#0d0c10]/60 border border-card-border rounded-xl hover:border-neon-yellow/40 hover:bg-neon-yellow/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
@@ -478,6 +483,7 @@ export default async function AdminDashboardPage() {
             <div className="mt-6 pt-4 border-t border-card-border/50">
               <Link
                 href="/admin/comments"
+                prefetch={false}
                 className="flex items-center justify-center text-xs font-black uppercase tracking-widest text-neon-pink hover:text-neon-pink/80 transition duration-150"
               >
                 Go to Moderation Queue <ArrowRight size={14} className="ml-1.5" />
@@ -520,6 +526,7 @@ export default async function AdminDashboardPage() {
                       {item.href && (
                         <Link
                           href={item.href}
+                          prefetch={false}
                           className="text-[10px] font-bold text-neon-blue uppercase tracking-widest hover:underline"
                         >
                           Edit
