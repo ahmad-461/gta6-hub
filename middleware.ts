@@ -59,15 +59,25 @@ export async function middleware(request: NextRequest) {
 
   // Protect /admin routes
   if (url.pathname.startsWith("/admin")) {
+    const correlationId = Math.random().toString(36).substring(2, 8)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 
+    const cookiesList = request.cookies.getAll().map(c => c.name)
+    const hasAuthCookie = cookiesList.some(name => name.includes("auth-token") || name.startsWith("sb-"))
+
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Request Path: ${url.pathname}`)
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Env Present: Url=${!!supabaseUrl}, AnonKey=${!!supabaseAnonKey}`)
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Auth Cookie Exist: ${hasAuthCookie} (Found cookies: ${JSON.stringify(cookiesList)})`)
+
     // If Supabase environment variables are missing, fallback to avoid crash
     if (!supabaseUrl || !supabaseAnonKey) {
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Missing Supabase URL or Anon Key. URL is /admin/login? ${url.pathname === "/admin/login"}`)
       if (url.pathname === "/admin/login") {
         return response
       }
       url.pathname = "/admin/login"
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Redirecting to /admin/login`)
       return NextResponse.redirect(url)
     }
 
@@ -107,29 +117,52 @@ export async function middleware(request: NextRequest) {
       },
     })
 
-    const { data: { user } } = await supabase.auth.getUser()
+    let userResult;
+    try {
+      userResult = await supabase.auth.getUser()
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] getUser success. User ID: ${userResult.data?.user?.id || "none"}`)
+    } catch (e: any) {
+      console.error(`[MIDDLEWARE DEBUG] [${correlationId}] getUser threw an error:`, e?.message || e)
+      userResult = { data: { user: null }, error: e }
+    }
+
+    const user = userResult.data?.user
 
     if (url.pathname === "/admin/login") {
       if (user) {
         url.pathname = "/admin"
+        console.log(`[MIDDLEWARE DEBUG] [${correlationId}] User is logged in, redirecting /admin/login -> /admin`)
         return createRedirectResponse(url)
       }
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No user, allowing access to /admin/login`)
       return response
     }
 
     if (!user) {
       url.pathname = "/admin/login"
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No authenticated user for ${url.pathname}, redirecting to /admin/login`)
       return createRedirectResponse(url)
     }
 
     // Read user role and status from profiles
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role, disabled")
-      .eq("id", user.id)
-      .single()
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Fetching profile for user ID: ${user.id}`)
+    let profileResult;
+    try {
+      profileResult = await supabase
+        .from("profiles")
+        .select("role, disabled")
+        .eq("id", user.id)
+        .single()
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] profile query complete. Data: ${JSON.stringify(profileResult.data)}, Error: ${JSON.stringify(profileResult.error)}`)
+    } catch (e: any) {
+      console.error(`[MIDDLEWARE DEBUG] [${correlationId}] profile query threw exception:`, e?.message || e)
+      profileResult = { data: null, error: e }
+    }
+
+    const profile = profileResult.data
 
     if (profile?.disabled) {
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Profile is disabled, signing out and redirecting to /admin/login?error=account_disabled`)
       await supabase.auth.signOut()
       const loginUrl = new URL("/admin/login", request.url)
       loginUrl.searchParams.set("error", "account_disabled")
@@ -141,13 +174,17 @@ export async function middleware(request: NextRequest) {
     }
 
     const role = profile?.role || "editor"
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] User role is determined as: ${role}`)
 
     // Editor trying to access user manager or site settings
     if (role === "editor" && (url.pathname.startsWith("/admin/users") || url.pathname.startsWith("/admin/settings"))) {
       url.pathname = "/admin"
       url.searchParams.set("error", "unauthorized")
+      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Editor unauthorized for path, redirecting to /admin?error=unauthorized`)
       return createRedirectResponse(url)
     }
+
+    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Allowed pass-through for path: ${url.pathname}`)
   }
 
   return response
