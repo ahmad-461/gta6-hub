@@ -28,7 +28,13 @@ export default async function AdminLayout({
   console.log(`[AUTH DEBUG] AdminLayout getUser() returned: ${user ? user.id : "null"}`)
 
   if (!user) {
-    console.log(`[AUTH REDIRECT SOURCE] admin-layout (no user)`)
+    console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
+    console.log(`requested pathname: ${pathname}`)
+    console.log(`whether getUser() returned a user: false`)
+    console.log(`user ID only: none`)
+    console.log(`profile result: none`)
+    console.log(`role: none`)
+    console.log(`authentication decision: redirect (no user)`)
     redirect("/admin/login")
   }
 
@@ -43,7 +49,13 @@ export default async function AdminLayout({
 
   if (!profile || profile.disabled) {
     // If no profile or disabled, force log out
-    console.log(`[AUTH REDIRECT SOURCE] admin-layout (disabled or missing profile)`)
+    console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
+    console.log(`requested pathname: ${pathname}`)
+    console.log(`whether getUser() returned a user: true`)
+    console.log(`user ID only: ${user.id}`)
+    console.log(`profile result: ${JSON.stringify(profile)}`)
+    console.log(`role: ${profile?.role || "none"}`)
+    console.log(`authentication decision: redirect (disabled or missing profile)`)
     await supabase.auth.signOut()
     redirect("/admin/login?error=account_disabled")
   }
