@@ -5,21 +5,14 @@ import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { toast } from "sonner"
 import {
-  BookOpen,
   Plus,
   Search,
-  Filter,
   Copy,
-  Trash2,
   Edit2,
   Loader2,
-  CheckCircle,
-  Eye,
-  FolderOpen,
-  Calendar,
+  BookOpen,
   CheckSquare,
-  Square,
-  Sparkles
+  Square
 } from "lucide-react"
 
 export default function GuideManagerPage() {
@@ -203,21 +196,21 @@ export default function GuideManagerPage() {
   })
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-mono">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[rgba(245,240,250,0.14)] pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+          <h1 className="text-3xl font-normal text-white tracking-widest sm:text-4xl font-anton uppercase">
             Guides & Walkthroughs
           </h1>
-          <p className="mt-2 text-sm text-foreground/60">
+          <p className="mt-2 text-xs text-[#9C8FAE]">
             Publish missions walkthroughs, dynamic cheat books, or collectibles guides.
           </p>
         </div>
         <Link
           href="/admin/guides/new"
           prefetch={false}
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-neon-blue hover:bg-neon-blue/90 text-black font-bold text-sm rounded-lg transition duration-150 uppercase tracking-wider"
+          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150"
         >
           <Plus size={18} className="mr-2" />
           New Guide
@@ -225,19 +218,16 @@ export default function GuideManagerPage() {
       </div>
 
       {/* Filters & Search Row */}
-      <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+      <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           {/* Search */}
           <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground/40">
-              <Search size={18} />
-            </div>
             <input
               type="text"
               placeholder="Search guides by title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition duration-150 text-sm"
+              className="block w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs"
             />
           </div>
 
@@ -245,7 +235,7 @@ export default function GuideManagerPage() {
           <select
             value={selectedGuideCategory}
             onChange={(e) => setSelectedGuideCategory(e.target.value)}
-            className="px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue text-sm cursor-pointer"
+            className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs cursor-pointer font-bold"
           >
             <option value="">All Categories</option>
             <option value="Getting Started">Getting Started</option>
@@ -259,7 +249,7 @@ export default function GuideManagerPage() {
           <select
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue text-sm cursor-pointer animate-none"
+            className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs cursor-pointer font-bold"
           >
             <option value="">All Difficulties</option>
             <option value="Beginner">Beginner</option>
@@ -271,7 +261,7 @@ export default function GuideManagerPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-blue text-sm cursor-pointer"
+            className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs cursor-pointer font-bold"
           >
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
@@ -284,20 +274,20 @@ export default function GuideManagerPage() {
 
       {/* Bulk Actions Panel */}
       {selectedIds.length > 0 && (
-        <div className="bg-neon-blue/10 border border-neon-blue/25 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <p className="text-sm text-neon-blue font-semibold">
+        <div className="bg-[#00E5FF]/10 border border-[#00E5FF]/25 rounded p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-xs text-[#00E5FF] font-bold uppercase tracking-wider">
             {selectedIds.length} guides selected
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleBulkPublish}
-              className="px-3 py-1.5 bg-neon-blue hover:bg-neon-blue/90 text-black text-xs font-bold rounded uppercase transition"
+              className="px-3 py-1.5 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-black text-[10px] font-bold rounded uppercase tracking-wider transition"
             >
               Publish Selected
             </button>
             <button
               onClick={handleBulkDelete}
-              className="px-3 py-1.5 bg-neon-pink hover:bg-neon-pink/90 text-white text-xs font-bold rounded uppercase transition"
+              className="px-3 py-1.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white text-[10px] font-bold rounded uppercase tracking-wider transition"
             >
               Delete Selected
             </button>
@@ -306,7 +296,7 @@ export default function GuideManagerPage() {
                 handleBulkChangeCategory(e.target.value)
                 e.target.value = ""
               }}
-              className="px-3 py-1.5 bg-[#100e16] border border-card-border rounded text-xs text-white focus:outline-none cursor-pointer"
+              className="px-3 py-1.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-[10px] text-white focus:outline-none cursor-pointer"
             >
               <option value="">Move to Category...</option>
               <option value="Getting Started">Getting Started</option>
@@ -322,18 +312,18 @@ export default function GuideManagerPage() {
       {/* Guides Table */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-neon-blue h-8 w-8" />
+          <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
         </div>
       ) : filteredGuides.length > 0 ? (
-        <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden shadow-2xl">
+        <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#110f17] border-b border-card-border text-foreground/50 text-xs font-bold uppercase tracking-wider">
+                <tr className="bg-[#0B0710] border-b border-[rgba(245,240,250,0.14)] text-[#9C8FAE]/50 text-xs font-bold uppercase tracking-wider sticky top-0 z-10">
                   <th className="py-4 px-6 w-10">
-                    <button onClick={handleSelectAll} className="text-foreground/60 hover:text-white transition">
+                    <button onClick={handleSelectAll} className="text-[#9C8FAE]/60 hover:text-white transition">
                       {selectedIds.length === filteredGuides.length ? (
-                        <CheckSquare size={18} className="text-neon-blue" />
+                        <CheckSquare size={18} className="text-[#FF2E88]" />
                       ) : (
                         <Square size={18} />
                       )}
@@ -347,43 +337,43 @@ export default function GuideManagerPage() {
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-card-border/50 text-sm">
-                {filteredGuides.map((guide) => {
+              <tbody className="divide-y divide-[rgba(245,240,250,0.08)] text-xs">
+                {filteredGuides.map((guide, idx) => {
                   const isSelected = selectedIds.includes(guide.id)
                   const authorName = authors.find((a) => a.id === guide.author_id)?.name || "System"
 
-                  let diffClass = "text-neon-blue"
-                  if (guide.difficulty === "Intermediate") diffClass = "text-neon-yellow"
-                  if (guide.difficulty === "Advanced") diffClass = "text-neon-pink"
+                  let diffClass = "text-[#00E5FF]"
+                  if (guide.difficulty === "Intermediate") diffClass = "text-amber-500"
+                  if (guide.difficulty === "Advanced") diffClass = "text-[#FF2E88]"
 
                   // Determine status badge
                   let statusLabel = "Draft"
-                  let statusClass = "bg-foreground/10 text-foreground/60"
+                  let statusClass = "bg-[#9C8FAE]/10 text-[#9C8FAE]"
 
                   if (guide.status === "published") {
                     if (guide.published_at && new Date(guide.published_at) > new Date()) {
                       statusLabel = "Scheduled"
-                      statusClass = "bg-neon-yellow/15 text-neon-yellow"
+                      statusClass = "bg-amber-500/10 text-amber-500"
                     } else {
                       statusLabel = "Published"
-                      statusClass = "bg-neon-blue/15 text-neon-blue"
+                      statusClass = "bg-emerald-500/10 text-emerald-500"
                     }
                   } else if (guide.status === "archived") {
                     statusLabel = "Archived"
-                    statusClass = "bg-foreground/5 text-foreground/40"
+                    statusClass = "bg-[#9C8FAE]/5 text-[#9C8FAE]/40"
                   }
 
                   return (
                     <tr
                       key={guide.id}
-                      className={`hover:bg-[#110f17]/40 transition duration-150 ${
-                        isSelected ? "bg-neon-blue/5" : ""
-                      }`}
+                      className={`transition duration-150 ${
+                        idx % 2 === 0 ? "bg-[#150C1F]" : "bg-[#0B0710]"
+                      } ${isSelected ? "bg-[#00E5FF]/5" : ""}`}
                     >
                       <td className="py-4 px-6">
-                        <button onClick={() => handleSelectId(guide.id)} className="text-foreground/60 hover:text-white transition">
+                        <button onClick={() => handleSelectId(guide.id)} className="text-[#9C8FAE]/60 hover:text-white transition">
                           {isSelected ? (
-                            <CheckSquare size={18} className="text-neon-blue" />
+                            <CheckSquare size={18} className="text-[#FF2E88]" />
                           ) : (
                             <Square size={18} />
                           )}
@@ -394,13 +384,13 @@ export default function GuideManagerPage() {
                           <p className="truncate" title={guide.title}>
                             {guide.title}
                           </p>
-                          <p className="text-xs text-foreground/40 font-mono truncate mt-0.5">
+                          <p className="text-[10px] text-[#9C8FAE]/40 font-mono truncate mt-0.5">
                             /guides/{guide.slug}
                           </p>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-foreground/80">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded bg-[#1c1a24] border border-card-border text-xs text-white">
+                      <td className="py-4 px-6 text-[#9C8FAE]">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.14)] text-[10px] text-white">
                           {guide.guide_category}
                         </span>
                       </td>
@@ -410,23 +400,23 @@ export default function GuideManagerPage() {
                         </span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${statusClass}`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${statusClass}`}>
                           {statusLabel}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-foreground/80">{authorName}</td>
+                      <td className="py-4 px-6 text-[#9C8FAE]">{authorName}</td>
                       <td className="py-4 px-6 text-right space-x-1.5">
                         <Link
                           href={`/admin/guides/${guide.id}`}
                           prefetch={false}
-                          className="inline-flex p-1.5 bg-[#1a1822] border border-card-border hover:border-neon-blue/50 text-foreground/75 hover:text-neon-blue rounded transition"
+                          className="inline-flex p-1.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] hover:border-[#00E5FF]/50 text-[#9C8FAE] hover:text-[#00E5FF] rounded transition"
                           title="Edit"
                         >
                           <Edit2 size={14} />
                         </Link>
                         <button
                           onClick={() => handleDuplicate(guide)}
-                          className="inline-flex p-1.5 bg-[#1a1822] border border-card-border hover:border-neon-purple/50 text-foreground/75 hover:text-neon-purple rounded transition"
+                          className="inline-flex p-1.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] hover:border-[#FF2E88]/50 text-[#9C8FAE] hover:text-[#FF2E88] rounded transition"
                           title="One-click Duplicate"
                         >
                           <Copy size={14} />
@@ -440,9 +430,9 @@ export default function GuideManagerPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 border border-dashed border-card-border rounded-xl bg-card-bg/50">
-          <BookOpen size={40} className="mx-auto text-foreground/30 mb-3" />
-          <p className="text-foreground/50 text-base">No guides found matching search criteria.</p>
+        <div className="text-center py-20 border border-dashed border-[rgba(245,240,250,0.14)] rounded">
+          <BookOpen size={40} className="mx-auto text-[#9C8FAE]/30 mb-3" />
+          <p className="text-[#9C8FAE] text-xs">No guides found matching search criteria.</p>
         </div>
       )}
     </div>

@@ -71,7 +71,21 @@ export default function RootLayout({
         </main>
         {!isAdminRoute && <Footer />}
         {!isAdminRoute && <ChatWidget />}
-        <Toaster theme="dark" richColors closeButton position="top-right" />
+        <Toaster
+          theme="dark"
+          richColors
+          closeButton
+          position="top-right"
+          toastOptions={{
+            classNames: {
+              toast: "bg-[#150C1F] border border-[rgba(245,240,250,0.14)] text-[#F5F0FA] font-mono",
+              success: "text-[#00E5FF]",
+              error: "text-red-500",
+              info: "text-[#FF2E88]",
+              warning: "text-amber-500",
+            }
+          }}
+        />
       </body>
     </html>
   )

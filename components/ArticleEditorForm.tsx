@@ -14,9 +14,6 @@ import {
   Image as ImageIcon,
   Clock,
   FileText,
-  Search,
-  CheckCircle,
-  Eye,
   Loader2,
   Trash,
   Tag,
@@ -243,7 +240,6 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       status,
       publishedAt: publishedAt || undefined,
       seoTitle: seoTitle || undefined,
-      seoDescription: seoDescription || undefined,
       featuredImage: featuredImage || undefined,
       rumorStatus: rumorStatus,
     }
@@ -360,29 +356,29 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="animate-spin text-neon-blue h-8 w-8" />
+      <div className="flex items-center justify-center py-20 font-mono">
+        <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-8">
+    <form onSubmit={handleSave} className="space-y-8 font-mono">
       {/* Top action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[rgba(245,240,250,0.14)] pb-6">
         <div className="flex items-center space-x-3">
           <button
             type="button"
             onClick={() => router.push("/admin/articles")}
-            className="p-2 bg-card-bg border border-card-border rounded-lg hover:bg-card-border/60 transition text-foreground"
+            className="p-2 bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded hover:bg-[#0B0710] transition text-[#9C8FAE] hover:text-white"
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
+            <h1 className="text-2xl font-normal text-white sm:text-3xl font-anton uppercase tracking-wider">
               {isEditing ? "Edit Article" : "New Article"}
             </h1>
-            <p className="text-xs text-foreground/45 mt-0.5">
+            <p className="text-xs text-[#9C8FAE] mt-0.5">
               {isEditing ? `Article ID: ${articleId}` : "Drafting a new news update"}
             </p>
           </div>
@@ -391,10 +387,10 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         <button
           type="submit"
           disabled={isSaving}
-          className="inline-flex items-center justify-center px-5 py-2.5 bg-neon-blue hover:bg-neon-blue/90 text-black font-bold text-sm rounded-lg transition duration-150 uppercase tracking-wider disabled:opacity-50"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150 disabled:opacity-50"
         >
           {isSaving ? (
-            <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-black" />
+            <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
           ) : (
             <Save size={18} className="mr-2" />
           )}
@@ -403,19 +399,19 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       </div>
 
       {duplicateWarning && (
-        <div className="bg-amber-500/10 border border-amber-500/30 p-5 rounded-xl flex items-start justify-between text-amber-400 animate-fadeIn">
+        <div className="bg-amber-500/10 border border-amber-500/30 p-5 rounded flex items-start justify-between text-amber-400">
           <div className="flex items-start space-x-3">
             <AlertTriangle size={20} className="mt-0.5 shrink-0" />
             <div>
-              <h4 className="font-extrabold text-white text-sm uppercase">Semantic Duplicate Detected (Similarity Check)</h4>
-              <p className="text-xs text-foreground/60 mt-1">
+              <h4 className="font-extrabold text-white text-xs uppercase">Semantic Duplicate Detected (Similarity Check)</h4>
+              <p className="text-xs text-[#9C8FAE] mt-1">
                 This draft looks extremely similar to the existing {duplicateWarning.contentType}: <strong>{duplicateWarning.title}</strong>. Review to ensure uniqueness.
               </p>
               <a
                 href={duplicateWarning.contentType === "article" ? `/news/${duplicateWarning.slug}` : `/guides/${duplicateWarning.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-xs text-neon-pink font-bold hover:underline mt-2"
+                className="inline-flex items-center text-xs text-[#FF2E88] font-bold hover:underline mt-2"
               >
                 Open and compare original article &rarr;
               </a>
@@ -424,7 +420,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           <button
             type="button"
             onClick={() => setDuplicateWarning(null)}
-            className="text-foreground/45 hover:text-white"
+            className="text-[#9C8FAE] hover:text-white"
           >
             <X size={16} />
           </button>
@@ -435,28 +431,28 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         {/* Left main content column */}
         <div className="lg:col-span-2 space-y-6">
           {/* AI Draft Assistant Panel */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <button
               type="button"
               onClick={() => setIsAiDraftOpen(!isAiDraftOpen)}
-              className="w-full flex items-center justify-between font-bold text-white text-sm uppercase tracking-wider"
+              className="w-full flex items-center justify-between font-bold text-white text-xs uppercase tracking-wider"
             >
-              <span className="flex items-center text-neon-pink">
-                <Sparkles size={16} className="mr-2 animate-pulse" /> AI Draft Assistant
+              <span className="flex items-center text-[#FF2E88]">
+                <Sparkles size={16} className="mr-2" /> AI Draft Assistant
               </span>
-              <span className="text-xs text-foreground/40">{isAiDraftOpen ? "Collapse [-]" : "Expand [+]"}</span>
+              <span className="text-[10px] text-[#9C8FAE]">{isAiDraftOpen ? "Collapse [-]" : "Expand [+]"}</span>
             </button>
 
             {isAiDraftOpen && (
-              <div className="space-y-4 pt-2 border-t border-card-border/50 animate-fadeIn">
-                <p className="text-xs text-foreground/50 leading-relaxed">
+              <div className="space-y-4 pt-4 border-t border-[rgba(245,240,250,0.08)]">
+                <p className="text-xs text-[#9C8FAE]">
                   Paste your raw notes, leaked bulletin texts, or bullet points. The assistant will format a high-quality rich-text draft matching our brand style.
                 </p>
                 <textarea
                   placeholder="Paste your raw trailer descriptions, bulletin notes, leak lists here..."
                   value={aiNotes}
                   onChange={(e) => setAiNotes(e.target.value)}
-                  className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-neon-pink text-xs min-h-[100px]"
+                  className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/30 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs min-h-[100px]"
                 />
                 <button
                   type="button"
@@ -476,7 +472,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                       toast.error(res.error || "Failed to generate draft.")
                     }
                   }}
-                  className="w-full py-2.5 bg-neon-pink hover:bg-neon-pink/90 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition disabled:opacity-40 flex items-center justify-center space-x-1.5"
+                  className="w-full py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white text-xs font-bold rounded uppercase tracking-wider transition disabled:opacity-40 flex items-center justify-center space-x-1.5"
                 >
                   {isGeneratingDraft ? (
                     <>
@@ -495,23 +491,23 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           </div>
 
           {/* Title & Slug */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground/85 mb-1.5">Article Title</label>
+              <label className="block text-xs font-semibold text-[#9C8FAE] uppercase tracking-wider mb-1.5">Article Title</label>
               <input
                 type="text"
                 required
                 placeholder="Enter article title..."
                 value={title}
                 onChange={handleTitleChange}
-                className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition text-sm"
+                className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground/85 mb-1.5">Slug URL</label>
-              <div className="flex rounded-lg shadow-sm">
-                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-card-border bg-[#0b0a0e] text-foreground/45 text-xs font-mono">
+              <label className="block text-xs font-semibold text-[#9C8FAE] uppercase tracking-wider mb-1.5">Slug URL</label>
+              <div className="flex rounded shadow-sm">
+                <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-[rgba(245,240,250,0.14)] bg-[#0B0710] text-[#9C8FAE]/45 text-xs font-mono">
                   /news/
                 </span>
                 <input
@@ -520,18 +516,18 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                   placeholder="article-slug-url"
                   value={slug}
                   onChange={(e) => setSlug(slugify(e.target.value))}
-                  className="block w-full px-3.5 py-2 bg-[#100e16] border border-card-border rounded-r-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition text-sm font-mono"
+                  className="block w-full px-3.5 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded-r text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs font-mono"
                 />
               </div>
             </div>
           </div>
 
           {/* Tiptap Rich Text Editor */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-3">
-            <label className="block text-sm font-semibold text-white">Main Article Content</label>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
+            <label className="block text-xs font-semibold text-white uppercase tracking-wider">Main Article Content</label>
             <TiptapEditor content={content} onChange={setContent} />
             {/* Editor Footer: Word count & read estimator */}
-            <div className="flex items-center justify-between text-xs text-foreground/45 pt-2 border-t border-card-border/40 px-1 font-mono">
+            <div className="flex items-center justify-between text-[10px] text-[#9C8FAE]/45 pt-2 border-t border-[rgba(245,240,250,0.14)] px-1 font-mono">
               <span className="flex items-center">
                 <FileText size={14} className="mr-1" /> {wordCount} Words
               </span>
@@ -542,44 +538,44 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           </div>
 
           {/* Excerpt with live counter */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-3">
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
             <div className="flex justify-between items-center">
-              <label className="block text-sm font-semibold text-foreground/85">Article Excerpt</label>
-              <span className={`text-xs font-mono ${excerpt.length > 150 ? "text-neon-pink" : "text-foreground/40"}`}>
+              <label className="block text-xs font-semibold text-[#9C8FAE] uppercase tracking-wider">Article Excerpt</label>
+              <span className={`text-[10px] font-mono ${excerpt.length > 150 ? "text-[#FF2E88]" : "text-[#9C8FAE]/40"}`}>
                 {excerpt.length}/150 Chars
               </span>
             </div>
             <textarea
               placeholder="Provide a concise teaser excerpt for card summaries (max 150 characters)..."
               value={excerpt}
-              maxLength={180} // Let them type a bit past, but Zod enforces 150
+              maxLength={180}
               onChange={(e) => setExcerpt(e.target.value)}
-              className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition text-sm min-h-[80px]"
+              className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs min-h-[80px]"
             />
           </div>
 
           {/* SEO Panel */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Search Engine Optimization (SEO)</h2>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Search Engine Optimization (SEO)</h2>
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-foreground/80 mb-1">Custom Meta Title</label>
+                <label className="block text-xs font-semibold text-[#9C8FAE] mb-1">Custom Meta Title</label>
                 <input
                   type="text"
                   placeholder="Defaults to article title if empty..."
                   value={seoTitle}
                   onChange={(e) => setSeoTitle(e.target.value)}
-                  className="block w-full px-3.5 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/45 focus:outline-none focus:ring-2 focus:ring-neon-blue transition text-sm"
+                  className="block w-full px-3.5 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/45 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-foreground/80 mb-1">Custom Meta Description</label>
+                <label className="block text-xs font-semibold text-[#9C8FAE] mb-1">Custom Meta Description</label>
                 <textarea
                   placeholder="Defaults to excerpt if empty..."
                   value={seoDescription}
                   onChange={(e) => setSeoDescription(e.target.value)}
-                  className="block w-full px-3.5 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/45 focus:outline-none focus:ring-2 focus:ring-neon-blue transition text-sm min-h-[60px]"
+                  className="block w-full px-3.5 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/45 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs min-h-[60px]"
                 />
               </div>
             </div>
@@ -589,15 +585,15 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         {/* Right sidebar metadata column */}
         <div className="space-y-6">
           {/* Status, Publishing Time */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Publishing & Rumor Status</h2>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Publishing & Rumor</h2>
 
             <div>
-              <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Rumor Tracker Class</label>
+              <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5 uppercase tracking-wider">Rumor Tracker Class</label>
               <select
                 value={rumorStatus || ""}
                 onChange={(e) => setRumorStatus(e.target.value || null)}
-                className="w-full px-3 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue cursor-pointer font-semibold mb-4"
+                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer font-semibold mb-4"
               >
                 <option value="">Standard News Piece (No Rumor Status)</option>
                 <option value="rumor">Rumor (Yellow Status)</option>
@@ -607,11 +603,11 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Visibility Status</label>
+              <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5 uppercase tracking-wider">Visibility Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full px-3 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue cursor-pointer font-semibold"
+                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer font-semibold"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published / Scheduled</option>
@@ -621,17 +617,17 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
 
             {status === "published" && (
               <div>
-                <label className="block text-xs font-semibold text-foreground/80 mb-1.5 flex items-center">
-                  <Calendar size={14} className="mr-1 text-neon-blue" />
+                <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5 flex items-center uppercase tracking-wider">
+                  <Calendar size={14} className="mr-1 text-[#00E5FF]" />
                   Publish Date & Time
                 </label>
                 <input
                   type="datetime-local"
                   value={publishedAt}
                   onChange={(e) => setPublishedAt(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue"
+                  className="w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF]"
                 />
-                <p className="text-[10px] text-foreground/40 mt-1 font-mono">
+                <p className="text-[10px] text-[#9C8FAE]/40 mt-1 font-mono">
                   Leave blank to publish instantly, or set a future date to schedule.
                 </p>
               </div>
@@ -639,22 +635,22 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           </div>
 
           {/* Featured Image */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Featured Image</h2>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Featured Image</h2>
 
             {featuredImage ? (
               <div className="space-y-3">
-                <div className="aspect-video rounded-lg overflow-hidden border border-card-border relative group">
+                <div className="aspect-video rounded overflow-hidden border border-[rgba(245,240,250,0.14)] relative group">
                   <NextImage src={featuredImage} alt="Featured preview" fill className="object-cover" />
                   <button
                     type="button"
                     onClick={() => setFeaturedImage("")}
-                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-neon-pink font-bold text-xs"
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-[#FF2E88] font-bold text-xs"
                   >
                     <Trash size={16} className="mr-1" /> Remove Image
                   </button>
                 </div>
-                <p className="text-xs text-foreground/45 truncate bg-[#100e16] p-1.5 rounded border border-card-border/40 font-mono">
+                <p className="text-[10px] text-[#9C8FAE]/45 truncate bg-[#0B0710] p-1.5 rounded border border-[rgba(245,240,250,0.08)] font-mono">
                   {featuredImage}
                 </p>
               </div>
@@ -665,23 +661,23 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                   setIsMediaModalOpen(true)
                   fetchMedia()
                 }}
-                className="w-full aspect-video border-2 border-dashed border-card-border rounded-lg flex flex-col items-center justify-center text-foreground/50 hover:border-foreground/20 hover:text-white transition group bg-[#100e16]/40"
+                className="w-full aspect-video border border-dashed border-[rgba(245,240,250,0.14)] rounded flex flex-col items-center justify-center text-[#9C8FAE]/50 hover:border-[#9C8FAE]/20 hover:text-white transition group bg-[#0B0710]/40"
               >
-                <ImageIcon size={24} className="mb-2 text-foreground/30 group-hover:text-neon-pink transition" />
-                <span className="text-xs font-semibold">Select Featured Image</span>
+                <ImageIcon size={24} className="mb-2 text-[#9C8FAE]/30 group-hover:text-[#FF2E88] transition" />
+                <span className="text-[10px] font-bold tracking-widest uppercase">Select Featured Image</span>
               </button>
             )}
           </div>
 
           {/* Category Dropdown */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Category Assignment</h2>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Category Assignment</h2>
             <div>
               <select
                 required
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue cursor-pointer"
+                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer"
               >
                 <option value="">-- Choose Category --</option>
                 {categories.map((c) => (
@@ -694,9 +690,9 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           </div>
 
           {/* Tags Input (type + enter) */}
-          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3 flex items-center">
-              <Tag size={16} className="mr-1.5 text-neon-blue" /> Tag Cloud
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 flex items-center uppercase tracking-wider">
+              <Tag size={16} className="mr-1.5 text-[#00E5FF]" /> Tag Cloud
             </h2>
             <div className="space-y-3">
               <input
@@ -705,7 +701,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleAddTag}
-                className="w-full px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue"
+                className="w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF]"
               />
 
               {tags.length > 0 && (
@@ -713,7 +709,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                   {tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center px-2 py-0.5 rounded bg-neon-pink/10 text-neon-pink text-xs font-bold font-mono border border-neon-pink/15"
+                      className="inline-flex items-center px-2 py-0.5 rounded bg-[#FF2E88]/10 text-[#FF2E88] text-[10px] font-bold font-mono border border-[#FF2E88]/15"
                     >
                       {tag}
                       <button
@@ -735,22 +731,22 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       {/* Featured Image Picker Modal */}
       {isMediaModalOpen && (
         <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
-          <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-4xl max-h-[85vh] flex flex-col justify-between shadow-2xl overflow-hidden">
-            <div className="p-4 border-b border-card-border flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Choose Featured Image</h3>
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded w-full max-w-4xl max-h-[85vh] flex flex-col justify-between shadow-2xl overflow-hidden">
+            <div className="p-4 border-b border-[rgba(245,240,250,0.14)] flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white font-anton uppercase tracking-wider">Choose Featured Image</h3>
               <button
                 type="button"
                 onClick={() => setIsMediaModalOpen(false)}
-                className="text-foreground/60 hover:text-white"
+                className="text-[#9C8FAE] hover:text-white"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 bg-[#110f17]/50">
+            <div className="flex-1 overflow-y-auto p-4 bg-[#0B0710]/50">
               {isLoadingMedia ? (
                 <div className="flex justify-center items-center py-20">
-                  <Loader2 className="animate-spin text-neon-blue h-8 w-8" />
+                  <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
                 </div>
               ) : mediaList.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -758,9 +754,9 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                     <div
                       key={item.id}
                       onClick={() => handleSelectFeaturedImage(item.url)}
-                      className="group border border-card-border hover:border-neon-blue bg-card-bg rounded-lg overflow-hidden cursor-pointer transition-all duration-150"
+                      className="group border border-[rgba(245,240,250,0.14)] hover:border-[#00E5FF] bg-[#150C1F] rounded overflow-hidden cursor-pointer transition-all duration-150"
                     >
-                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-card-border overflow-hidden">
+                      <div className="aspect-video bg-black flex items-center justify-center relative border-b border-[rgba(245,240,250,0.14)] overflow-hidden">
                         <NextImage
                           src={item.url}
                           alt={item.alt_text || "Featured Image Preview"}
@@ -778,8 +774,8 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border border-dashed border-card-border rounded-lg">
-                  <p className="text-sm text-foreground/40">No media found. Upload media in the Media Library first!</p>
+                <div className="text-center py-12 border border-dashed border-[rgba(245,240,250,0.14)] rounded">
+                  <p className="text-xs text-[#9C8FAE]">No media found. Upload media in the Media Library first!</p>
                 </div>
               )}
             </div>
