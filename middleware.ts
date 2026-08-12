@@ -7,7 +7,43 @@ export async function middleware(request: NextRequest) {
   // Inject x-pathname header directly on request headers so it persists
   request.headers.set("x-pathname", url.pathname)
 
-  // Maintenance mode check
+  // Standard environment variables with fallback dummy values for build-time static pre-rendering
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy-supabase-url.supabase.co"
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy"
+
+  // 1. Initialize the response and standard cookie/session refresh pattern using createServerClient
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+        supabaseResponse = NextResponse.next({
+          request,
+        })
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        )
+      },
+    },
+  })
+
+  // IMPORTANT: Do not run code between createServerClient and supabase.auth.getUser()
+  // to avoid issues with users being randomly logged out.
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data?.user
+  } catch (err) {
+    console.error("Failed to fetch user in middleware:", err)
+  }
+
+  // 2. Check maintenance mode (skip for /admin, /api, static assets — preserve existing bypass logic)
   const isStaticFile =
     url.pathname.startsWith("/_next") ||
     url.pathname.includes(".") ||
@@ -18,22 +54,8 @@ export async function middleware(request: NextRequest) {
   const isMaintenancePage = url.pathname === "/maintenance"
 
   if (!isAdmin && !isApi && !isStaticFile && !isMaintenancePage) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (supabaseUrl && supabaseAnonKey) {
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       try {
-        const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll()
-            },
-            setAll() {
-              // Read-only in this block
-            },
-          },
-        })
-
         const { data: setting } = await supabase
           .from("site_settings")
           .select("value")
@@ -43,9 +65,22 @@ export async function middleware(request: NextRequest) {
         if (setting?.value === "true") {
           url.pathname = "/maintenance"
           request.headers.set("x-pathname", "/maintenance")
-          return NextResponse.rewrite(url, {
+          const rewriteResponse = NextResponse.rewrite(url, {
             request,
           })
+          // Copy refreshed cookies from supabaseResponse to the rewrite response
+          supabaseResponse.cookies.getAll().forEach((cookie) => {
+            rewriteResponse.cookies.set(cookie.name, cookie.value, {
+              path: "/",
+              domain: cookie.domain,
+              maxAge: cookie.maxAge,
+              expires: cookie.expires,
+              secure: cookie.secure,
+              httpOnly: cookie.httpOnly,
+              sameSite: cookie.sameSite,
+            })
+          })
+          return rewriteResponse
         }
       } catch (err) {
         console.error("Failed to check maintenance mode in middleware:", err)
@@ -53,161 +88,56 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  let response = NextResponse.next({
-    request,
-  })
-
-  // Protect /admin routes
-  if (url.pathname.startsWith("/admin")) {
-    const correlationId = Math.random().toString(36).substring(2, 8)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-
-    const cookiesList = request.cookies.getAll().map(c => c.name)
-    const hasAuthCookie = cookiesList.some(name => name.includes("auth-token") || name.startsWith("sb-"))
-
-    // Helper to create redirect response with preserved/refreshed cookies copied over
-    const createRedirectResponse = (targetUrl: URL) => {
-      const redirectResponse = NextResponse.redirect(targetUrl)
-      response.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, {
-          path: "/",
-          domain: cookie.domain,
-          maxAge: cookie.maxAge,
-          expires: cookie.expires,
-          secure: cookie.secure,
-          httpOnly: cookie.httpOnly,
-          sameSite: cookie.sameSite,
-        })
+  // Helper to create redirect response with preserved/refreshed cookies copied over
+  const createRedirectResponse = (targetUrl: URL) => {
+    const redirectResponse = NextResponse.redirect(targetUrl)
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, {
+        path: "/",
+        domain: cookie.domain,
+        maxAge: cookie.maxAge,
+        expires: cookie.expires,
+        secure: cookie.secure,
+        httpOnly: cookie.httpOnly,
+        sameSite: cookie.sameSite,
       })
-      return redirectResponse
-    }
-
-    const isPrefetch =
-      request.headers.get("x-next-router-prefetch") === "1" ||
-      request.headers.get("purpose") === "prefetch" ||
-      request.headers.get("sec-fetch-purpose") === "prefetch"
-
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Request Path: ${url.pathname} | isPrefetch: ${isPrefetch}`)
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Env Present: Url=${!!supabaseUrl}, AnonKey=${!!supabaseAnonKey}`)
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Auth Cookie Exist: ${hasAuthCookie} (Found cookies: ${JSON.stringify(cookiesList)})`)
-
-    // Safely bypass full session refresh / database profile lookup for Next.js prefetch requests
-    // to prevent concurrent token refresh race conditions (session desync) and reduce database load.
-    // To prevent spoofing bypasses, we still enforce that an auth cookie MUST exist; otherwise we redirect.
-    // If an auth cookie exists, we allow the prefetch to pass through to the Server Layout (AdminLayout),
-    // which does the strict, secure, cryptographic session and signature validation.
-    if (isPrefetch) {
-      if (!hasAuthCookie) {
-        console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Prefetch request missing auth cookie. Redirecting to /admin/login`)
-        url.pathname = "/admin/login"
-        return createRedirectResponse(url)
-      }
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Bypassing full auth/profile check for prefetch request with cookie: ${url.pathname}`)
-      return response
-    }
-
-    // If Supabase environment variables are missing, fallback to avoid crash
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Missing Supabase URL or Anon Key. URL is /admin/login? ${url.pathname === "/admin/login"}`)
-      if (url.pathname === "/admin/login") {
-        return response
-      }
-      console.log(`[AUTH REDIRECT SOURCE] middleware`)
-      console.log(`requested pathname: ${url.pathname}`)
-      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
-      console.log(`whether getUser() returned a user: false (missing env)`)
-      console.log(`user ID only: none`)
-      console.log(`profile result: none`)
-      console.log(`role: none`)
-      console.log(`authentication decision: redirect (missing env)`)
-      console.log(`redirect target: /admin/login`)
-      url.pathname = "/admin/login"
-      return NextResponse.redirect(url)
-    }
-
-    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value)
-          })
-          response = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options)
-          })
-        },
-      },
     })
+    return redirectResponse
+  }
 
-    let userResult;
-    try {
-      userResult = await supabase.auth.getUser()
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] getUser success. User ID: ${userResult.data?.user?.id || "none"}`)
-    } catch (e: any) {
-      console.error(`[MIDDLEWARE DEBUG] [${correlationId}] getUser threw an error:`, e?.message || e)
-      userResult = { data: { user: null }, error: e }
-    }
-
-    const user = userResult.data?.user
-
+  // 3. If /admin route: check logged in → redirect to /admin/login if not
+  if (isAdmin) {
+    // If the path is precisely the login route
     if (url.pathname === "/admin/login") {
       if (user) {
         url.pathname = "/admin"
-        console.log(`[MIDDLEWARE DEBUG] [${correlationId}] User is logged in, redirecting /admin/login -> /admin`)
         return createRedirectResponse(url)
       }
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] No user, allowing access to /admin/login`)
-      return response
+      return supabaseResponse
     }
 
+    // For any other admin routes, verify logged in status
     if (!user) {
-      const requestedPath = url.pathname
-      console.log(`[AUTH REDIRECT SOURCE] middleware`)
-      console.log(`requested pathname: ${requestedPath}`)
-      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
-      console.log(`whether getUser() returned a user: false`)
-      console.log(`user ID only: none`)
-      console.log(`profile result: none`)
-      console.log(`role: none`)
-      console.log(`authentication decision: redirect (no user)`)
-      console.log(`redirect target: /admin/login`)
       url.pathname = "/admin/login"
       return createRedirectResponse(url)
     }
 
-    // Read user role and status from profiles
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Fetching profile for user ID: ${user.id}`)
-    let profileResult;
+    // 4. If logged in: fetch profile role, handle disabled-account check and editor-role redirect
+    let profileResult
     try {
       profileResult = await supabase
         .from("profiles")
         .select("role, disabled")
         .eq("id", user.id)
         .single()
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] profile query complete. Data: ${JSON.stringify(profileResult.data)}, Error: ${JSON.stringify(profileResult.error)}`)
     } catch (e: any) {
-      console.error(`[MIDDLEWARE DEBUG] [${correlationId}] profile query threw exception:`, e?.message || e)
       profileResult = { data: null, error: e }
     }
 
     const profile = profileResult.data
 
     if (profile?.disabled) {
-      console.log(`[AUTH REDIRECT SOURCE] middleware`)
-      console.log(`requested pathname: ${url.pathname}`)
-      console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
-      console.log(`whether getUser() returned a user: true`)
-      console.log(`user ID only: ${user.id}`)
-      console.log(`profile result: ${JSON.stringify(profileResult)}`)
-      console.log(`role: ${profile?.role || "none"}`)
-      console.log(`authentication decision: redirect (profile disabled)`)
-      console.log(`redirect target: /admin/login?error=account_disabled`)
+      // Force log out disabled user
       await supabase.auth.signOut()
       const loginUrl = new URL("/admin/login", request.url)
       loginUrl.searchParams.set("error", "account_disabled")
@@ -219,20 +149,16 @@ export async function middleware(request: NextRequest) {
     }
 
     const role = profile?.role || "editor"
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] User role is determined as: ${role}`)
 
     // Editor trying to access user manager or site settings
     if (role === "editor" && (url.pathname.startsWith("/admin/users") || url.pathname.startsWith("/admin/settings"))) {
       url.pathname = "/admin"
       url.searchParams.set("error", "unauthorized")
-      console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Editor unauthorized for path, redirecting to /admin?error=unauthorized`)
       return createRedirectResponse(url)
     }
-
-    console.log(`[MIDDLEWARE DEBUG] [${correlationId}] Allowed pass-through for path: ${url.pathname}`)
   }
 
-  return response
+  return supabaseResponse
 }
 
 export const config = {
