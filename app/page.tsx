@@ -6,7 +6,6 @@ import { ArrowRight, Star, Flame } from "lucide-react"
 import CountdownTimer from "@/components/CountdownTimer"
 import CommunityPollWidget from "@/components/CommunityPollWidget"
 import ScrollReveal from "@/components/ScrollReveal"
-import ContinueSaveSlots from "@/components/ContinueSaveSlots"
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return ""
@@ -43,7 +42,6 @@ export default async function HomePage() {
   let sidebarArticles: any[] = []
   let sidebarComments: any[] = []
   let activePoll: any = null
-  let rumorTickerItems: any[] = []
 
   if (!isDummy) {
     try {
@@ -182,17 +180,6 @@ export default async function HomePage() {
         .maybeSingle()
 
       activePoll = poll
-
-      // 9. Fetch rumors specifically for ticker
-      const { data: rawRumors } = await supabase
-        .from("articles")
-        .select("id, title, slug, rumor_status")
-        .eq("status", "published")
-        .not("rumor_status", "is", null)
-        .order("published_at", { ascending: false })
-        .limit(6)
-
-      rumorTickerItems = rawRumors || []
     } catch (err) {
       console.error("Failed to query Supabase server side:", err)
     }
@@ -284,58 +271,12 @@ export default async function HomePage() {
         "Cooperative Heists": 204,
       },
     }
-
-    rumorTickerItems = [
-      { id: "mr1", title: "Lucia and Jason observed scouting Port Gellhorn convenience store", slug: "dual-protagonist-system", rumor_status: "rumor" },
-      { id: "mr2", title: "Heavy lightning strikes confirmed to trigger temporary localized power grid failure", slug: "dynamic-weather-patterns", rumor_status: "confirmed" },
-      { id: "mr3", title: "Speculated late 2024 trailer drop debunked by insider schedule leaks", slug: "trailer-hits-200-million", rumor_status: "debunked" },
-    ]
   }
 
   const countdownTarget = settings["countdown_target"] || "2026-11-19T00:00:00-05:00"
 
-  // Merge and fallback logic for rumors ticker
-  let mergedRumors = [...rumorTickerItems]
-  if (mergedRumors.length < 3 && latestNews && latestNews.length > 0) {
-    const needed = 6 - mergedRumors.length
-    const fallbackArts = latestNews.slice(0, needed).map((art: any) => ({
-      id: art.id,
-      title: art.title,
-      slug: art.slug,
-      rumor_status: art.rumor_status || null,
-    }))
-    mergedRumors = [...mergedRumors, ...fallbackArts]
-  }
-
-  // Map to police scanner elements
-  const scannerItems: { text: string; slug?: string; prefix?: string; isStaticText?: boolean }[] = []
-  mergedRumors.forEach((item, index) => {
-    // Occasionally insert radio static phrases
-    if (index > 0 && index % 2 === 0) {
-      const staticPhrases = ["*CRACKLE*", "10-4 DISPATCH", "CODE-3 PURSUIT", "DISPATCH CALL INBOUND"]
-      const randomPhrase = staticPhrases[index % staticPhrases.length]
-      scannerItems.push({ text: randomPhrase, isStaticText: true })
-    }
-
-    let prefix = "REPORTED INTEL — 10-4:"
-    if (item.rumor_status === "confirmed") {
-      prefix = "CONFIRMED — DISPATCH LOG:"
-    } else if (item.rumor_status === "debunked") {
-      prefix = "DEBUNKED — CASE CLOSED:"
-    } else if (item.rumor_status === "rumor") {
-      prefix = "UNCONFIRMED SIGHTING:"
-    }
-
-    scannerItems.push({
-      text: item.title,
-      slug: item.slug,
-      prefix,
-      isStaticText: false,
-    })
-  })
-
-  // Duplicate items for continuous marquee scroll
-  const duplicatedScannerItems = scannerItems.length > 0 ? [...scannerItems, ...scannerItems] : []
+  // Duplicate items for seamless continuous ticker scroll
+  const tickerItems = latestNews && latestNews.length > 0 ? [...latestNews, ...latestNews] : []
 
   // Use up to 3 latest news articles specifically
   const gridNews = latestNews ? latestNews.slice(0, 3) : []
@@ -441,47 +382,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Continue Save Slots (metaphor load game) */}
-      <ContinueSaveSlots />
-
-      {/* Auto-scrolling Police Scanner Ticker Strip */}
-      {duplicatedScannerItems.length > 0 && (
-        <div
-          className="w-full bg-[#150C1F] border-t-2 border-b-2 border-[#FF2E88]/30 py-3.5 overflow-hidden z-20 relative bg-[linear-gradient(rgba(21,12,31,0.95),rgba(21,12,31,0.95)),repeating-linear-gradient(0deg,rgba(0,0,0,0.2)_0px,rgba(0,0,0,0.2)_1px,transparent_1px,transparent_2px)]"
-          title="Police Scanner Dispatch Log"
-        >
-          {/* Subtle audio/voice vibe pulse accent */}
-          <div className="absolute top-0 left-4 bottom-0 flex items-center space-x-1 text-[#FF2E88]/40 text-[9px] font-mono tracking-widest z-30 select-none pointer-events-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF2E88] animate-pulse" />
-            <span>DISPATCH LIVE</span>
-          </div>
-
+      {/* Auto-scrolling Ticker Strip */}
+      {tickerItems.length > 0 && (
+        <div className="w-full bg-[#150C1F] border-t border-b border-[rgba(245,240,250,0.14)] py-3 overflow-hidden z-20 relative">
           <div className="ticker-marquee whitespace-nowrap flex items-center">
-            {duplicatedScannerItems.map((item, index) => {
-              if (item.isStaticText) {
-                return (
-                  <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-[#FF2E88]/60 font-black tracking-widest uppercase italic animate-pulse">
-                    <span className="bg-[#FF2E88]/10 px-1.5 py-0.5 rounded border border-[#FF2E88]/20">{item.text}</span>
-                  </div>
-                )
-              }
-              return (
-                <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-[#9C8FAE] tracking-wider select-none">
-                  <span className="inline-block w-2 h-2 bg-[#00E5FF] rounded-full mr-3 animate-pulse" />
-                  <span className="text-[#FF2E88] font-bold mr-2 uppercase tracking-wide">{item.prefix}</span>
-                  {item.slug ? (
-                    <Link
-                      href={`/news/${item.slug}`}
-                      className="text-[#F5F0FA] hover:text-[#00E5FF] transition-colors underline decoration-dotted font-mono font-bold"
-                    >
-                      {item.text}
-                    </Link>
-                  ) : (
-                    <span className="text-[#F5F0FA] font-bold">{item.text}</span>
-                  )}
-                </div>
-              )
-            })}
+            {tickerItems.map((item, index) => (
+              <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-[#9C8FAE] tracking-wider">
+                <span className="inline-block w-2 h-2 bg-[#FF2E88] rounded-full mr-3 animate-pulse" />
+                <span className="text-[#00E5FF] font-bold mr-2">LATEST INTEL:</span>
+                <Link href={`/news/${item.slug}`} className="hover:text-white transition-colors underline decoration-dotted">
+                  {item.title}
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       )}

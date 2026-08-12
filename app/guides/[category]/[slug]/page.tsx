@@ -9,7 +9,6 @@ import GuideToc from "@/components/GuideToc"
 import GuideContentRenderer from "@/components/GuideContentRenderer"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
-import SaveGameButton from "@/components/SaveGameButton"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
 
@@ -259,14 +258,6 @@ export default async function GuidePage({ params }: GuidePageProps) {
                 <Clock className="w-4 h-4 text-neon-blue" />
                 {readTime} Min Read ({guide.word_count} words)
               </span>
-              <span className="text-foreground/20">|</span>
-              <SaveGameButton
-                slug={guide.slug}
-                title={guide.title}
-                type="guide"
-                categoryName={guide.guide_category}
-                categorySlug={params.category}
-              />
             </div>
           </div>
 
