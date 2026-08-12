@@ -6,39 +6,29 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 2.2s
+ ✓ Ready in 1758ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1209ms (127 modules)
-[MIDDLEWARE DEBUG] [0k86mk] Request Path: /admin
-[MIDDLEWARE DEBUG] [0k86mk] Env Present: Url=false, AnonKey=false
-[MIDDLEWARE DEBUG] [0k86mk] Auth Cookie Exist: false (Found cookies: [])
-[MIDDLEWARE DEBUG] [0k86mk] Missing Supabase URL or Anon Key. URL is /admin/login? false
-[MIDDLEWARE DEBUG] [0k86mk] Redirecting to /admin/login
-[MIDDLEWARE DEBUG] [5fg7hj] Request Path: /admin/login
-[MIDDLEWARE DEBUG] [5fg7hj] Env Present: Url=false, AnonKey=false
-[MIDDLEWARE DEBUG] [5fg7hj] Auth Cookie Exist: false (Found cookies: [])
-[MIDDLEWARE DEBUG] [5fg7hj] Missing Supabase URL or Anon Key. URL is /admin/login? true
- ○ Compiling /admin/login ...
- ✓ Compiled /admin/login in 6.9s (914 modules)
- GET /admin/login 200 in 7504ms
- ✓ Compiled in 165ms (127 modules)
- ○ Compiling /admin ...
- ✓ Compiled /admin in 1209ms (945 modules)
- GET /admin 200 in 22673ms
- ○ Compiling /api/insights ...
- ✓ Compiled /api/insights in 601ms (539 modules)
- GET /api/insights 401 in 730ms
- GET /api/insights 401 in 21ms
+ ✓ Compiled /middleware in 1084ms (127 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 7.7s (865 modules)
+ HEAD / 200 in 8302ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET /admin 200 in 21381ms
- GET /api/insights 401 in 44ms
- GET /api/insights 401 in 572ms
- GET /admin 200 in 21165ms
- GET /api/insights 401 in 17ms
- GET /api/insights 401 in 18ms
- ✓ Compiled in 265ms (127 modules)
- ✓ Compiled in 892ms (974 modules)
-<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
-<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
-[?25h
+ GET / 200 in 114ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1742ms (850 modules)
+ GET /og-image.jpg 404 in 2019ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 402ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ✓ Compiled in 715ms (387 modules)
+ ✓ Compiled in 423ms (387 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 529ms (461 modules)
+ GET / 200 in 1098ms
+ ✓ Compiled /_not-found in 395ms (463 modules)
+ GET /og-image.jpg 404 in 730ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 159ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ✓ Compiled in 1051ms (848 modules)

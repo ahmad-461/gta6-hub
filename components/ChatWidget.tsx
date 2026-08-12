@@ -21,6 +21,18 @@ export default function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const handleToggle = (e: any) => {
+      if (e.detail?.open !== undefined) {
+        setIsOpen(e.detail.open)
+      } else {
+        setIsOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener("toggle-chat-widget", handleToggle)
+    return () => window.removeEventListener("toggle-chat-widget", handleToggle)
+  }, [])
+
+  useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
@@ -133,18 +145,9 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Floating Chat Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 p-4 bg-[#0c0a0f] border border-neon-pink/30 hover:border-neon-pink text-neon-pink hover:text-white rounded-full shadow-[0_0_15px_rgba(236,72,153,0.15)] hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] transition-all duration-300"
-        title="Ask the Hub AI"
-      >
-        {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-      </button>
-
       {/* Chat Window Panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-full max-w-[380px] h-[500px] bg-[#0c0a0f]/95 border border-card-border rounded-xl shadow-2xl flex flex-col overflow-hidden backdrop-blur-md animate-fadeIn">
+        <div className="fixed bottom-24 right-6 z-[100] w-full max-w-[380px] h-[500px] bg-[#0b0710]/95 border border-[rgba(245,240,250,0.14)] rounded-xl shadow-2xl flex flex-col overflow-hidden backdrop-blur-md animate-fadeIn">
           {/* Header */}
           <div className="p-4 border-b border-card-border bg-[#120f17] flex items-center justify-between">
             <div className="flex items-center space-x-2">

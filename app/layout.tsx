@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import ChatWidget from "@/components/ChatWidget"
+import GamePhoneMenu from "@/components/GamePhoneMenu"
+import WantedLevelMeter from "@/components/WantedLevelMeter"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
 import { Anton, Space_Mono } from "next/font/google"
@@ -71,6 +73,8 @@ export default function RootLayout({
         </main>
         {!isAdminRoute && <Footer />}
         {!isAdminRoute && <ChatWidget />}
+        {!isAdminRoute && <GamePhoneMenu />}
+        {!isAdminRoute && <WantedLevelMeter />}
         <Toaster
           theme="dark"
           richColors

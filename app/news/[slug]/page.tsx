@@ -10,6 +10,7 @@ import ArticleComments from "@/components/ArticleComments"
 import CopyLinkButton from "@/components/CopyLinkButton"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
+import SaveGameButton from "@/components/SaveGameButton"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
 
@@ -293,6 +294,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   <Clock className="w-4 h-4 text-neon-blue" />
                   {readTime} Min Read
                 </span>
+                <span className="hidden sm:inline text-foreground/20">|</span>
+                <SaveGameButton
+                  slug={article.slug}
+                  title={article.title}
+                  type="news"
+                  categoryName={(article.category as any)?.name || "News"}
+                />
               </div>
             </div>
 
