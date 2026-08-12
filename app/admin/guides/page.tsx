@@ -216,6 +216,7 @@ export default function GuideManagerPage() {
         </div>
         <Link
           href="/admin/guides/new"
+          prefetch={false}
           className="inline-flex items-center justify-center px-4 py-2.5 bg-neon-blue hover:bg-neon-blue/90 text-black font-bold text-sm rounded-lg transition duration-150 uppercase tracking-wider"
         >
           <Plus size={18} className="mr-2" />
@@ -417,6 +418,7 @@ export default function GuideManagerPage() {
                       <td className="py-4 px-6 text-right space-x-1.5">
                         <Link
                           href={`/admin/guides/${guide.id}`}
+                          prefetch={false}
                           className="inline-flex p-1.5 bg-[#1a1822] border border-card-border hover:border-neon-blue/50 text-foreground/75 hover:text-neon-blue rounded transition"
                           title="Edit"
                         >

@@ -38,6 +38,7 @@ export default function SEOSummaryCard() {
   return (
     <Link
       href="/admin/insights"
+      prefetch={false}
       className="group relative bg-[#15131a] border border-card-border p-5 rounded-xl transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-md hover:border-amber-500/40 group-hover:shadow-amber-500/10 hover:-translate-y-1 min-h-[140px]"
     >
       {/* Colored top indicator */}

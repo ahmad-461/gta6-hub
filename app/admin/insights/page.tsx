@@ -366,7 +366,7 @@ export default function AdminInsightsPage() {
           </form>
 
           <div className="pt-2 text-center">
-            <Link href="/" className="text-xs text-foreground/40 hover:text-white transition-colors">
+            <Link href="/" prefetch={false} className="text-xs text-foreground/40 hover:text-white transition-colors">
               &larr; Return to Home Portal
             </Link>
           </div>
@@ -397,7 +397,7 @@ export default function AdminInsightsPage() {
             >
               Sign out of account
             </button>
-            <Link href="/" className="text-xs text-foreground/40 hover:text-white transition-colors">
+            <Link href="/" prefetch={false} className="text-xs text-foreground/40 hover:text-white transition-colors">
               &larr; Exit to Public Portal
             </Link>
           </div>
