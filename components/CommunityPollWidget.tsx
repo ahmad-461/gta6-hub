@@ -67,6 +67,14 @@ export default function CommunityPollWidget({ initialPoll }: CommunityPollWidget
       votedPolls.push(poll.id)
       localStorage.setItem("voted_polls", JSON.stringify(votedPolls))
 
+      // Trigger anonymous community points update (+5 points for voting)
+      try {
+        const { incrementClientPoints } = await import("@/lib/points")
+        await incrementClientPoints(5)
+      } catch (ptsErr) {
+        console.warn("Could not award community points:", ptsErr)
+      }
+
       setHasVoted(true)
     } catch (err) {
       console.error("Failed to vote:", err)

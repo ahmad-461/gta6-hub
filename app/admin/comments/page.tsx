@@ -48,6 +48,7 @@ export default function CommentModerationPage() {
           content,
           status,
           created_at,
+          anon_id,
           articles (
             title
           )
@@ -74,12 +75,43 @@ export default function CommentModerationPage() {
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
+      // Find comment first to check anon_id for points trigger
+      const targetComment = comments.find((c) => c.id === id)
+
       const { error } = await supabase
         .from("comments")
         .update({ status: newStatus, updated_at: new Date().toISOString() })
         .eq("id", id)
 
       if (error) throw error
+
+      // Award +10 community points if a comment is approved and has an anon_id
+      if (newStatus === "approved" && targetComment?.anon_id) {
+        try {
+          // Check existing points for that user
+          const { data: ptsData } = await supabase
+            .from("community_points")
+            .select("points")
+            .eq("anon_id", targetComment.anon_id)
+            .maybeSingle()
+
+          const currentPoints = ptsData?.points || 0
+          const updatedPoints = currentPoints + 10
+
+          await supabase
+            .from("community_points")
+            .upsert({
+              anon_id: targetComment.anon_id,
+              points: updatedPoints,
+              updated_at: new Date().toISOString(),
+            }, { onConflict: "anon_id" })
+
+          toast.success("Awarded +10 community points to contributor!")
+        } catch (ptsErr) {
+          console.warn("Could not award approval points:", ptsErr)
+        }
+      }
+
       toast.success(`Comment successfully marked as ${newStatus}!`)
       setComments((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
@@ -105,13 +137,42 @@ export default function CommentModerationPage() {
   const handleBulkApprove = async () => {
     if (selectedIds.length === 0) return
     try {
+      // Bulk update comments status
       const { error } = await supabase
         .from("comments")
         .update({ status: "approved", updated_at: new Date().toISOString() })
         .in("id", selectedIds)
 
       if (error) throw error
-      toast.success(`Approved ${selectedIds.length} comments!`)
+
+      // Award +10 points to each approved comment's anon_id
+      for (const id of selectedIds) {
+        const target = comments.find((c) => c.id === id)
+        if (target?.anon_id) {
+          try {
+            const { data: ptsData } = await supabase
+              .from("community_points")
+              .select("points")
+              .eq("anon_id", target.anon_id)
+              .maybeSingle()
+
+            const currentPoints = ptsData?.points || 0
+            const updatedPoints = currentPoints + 10
+
+            await supabase
+              .from("community_points")
+              .upsert({
+                anon_id: target.anon_id,
+                points: updatedPoints,
+                updated_at: new Date().toISOString(),
+              }, { onConflict: "anon_id" })
+          } catch (ptsErr) {
+            console.warn("Could not award points for comment:", id, ptsErr)
+          }
+        }
+      }
+
+      toast.success(`Approved ${selectedIds.length} comments & successfully processed community points!`)
       setComments((prev) =>
         prev.map((c) => (selectedIds.includes(c.id) ? { ...c, status: "approved" } : c))
       )
