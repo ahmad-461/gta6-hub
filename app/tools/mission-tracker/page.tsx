@@ -121,22 +121,56 @@ export default function MissionTrackerPage() {
     }
   }
 
-  const toggleMission = (id: string) => {
+  const toggleMission = async (id: string) => {
+    let updated: string[] = []
+    let pointsAward = 0
+
     if (completedIds.includes(id)) {
-      saveCompleted(completedIds.filter((mid) => mid !== id))
+      updated = completedIds.filter((mid) => mid !== id)
+      pointsAward = -2 // Subtract points if unchecked
     } else {
-      saveCompleted([...completedIds, id])
+      updated = [...completedIds, id]
+      pointsAward = 2 // Award points for checking off
+    }
+
+    saveCompleted(updated)
+
+    // Trigger anonymous community points update (+2 points each)
+    try {
+      const { incrementClientPoints } = await import("@/lib/points")
+      await incrementClientPoints(pointsAward)
+    } catch (ptsErr) {
+      console.warn("Could not award community points:", ptsErr)
     }
   }
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm("Are you sure you want to reset all mission completion progress?")) {
+      const currentCompletedCount = completedIds.length
       saveCompleted([])
+
+      // Deduct all awarded points
+      try {
+        const { incrementClientPoints } = await import("@/lib/points")
+        await incrementClientPoints(-(currentCompletedCount * 2))
+      } catch (ptsErr) {
+        console.warn("Could not deduct points:", ptsErr)
+      }
     }
   }
 
-  const handleMarkAll = () => {
+  const handleMarkAll = async () => {
+    const uncompletedMissions = STORY_MISSIONS.filter(m => !completedIds.includes(m.id))
     saveCompleted(STORY_MISSIONS.map((m) => m.id))
+
+    if (uncompletedMissions.length > 0) {
+      try {
+        const { incrementClientPoints } = await import("@/lib/points")
+        await incrementClientPoints(uncompletedMissions.length * 2)
+      } catch (ptsErr) {
+        console.warn("Could not award points:", ptsErr)
+      }
+    }
   }
 
   const completedCount = completedIds.length

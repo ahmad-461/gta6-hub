@@ -1,0 +1,24 @@
+
+> gta6-hub@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.16
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1943ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1320ms (127 modules)
+ ○ Compiling /community ...
+ ✓ Compiled /community in 8.1s (683 modules)
+ GET /community 200 in 8923ms
+ ○ Compiling /map ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /map in 6.9s (732 modules)
+ GET /map 200 in 7189ms
+ ✓ Compiled /rumors in 385ms (736 modules)
+ GET /rumors 200 in 530ms
+ ○ Compiling /trailers ...
+ ✓ Compiled /trailers in 944ms (808 modules)
+ GET /trailers 200 in 8303ms

@@ -40,6 +40,7 @@ const articleSchema = z.object({
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
   featuredImage: z.string().optional(),
+  rumorStatus: z.string().nullable().optional(),
 })
 
 interface ArticleEditorFormProps {
@@ -71,6 +72,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
   const [seoTitle, setSeoTitle] = useState("")
   const [seoDescription, setSeoDescription] = useState("")
   const [featuredImage, setFeaturedImage] = useState("")
+  const [rumorStatus, setRumorStatus] = useState<string | null>(null)
 
   // Tags State
   const [tagInput, setTagInput] = useState("")
@@ -139,6 +141,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       setFeaturedImage(article.featured_image || "")
       setSeoTitle(article.seo_title || "")
       setSeoDescription(article.seo_description || "")
+      setRumorStatus(article.rumor_status || null)
 
       if (article.published_at) {
         // Format ISO date string to datetime-local compatible format
@@ -242,6 +245,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       seoTitle: seoTitle || undefined,
       seoDescription: seoDescription || undefined,
       featuredImage: featuredImage || undefined,
+      rumorStatus: rumorStatus,
     }
 
     const validation = articleSchema.safeParse(formData)
@@ -270,6 +274,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         published_at: publishedAt ? new Date(publishedAt).toISOString() : (status === "published" ? new Date().toISOString() : null),
         author_id: authorId,
         updated_at: new Date().toISOString(),
+        rumor_status: rumorStatus || null,
       }
 
       let savedArticleId = articleId
@@ -585,7 +590,21 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         <div className="space-y-6">
           {/* Status, Publishing Time */}
           <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Publishing Status</h2>
+            <h2 className="text-base font-bold text-white border-b border-card-border pb-3">Publishing & Rumor Status</h2>
+
+            <div>
+              <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Rumor Tracker Class</label>
+              <select
+                value={rumorStatus || ""}
+                onChange={(e) => setRumorStatus(e.target.value || null)}
+                className="w-full px-3 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue cursor-pointer font-semibold mb-4"
+              >
+                <option value="">Standard News Piece (No Rumor Status)</option>
+                <option value="rumor">Rumor (Yellow Status)</option>
+                <option value="confirmed">Confirmed (Green Status)</option>
+                <option value="debunked">Debunked (Red Status)</option>
+              </select>
+            </div>
 
             <div>
               <label className="block text-xs font-semibold text-foreground/80 mb-1.5">Visibility Status</label>

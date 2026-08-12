@@ -298,6 +298,14 @@ export default function QuizClient({ dbCharacters }: QuizClientProps) {
       setIsLoadingMatch(false)
       setIsQuizCompleted(true)
 
+      // Sync points for completing the personality character match (+5 points)
+      try {
+        const { incrementClientPoints } = require("@/lib/points")
+        incrementClientPoints(5)
+      } catch (ptsErr) {
+        console.warn("Could not award community points:", ptsErr)
+      }
+
       // Update URL with results so it's shareable
       const params = new URLSearchParams()
       params.set("char", bestMatch.slug)

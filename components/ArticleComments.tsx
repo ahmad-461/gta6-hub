@@ -45,6 +45,15 @@ export default function ArticleComments({ articleId, initialComments }: ArticleC
     setSubmitting(true)
 
     try {
+      // Retrieve local anonymous community session ID
+      let localAnonId = null
+      try {
+        const { getOrCreateAnonId } = require("@/lib/points")
+        localAnonId = getOrCreateAnonId()
+      } catch (err) {
+        console.warn("Could not retrieve anon session id:", err)
+      }
+
       const { error } = await supabase
         .from("comments")
         .insert({
@@ -53,6 +62,7 @@ export default function ArticleComments({ articleId, initialComments }: ArticleC
           email: email.trim(),
           content: content.trim(),
           status: "pending",
+          anon_id: localAnonId,
         })
 
       if (error) {

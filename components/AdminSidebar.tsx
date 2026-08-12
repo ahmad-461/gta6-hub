@@ -20,7 +20,9 @@ import {
   LogOut,
   ShieldCheck,
   Power,
-  Compass
+  Compass,
+  MapPin,
+  Video
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -71,6 +73,8 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     { name: "Articles", href: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
     { name: "Guides", href: "/admin/guides", icon: BookOpen, roles: ["admin", "editor"] },
     { name: "Characters", href: "/admin/characters", icon: Users, roles: ["admin", "editor"] },
+    { name: "Map Locations", href: "/admin/map-locations", icon: MapPin, roles: ["admin", "editor"] },
+    { name: "Trailers", href: "/admin/trailers", icon: Video, roles: ["admin", "editor"] },
     { name: "Lore Topics", href: "/admin/lore-topics", icon: Compass, roles: ["admin", "editor"] },
     { name: "Cheat Codes", href: "/admin/cheats", icon: Key, roles: ["admin", "editor"] },
     { name: "Media Library", href: "/admin/media", icon: Image, roles: ["admin", "editor"] },
