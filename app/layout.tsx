@@ -2,6 +2,7 @@ import React from "react"
 import type { Metadata } from "next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import ChatWidget from "@/components/ChatWidget"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
 
@@ -54,6 +55,7 @@ export default function RootLayout({
           {children}
         </main>
         {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <ChatWidget />}
         <Toaster theme="dark" richColors closeButton position="top-right" />
       </body>
     </html>

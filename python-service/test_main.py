@@ -44,6 +44,18 @@ class TestAnalysisService(unittest.TestCase):
         self.assertIn("well_covered", data)
         self.assertIn("under_covered", data)
 
+    def test_authorized_sentiment_trend(self):
+        # Correct key
+        response = self.client.get("/api/sentiment-trend", headers={"X-Internal-Key": "test-secret-key-123"})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        # Verify it has weekly keys containing positive/neutral/negative metrics
+        self.assertGreater(len(data), 0)
+        first_key = list(data.keys())[0]
+        self.assertIn("positive", data[first_key])
+        self.assertIn("neutral", data[first_key])
+        self.assertIn("negative", data[first_key])
+
     def test_production_missing_supabase_credentials(self):
         # When ENVIRONMENT is "production" and supabase client is not initialized,
         # it should raise a 500 error instead of using mock fallback.

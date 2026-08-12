@@ -20,8 +20,13 @@ import {
   Trash,
   ChevronRight,
   List,
-  X
+  X,
+  Sparkles,
+  AlertTriangle
 } from "lucide-react"
+import { generateAIDraftAction } from "@/app/actions/draft"
+import { checkDuplicateSimilarityAction } from "@/app/actions/duplicate"
+import { triggerEmbeddingsGeneration } from "@/app/actions/publish"
 
 // Zod Schema for Guide Form
 const guideSchema = z.object({
@@ -47,6 +52,12 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
 
   const [isLoading, setIsLoading] = useState(isEditing)
   const [isSaving, setIsSaving] = useState(false)
+
+  // AI Draft & Duplicate Warnings State
+  const [isAiDraftOpen, setIsAiDraftOpen] = useState(false)
+  const [aiNotes, setAiNotes] = useState("")
+  const [isGeneratingDraft, setIsGeneratingDraft] = useState(false)
+  const [duplicateWarning, setDuplicateWarning] = useState<{ title: string; slug: string; contentType: string } | null>(null)
 
   // Form Fields State
   const [title, setTitle] = useState("")
@@ -191,6 +202,21 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
     e.preventDefault()
     setIsSaving(true)
 
+    // Run background similarity duplicate check on save
+    if (!duplicateWarning) {
+      const dupCheck = await checkDuplicateSimilarityAction({ content, ignoreId: guideId })
+      if (dupCheck.isDuplicate) {
+        setDuplicateWarning({
+          title: dupCheck.title || "",
+          slug: dupCheck.slug || "",
+          contentType: dupCheck.contentType || ""
+        })
+        toast.warning("Similarity Warning: High resemblance to an existing page. Review before proceeding.")
+        setIsSaving(false)
+        return
+      }
+    }
+
     const formData = {
       title,
       slug,
@@ -235,6 +261,8 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         updated_at: new Date().toISOString(),
       }
 
+      let savedGuideId = guideId
+
       if (isEditing) {
         const { error } = await supabase
           .from("guides")
@@ -243,17 +271,30 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
 
         if (error) throw error
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("guides")
           .insert({
             ...savePayload,
             created_at: new Date().toISOString(),
           })
+          .select("id")
+          .single()
 
         if (error) throw error
+        savedGuideId = data?.id
       }
 
       toast.success(isEditing ? "Guide updated successfully!" : "Guide published/created successfully!")
+
+      // Trigger embeddings generation via server action
+      if (savedGuideId) {
+        try {
+          await triggerEmbeddingsGeneration(savedGuideId, "guide")
+        } catch (embErr) {
+          console.error("Embeddings trigger error:", embErr)
+        }
+      }
+
       router.push("/admin/guides")
     } catch (err: any) {
       toast.error(err.message || "Failed to save guide.")
@@ -306,9 +347,98 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         </button>
       </div>
 
+      {duplicateWarning && (
+        <div className="bg-amber-500/10 border border-amber-500/30 p-5 rounded-xl flex items-start justify-between text-amber-400 animate-fadeIn">
+          <div className="flex items-start space-x-3">
+            <AlertTriangle size={20} className="mt-0.5 shrink-0" />
+            <div>
+              <h4 className="font-extrabold text-white text-sm uppercase">Semantic Duplicate Detected (Similarity Check)</h4>
+              <p className="text-xs text-foreground/60 mt-1">
+                This draft looks extremely similar to the existing {duplicateWarning.contentType}: <strong>{duplicateWarning.title}</strong>. Review to ensure uniqueness.
+              </p>
+              <a
+                href={duplicateWarning.contentType === "article" ? `/news/${duplicateWarning.slug}` : `/guides/${duplicateWarning.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-xs text-neon-pink font-bold hover:underline mt-2"
+              >
+                Open and compare original walkthrough &rarr;
+              </a>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDuplicateWarning(null)}
+            className="text-foreground/45 hover:text-white"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left main content column */}
         <div className="lg:col-span-2 space-y-6">
+          {/* AI Draft Assistant Panel */}
+          <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
+            <button
+              type="button"
+              onClick={() => setIsAiDraftOpen(!isAiDraftOpen)}
+              className="w-full flex items-center justify-between font-bold text-white text-sm uppercase tracking-wider"
+            >
+              <span className="flex items-center text-neon-pink">
+                <Sparkles size={16} className="mr-2 animate-pulse" /> AI Draft Assistant
+              </span>
+              <span className="text-xs text-foreground/40">{isAiDraftOpen ? "Collapse [-]" : "Expand [+]"}</span>
+            </button>
+
+            {isAiDraftOpen && (
+              <div className="space-y-4 pt-2 border-t border-card-border/50 animate-fadeIn">
+                <p className="text-xs text-foreground/50 leading-relaxed">
+                  Paste your raw walkthrough notes, leaked codes, or map coordinates. The assistant will format a high-quality rich-text strategy guide draft.
+                </p>
+                <textarea
+                  placeholder="Paste your raw notes, leak transcripts, or strategy guide details here..."
+                  value={aiNotes}
+                  onChange={(e) => setAiNotes(e.target.value)}
+                  className="block w-full px-3.5 py-2.5 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-neon-pink text-xs min-h-[100px]"
+                />
+                <button
+                  type="button"
+                  disabled={isGeneratingDraft || !aiNotes.trim()}
+                  onClick={async () => {
+                    setIsGeneratingDraft(true)
+                    const res = await generateAIDraftAction({
+                      notes: aiNotes,
+                      contentType: "guide",
+                      categoryName: guideCategory
+                    })
+                    setIsGeneratingDraft(false)
+                    if (res.success && res.html) {
+                      setContent(res.html)
+                      toast.success("Strategy guide draft generated and loaded into Tiptap!")
+                    } else {
+                      toast.error(res.error || "Failed to generate draft.")
+                    }
+                  }}
+                  className="w-full py-2.5 bg-neon-pink hover:bg-neon-pink/90 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition disabled:opacity-40 flex items-center justify-center space-x-1.5"
+                >
+                  {isGeneratingDraft ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Drafting with Gemini...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={14} />
+                      <span>Generate Draft</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Title & Slug */}
           <div className="bg-card-bg border border-card-border p-6 rounded-xl space-y-4">
             <div>
