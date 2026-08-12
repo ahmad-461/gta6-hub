@@ -6,6 +6,7 @@ import { ArrowRight, Star, Flame } from "lucide-react"
 import CountdownTimer from "@/components/CountdownTimer"
 import CommunityPollWidget from "@/components/CommunityPollWidget"
 import ScrollReveal from "@/components/ScrollReveal"
+import SiteDepthIndex from "@/components/SiteDepthIndex"
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return ""
@@ -42,10 +43,47 @@ export default async function HomePage() {
   let sidebarArticles: any[] = []
   let sidebarComments: any[] = []
   let activePoll: any = null
+  let newsCount: number | null = null
+  let guidesCount: number | null = null
+  let loreCount: number | null = null
 
   if (!isDummy) {
     try {
       const supabase = createSupabaseServerClient()
+
+      // Fetch Site Depth Index counts safely
+      try {
+        const { count: artCount } = await supabase
+          .from("articles")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "published")
+        newsCount = artCount
+      } catch (e) {
+        console.error("Error counting articles:", e)
+      }
+
+      try {
+        const { count: gdCount } = await supabase
+          .from("guides")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "published")
+        guidesCount = gdCount
+      } catch (e) {
+        console.error("Error counting guides:", e)
+      }
+
+      try {
+        const { count: charCount } = await supabase
+          .from("characters")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "published")
+        const { count: topicCount } = await supabase
+          .from("lore_topics")
+          .select("id", { count: "exact", head: true })
+        loreCount = (charCount || 0) + (topicCount || 0)
+      } catch (e) {
+        console.error("Error counting lore characters/topics:", e)
+      }
 
       // 1. Fetch site settings
       const { data: rawSettings } = await supabase
@@ -301,6 +339,13 @@ export default async function HomePage() {
           clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
         }}
       >
+        {/* Mobile horizontal watermark, centered behind hero text */}
+        <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-0 overflow-hidden lg:hidden">
+          <span className="font-anton text-[11rem] sm:text-[16rem] uppercase leading-none tracking-tighter opacity-[0.03] bg-gradient-to-r from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent">
+            VICE
+          </span>
+        </div>
+
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Asymmetric Left Column */}
           <div className="lg:col-span-7 space-y-8 text-left">
@@ -327,6 +372,16 @@ export default async function HomePage() {
             <p className="text-base sm:text-lg text-[#9C8FAE] max-w-xl leading-relaxed font-normal">
               The premier hyper-focused fan ecosystem for Grand Theft Auto VI. Access immediate walkthroughs, real-time database lookups, and deep lore map tracing.
             </p>
+
+            {/* Editorial Voice Moment */}
+            <div className="pl-4 border-l-2 border-[#FF2E88] max-w-xl space-y-1">
+              <span className="block font-mono text-[10px] tracking-widest text-[#FF2E88] uppercase font-bold">
+                OUR COVENANT / EDITORIAL CRITERIA
+              </span>
+              <p className="text-sm text-[#F5F0FA] leading-relaxed font-normal">
+                Unlike mass-media outlets chasing algorithmic clicks, GTA 6 Hub is built on raw, verified telemetry and meticulous database indexing. We do not deal in baseless speculation. Our mission is to trace every coordinate of Leonida and map its narrative architecture with zero filler—providing the community with a high-fidelity intelligence layer they can actually trust.
+              </p>
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 pt-2">
@@ -707,6 +762,15 @@ export default async function HomePage() {
             </ScrollReveal>
           </div>
         </section>
+
+        {/* Site Depth Index Section */}
+        <ScrollReveal>
+          <SiteDepthIndex
+            newsCount={newsCount}
+            guidesCount={guidesCount}
+            loreCount={loreCount}
+          />
+        </ScrollReveal>
       </div>
     </div>
   )
