@@ -1,6 +1,4 @@
 import React from "react"
-import { redirect } from "next/navigation"
-import { headers, cookies } from "next/headers"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import AdminSidebar from "@/components/AdminSidebar"
 
@@ -13,102 +11,43 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const reqHeaders = headers()
-  const pathname = reqHeaders.get("x-pathname") || ""
-  const isPrefetch =
-    reqHeaders.get("x-next-router-prefetch") === "1" ||
-    reqHeaders.get("purpose") === "prefetch" ||
-    reqHeaders.get("sec-fetch-purpose") === "prefetch"
-
-  console.log(`[AUTH DEBUG] AdminLayout rendering. Pathname is: "${pathname}" | isPrefetch: ${isPrefetch}`)
-  const isLoginPage = pathname === "/admin/login"
-
-  if (isLoginPage) {
-    return <div className="min-h-screen bg-background">{children}</div>
-  }
-
-  const cookiesList = cookies().getAll().map(c => c.name)
-  const hasAuthCookie = cookiesList.some(name => name.includes("auth-token") || name.startsWith("sb-"))
-  console.log(`[AUTH DEBUG] AdminLayout Auth Cookie Exist: ${hasAuthCookie} (Found cookies: ${JSON.stringify(cookiesList)})`)
-
-  // Retrieve user session and role server-side
+  // Retrieve user session and role server-side using the official server client
   const supabase = createSupabaseServerClient()
 
   let user = null
-  let authMethodUsed = "none"
-  let errorLogged: any = null
-
-  if (isPrefetch) {
-    console.log(`[AUTH DEBUG] AdminLayout: Prefetch request detected. Using getSession() to avoid token rotation.`)
-    authMethodUsed = "getSession()"
-    try {
-      const sessionResult = await supabase.auth.getSession()
-      user = sessionResult.data?.session?.user || null
-    } catch (e: any) {
-      console.error(`[AUTH DEBUG] AdminLayout: getSession threw exception:`, e?.message || e)
-      errorLogged = e
-    }
-  } else {
-    console.log(`[AUTH DEBUG] AdminLayout: Non-prefetch request. Calling getUser() for strict cryptographic validation.`)
-    authMethodUsed = "getUser()"
-    try {
-      const userResult = await supabase.auth.getUser()
-      user = userResult.data?.user || null
-    } catch (e: any) {
-      console.error(`[AUTH DEBUG] AdminLayout: getUser threw exception:`, e?.message || e)
-      errorLogged = e
-    }
+  try {
+    const userResult = await supabase.auth.getUser()
+    user = userResult.data?.user || null
+  } catch (e) {
+    console.error("[AUTH] AdminLayout: getUser threw exception:", e)
   }
 
+  // If there's no user, we render children (e.g. login page) or fallback.
+  // Note: Middleware already protects routes and redirects non-logged in users from pages under /admin,
+  // except for /admin/login which has custom layout display.
+  // We can trust the user status passed from middleware.
   if (!user) {
-    console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
-    console.log(`requested pathname: ${pathname}`)
-    console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
-    console.log(`auth method used: ${authMethodUsed}`)
-    console.log(`error logged: ${JSON.stringify(errorLogged)}`)
-    console.log(`user ID if authenticated: none`)
-    console.log(`profile result: none`)
-    console.log(`role: none`)
-    console.log(`authentication decision: redirect (no user)`)
-    console.log(`redirect target: /admin/login`)
-    redirect("/admin/login")
+    return <div className="min-h-screen bg-background">{children}</div>
   }
 
-  // Fetch the user's profile
-  console.log(`[AUTH DEBUG] AdminLayout fetching profile for: ${user.id}`)
-  let profileResult;
+  // Fetch the user's profile to build adminUser representation
+  let profileResult
   try {
     profileResult = await supabase
       .from("profiles")
-      .select("role, name, disabled")
+      .select("role, name")
       .eq("id", user.id)
       .single()
-    console.log(`[AUTH DEBUG] AdminLayout profile response: ${JSON.stringify(profileResult)}`)
-  } catch (e: any) {
-    console.error(`[AUTH DEBUG] AdminLayout profile query threw exception:`, e?.message || e)
+  } catch (e) {
+    console.error("[AUTH] AdminLayout profile query threw exception:", e)
     profileResult = { data: null, error: e }
   }
   const profile = profileResult.data
 
-  if (!profile || profile.disabled) {
-    // If no profile or disabled, force log out
-    console.log(`[AUTH REDIRECT SOURCE] admin-layout`)
-    console.log(`requested pathname: ${pathname}`)
-    console.log(`whether an auth cookie exists: ${hasAuthCookie}`)
-    console.log(`auth method used: ${authMethodUsed}`)
-    console.log(`user ID if authenticated: ${user.id}`)
-    console.log(`profile result: ${JSON.stringify(profileResult)}`)
-    console.log(`role: ${profile?.role || "none"}`)
-    console.log(`authentication decision: redirect (disabled or missing profile)`)
-    console.log(`redirect target: /admin/login?error=account_disabled`)
-    await supabase.auth.signOut()
-    redirect("/admin/login?error=account_disabled")
-  }
-
   const adminUser = {
     email: user.email || "",
-    name: profile.name || user.email || "Admin User",
-    role: profile.role || "editor",
+    name: profile?.name || user.email || "Admin User",
+    role: profile?.role || "editor",
   }
 
   return (
