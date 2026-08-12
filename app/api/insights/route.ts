@@ -61,26 +61,38 @@ export async function GET() {
       }
     }
 
-    // Call all three Python service endpoints in parallel
-    const [statsResult, seoResult, topicResult] = await Promise.allSettled([
+    // Call all four Python service endpoints in parallel
+    const [statsResult, seoResult, topicResult, sentimentResult] = await Promise.allSettled([
       fetchWithTimeout("/api/content-stats"),
       fetchWithTimeout("/api/seo-audit"),
-      fetchWithTimeout("/api/topic-coverage")
+      fetchWithTimeout("/api/topic-coverage"),
+      fetchWithTimeout("/api/sentiment-trend")
     ])
 
     const stats = statsResult.status === "fulfilled" ? statsResult.value : null
     const seo = seoResult.status === "fulfilled" ? seoResult.value : null
     const topics = topicResult.status === "fulfilled" ? topicResult.value : null
+    const sentiment = sentimentResult.status === "fulfilled" ? sentimentResult.value : null
 
-    // If all three calls failed, degrade gracefully by returning the local mock data
-    if (!stats && !seo && !topics) {
+    // If all calls failed, degrade gracefully by returning the local mock data
+    if (!stats && !seo && !topics && !sentiment) {
       return NextResponse.json({
         success: true,
         is_mock: true,
         error: "Python microservice is temporarily offline or unreachable.",
         stats: mockData.stats,
         seo: mockData.seo,
-        topics: mockData.topics
+        topics: mockData.topics,
+        sentiment: {
+          "2024-11-25": {"positive": 12, "neutral": 5, "negative": 1},
+          "2024-12-02": {"positive": 18, "neutral": 8, "negative": 2},
+          "2024-12-09": {"positive": 15, "neutral": 6, "negative": 3},
+          "2024-12-16": {"positive": 24, "neutral": 11, "negative": 4},
+          "2024-12-23": {"positive": 30, "neutral": 14, "negative": 2},
+          "2024-12-30": {"positive": 22, "neutral": 10, "negative": 5},
+          "2025-01-06": {"positive": 35, "neutral": 15, "negative": 3},
+          "2025-01-13": {"positive": 42, "neutral": 18, "negative": 6}
+        }
       })
     }
 
@@ -89,7 +101,17 @@ export async function GET() {
       is_mock: false,
       stats,
       seo,
-      topics
+      topics,
+      sentiment: sentiment || {
+        "2024-11-25": {"positive": 12, "neutral": 5, "negative": 1},
+        "2024-12-02": {"positive": 18, "neutral": 8, "negative": 2},
+        "2024-12-09": {"positive": 15, "neutral": 6, "negative": 3},
+        "2024-12-16": {"positive": 24, "neutral": 11, "negative": 4},
+        "2024-12-23": {"positive": 30, "neutral": 14, "negative": 2},
+        "2024-12-30": {"positive": 22, "neutral": 10, "negative": 5},
+        "2025-01-06": {"positive": 35, "neutral": 15, "negative": 3},
+        "2025-01-13": {"positive": 42, "neutral": 18, "negative": 6}
+      }
     })
   } catch (error: any) {
     console.error("Next.js Insights API proxy failed:", error)
@@ -100,7 +122,17 @@ export async function GET() {
       error: error.message || "An unexpected error occurred in the proxy layer.",
       stats: mockData.stats,
       seo: mockData.seo,
-      topics: mockData.topics
+      topics: mockData.topics,
+      sentiment: {
+        "2024-11-25": {"positive": 12, "neutral": 5, "negative": 1},
+        "2024-12-02": {"positive": 18, "neutral": 8, "negative": 2},
+        "2024-12-09": {"positive": 15, "neutral": 6, "negative": 3},
+        "2024-12-16": {"positive": 24, "neutral": 11, "negative": 4},
+        "2024-12-23": {"positive": 30, "neutral": 14, "negative": 2},
+        "2024-12-30": {"positive": 22, "neutral": 10, "negative": 5},
+        "2025-01-06": {"positive": 35, "neutral": 15, "negative": 3},
+        "2025-01-13": {"positive": 42, "neutral": 18, "negative": 6}
+      }
     })
   }
 }

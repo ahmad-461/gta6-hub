@@ -11,9 +11,11 @@ import {
   Legend,
   LinearScale,
   Title,
-  Tooltip
+  Tooltip,
+  PointElement,
+  LineElement
 } from "chart.js"
-import { Bar } from "react-chartjs-2"
+import { Bar, Line } from "react-chartjs-2"
 import {
   AlertCircle,
   AlertTriangle,
@@ -40,6 +42,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -62,6 +66,7 @@ interface InsightsData {
     well_covered: Array<{ topic: string; mentions: number }>
     under_covered: Array<{ topic: string; mentions: number }>
   } | null
+  sentiment?: Record<string, { positive: number; neutral: number; negative: number }>
 }
 
 export default function AdminInsightsPage() {
@@ -215,6 +220,88 @@ export default function AdminInsightsPage() {
     setEmail("")
     setPassword("")
     router.refresh()
+  }
+
+  // Sentiment trend line chart config compile
+  const sentimentChartData = useMemo(() => {
+    if (!insights?.sentiment) return null
+
+    const trend = insights.sentiment
+    const labels = Object.keys(trend).sort()
+    const positive = labels.map(k => trend[k].positive || 0)
+    const neutral = labels.map(k => trend[k].neutral || 0)
+    const negative = labels.map(k => trend[k].negative || 0)
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Positive Sentiment",
+          data: positive,
+          backgroundColor: "rgba(16, 185, 129, 0.15)",
+          borderColor: "#10b981", // neon green
+          borderWidth: 2.5,
+          tension: 0.35,
+          pointRadius: 4,
+          pointBackgroundColor: "#10b981"
+        },
+        {
+          label: "Neutral Sentiment",
+          data: neutral,
+          backgroundColor: "rgba(168, 85, 247, 0.15)",
+          borderColor: "#a855f7", // neon purple
+          borderWidth: 2.5,
+          tension: 0.35,
+          pointRadius: 4,
+          pointBackgroundColor: "#a855f7"
+        },
+        {
+          label: "Negative Sentiment",
+          data: negative,
+          backgroundColor: "rgba(236, 72, 153, 0.15)",
+          borderColor: "#ec4899", // neon pink/red
+          borderWidth: 2.5,
+          tension: 0.35,
+          pointRadius: 4,
+          pointBackgroundColor: "#ec4899"
+        }
+      ]
+    }
+  }, [insights])
+
+  const sentimentChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        grid: {
+          color: "rgba(255, 255, 255, 0.05)"
+        },
+        ticks: {
+          color: "rgba(255, 255, 255, 0.4)",
+          font: { size: 10 }
+        }
+      },
+      x: {
+        grid: {
+          color: "transparent"
+        },
+        ticks: {
+          color: "rgba(255, 255, 255, 0.4)",
+          font: { size: 10, weight: "bold" as const }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: "top" as const,
+        labels: {
+          color: "rgba(255, 255, 255, 0.6)",
+          font: { size: 10, weight: "bold" as const }
+        }
+      }
+    }
   }
 
   // Word count chart config compile
@@ -575,6 +662,22 @@ export default function AdminInsightsPage() {
                     <Bar data={chartData} options={chartOptions} />
                   ) : (
                     <div className="h-full flex items-center justify-center text-xs text-foreground/30">No trend data calculated.</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Comments Sentiment Trend Line Chart */}
+              <div className="bg-card-bg/60 border border-card-border p-6 rounded-xl space-y-4 backdrop-blur-sm">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4.5 h-4.5 text-neon-pink" />
+                  <h3 className="text-sm font-black text-white uppercase tracking-wider">Community Sentiment Trend</h3>
+                </div>
+
+                <div className="relative h-64 w-full">
+                  {sentimentChartData ? (
+                    <Line data={sentimentChartData} options={sentimentChartOptions} />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-xs text-foreground/30">No sentiment trend data calculated.</div>
                   )}
                 </div>
               </div>

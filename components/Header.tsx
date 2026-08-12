@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Menu, X, ShieldAlert, Award, FileText, Swords, Wrench, Flame } from "lucide-react"
+import { Menu, X, ShieldAlert, Award, FileText, Swords, Wrench, Flame, Compass } from "lucide-react"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,6 +12,7 @@ export default function Header() {
     { name: "News", href: "/news", icon: FileText },
     { name: "Guides", href: "/guides", icon: Award },
     { name: "Characters", href: "/characters", icon: Swords },
+    { name: "Lore Map", href: "/lore-map", icon: Compass },
     { name: "Cheats", href: "/cheats", icon: ShieldAlert },
     { name: "Tools", href: "/tools", icon: Wrench },
   ]
