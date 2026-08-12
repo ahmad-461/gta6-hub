@@ -232,6 +232,7 @@ export default function ArticleManagerPage() {
         </div>
         <Link
           href="/admin/articles/new"
+          prefetch={false}
           className="inline-flex items-center justify-center px-4 py-2.5 bg-neon-pink hover:bg-neon-pink/90 text-white font-bold text-sm rounded-lg transition duration-150 uppercase tracking-wider"
         >
           <Plus size={18} className="mr-2" />
@@ -463,6 +464,7 @@ export default function ArticleManagerPage() {
                       <td className="py-4 px-6 text-right space-x-1.5">
                         <Link
                           href={`/admin/articles/${article.id}`}
+                          prefetch={false}
                           className="inline-flex p-1.5 bg-[#1a1822] border border-card-border hover:border-neon-blue/50 text-foreground/75 hover:text-neon-blue rounded transition"
                           title="Edit"
                         >

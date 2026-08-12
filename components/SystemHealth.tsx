@@ -64,6 +64,7 @@ export default function SystemHealth() {
             ) : unavailable ? (
               <Link
                 href="/admin/insights"
+                prefetch={false}
                 className="inline-flex items-center space-x-1 text-xs font-bold text-amber-500 hover:underline bg-amber-500/10 px-2.5 py-1 rounded"
               >
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -72,6 +73,7 @@ export default function SystemHealth() {
             ) : (
               <Link
                 href="/admin/insights"
+                prefetch={false}
                 className={`inline-flex items-center space-x-1 text-xs font-bold px-2.5 py-1 rounded ${
                   count && count > 0
                     ? "text-neon-pink bg-neon-pink/10 hover:underline"
