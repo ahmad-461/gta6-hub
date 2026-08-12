@@ -2,10 +2,9 @@ import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Calendar, MessageSquare, ArrowRight, Twitter, Youtube, Disc, MessageCircle, Flame, ShieldAlert, Award, Star } from "lucide-react"
+import { ArrowRight, Star, Flame } from "lucide-react"
 import CountdownTimer from "@/components/CountdownTimer"
 import CommunityPollWidget from "@/components/CommunityPollWidget"
-import ParallaxWatermark from "@/components/ParallaxWatermark"
 import ScrollReveal from "@/components/ScrollReveal"
 
 function formatDate(dateStr?: string) {
@@ -276,159 +275,193 @@ export default async function HomePage() {
 
   const countdownTarget = settings["countdown_target"] || "2026-11-19T00:00:00-05:00"
 
-  const socials = [
-    { key: "social_twitter", name: "X / Twitter", icon: Twitter, color: "text-[#1DA1F2] hover:bg-[#1DA1F2]/10" },
-    { key: "social_reddit", name: "Reddit", icon: MessageCircle, color: "text-[#FF4500] hover:bg-[#FF4500]/10" },
-    { key: "social_discord", name: "Discord", icon: Disc, color: "text-[#5865F2] hover:bg-[#5865F2]/10" },
-    { key: "social_youtube", name: "YouTube", icon: Youtube, color: "text-[#FF0000] hover:bg-[#FF0000]/10" },
-  ].filter((s) => settings[s.key])
+  // Duplicate items for seamless continuous ticker scroll
+  const tickerItems = latestNews && latestNews.length > 0 ? [...latestNews, ...latestNews] : []
+
+  // Use up to 3 latest news articles specifically
+  const gridNews = latestNews ? latestNews.slice(0, 3) : []
 
   return (
-    <div className="flex-grow flex flex-col relative bg-[#0d0c10] overflow-hidden">
+    <div className="flex-grow flex flex-col relative bg-[#0B0710] overflow-hidden text-[#F5F0FA]">
       {/* Cinematic Global Noise Texture */}
       <div className="film-grain" />
 
-      {/* Hero: Asymmetric Layout with Giant Typography and Scroll Parallax Watermark */}
-      <section className="relative min-h-[90vh] flex items-center py-20 px-4 sm:px-6 lg:px-12 border-b border-card-border overflow-hidden mesh-glow-1">
-        {/* Parallax Background Typography */}
-        <div className="absolute right-0 top-1/4 select-none pointer-events-none z-0 overflow-hidden w-full max-w-4xl h-full hidden lg:block opacity-[0.06]">
-          <ParallaxWatermark
-            text="LEONIDA"
-            className="text-[20rem] font-black tracking-tighter text-stroke-neon-pink select-none uppercase leading-none"
-          />
-        </div>
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Glow Blob 1 (magenta top-right) */}
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#FF2E88]/10 blur-[130px] z-0" />
+        {/* Glow Blob 2 (cyan bottom-left) */}
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00E5FF]/8 blur-[130px] z-0" />
+      </div>
 
-        <div className="absolute left-1/4 top-1/3 w-[500px] h-[500px] bg-neon-pink/10 blur-[130px] rounded-full pointer-events-none animate-pulse" />
-        <div className="absolute right-10 bottom-10 w-[400px] h-[400px] bg-neon-blue/10 blur-[150px] rounded-full pointer-events-none" />
-
+      {/* Hero Section */}
+      <section
+        className="relative min-h-[90vh] flex items-center pt-20 pb-32 px-4 sm:px-6 lg:px-12 overflow-hidden bg-[#0B0710] z-10 border-b border-[rgba(245,240,250,0.14)]"
+        style={{
+          clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
+        }}
+      >
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-          {/* Asymmetric Left Main Text Column */}
-          <div className="lg:col-span-8 space-y-8 text-left">
-            {latestTeaser && (
-              <div className="inline-flex items-center gap-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink px-4 py-1.5 rounded-md text-xs font-bold hover:bg-neon-pink/15 transition-all duration-300 transform -rotate-1 shadow-md">
-                <span className="uppercase tracking-widest font-black text-[10px] bg-neon-pink text-black px-1.5 py-0.5 rounded">
-                  NEW
-                </span>
-                <Link href={`/news/${latestTeaser.slug}`} className="hover:underline truncate max-w-[200px] sm:max-w-md">
-                  {latestTeaser.title}
-                </Link>
-              </div>
-            )}
-
-            {/* Giant Stacked Typographic Treatment */}
-            <div className="space-y-2">
-              <h1 className="text-5xl sm:text-7xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-none text-white font-sans">
-                ENTER THE{" "}
-                <span className="block text-stroke-neon-pink text-stroke-neon-pink">
-                  NEXT-GEN
-                </span>{" "}
-                <span className="bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue bg-clip-text text-transparent glow-pink-text">
-                  LEONIDA
-                </span>
-              </h1>
+          {/* Asymmetric Left Column */}
+          <div className="lg:col-span-7 space-y-8 text-left">
+            {/* Small mono eyebrow label with a horizontal rule accent */}
+            <div className="flex items-center space-x-3 font-mono text-xs text-[#9C8FAE] tracking-widest uppercase">
+              <span>UNOFFICIAL INTEL — EST. 2026</span>
+              <span className="h-[1px] w-12 bg-[#FF2E88]"></span>
             </div>
 
-            <p className="text-lg sm:text-xl text-foreground/80 max-w-2xl leading-relaxed font-medium">
+            {/* Headline Block */}
+            <div className="space-y-1">
+              <span className="block text-[#F5F0FA] text-lg sm:text-2xl font-mono tracking-wide">
+                The Ultimate
+              </span>
+              <h1 className="text-6xl sm:text-8xl lg:text-[7.5rem] font-anton font-bold uppercase tracking-tighter leading-[0.92] text-[#F5F0FA]">
+                GTA VI
+              </h1>
+              <span className="block text-4xl sm:text-6xl lg:text-7xl font-anton uppercase tracking-tight bg-gradient-to-r from-[#FF2E88] to-[#00E5FF] bg-clip-text text-transparent leading-[0.92]">
+                INTELLIGENCE HUB
+              </span>
+            </div>
+
+            {/* Supporting Paragraph */}
+            <p className="text-base sm:text-lg text-[#9C8FAE] max-w-xl leading-relaxed font-normal">
               The premier hyper-focused fan ecosystem for Grand Theft Auto VI. Access immediate walkthroughs, real-time database lookups, and deep lore map tracing.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4 pt-2">
               <Link
                 href="/news"
-                className="px-8 py-4 bg-neon-pink hover:bg-neon-pink/90 text-white font-black uppercase tracking-wider text-sm rounded transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,127,0.5)] transform -skew-x-12"
+                className="px-8 py-3.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
               >
-                <span className="inline-block transform skew-x-12">Latest News</span>
+                Enter The Hub
               </Link>
               <Link
-                href="/cheats"
-                className="px-8 py-4 bg-transparent hover:bg-neon-blue/10 border-2 border-neon-blue text-neon-blue font-black uppercase tracking-wider text-sm rounded transition-all duration-300 transform -skew-x-12"
+                href="/lore-map"
+                className="px-8 py-3.5 bg-transparent hover:bg-[rgba(245,240,250,0.06)] border border-[#FF2E88] text-[#F5F0FA] font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono active:scale-95 duration-100"
               >
-                <span className="inline-block transform skew-x-12">Cheat Finder</span>
+                Explore The Map
               </Link>
+            </div>
+
+            {/* HUD Countdown Module */}
+            <div className="relative border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/60 backdrop-blur-md p-6 max-w-lg rounded shadow-2xl overflow-hidden mt-8">
+              {/* Corner-bracket accents (like a targeting reticle) */}
+              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
+              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
+              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
+
+              {/* Pulsing dot + label row */}
+              <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-[#00E5FF]">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                </span>
+                <span>SYSTEM COUNTDOWN TELEMETRY</span>
+              </div>
+
+              {/* Countdown Numbers */}
+              <CountdownTimer targetDate={countdownTarget} />
             </div>
           </div>
 
-          {/* Right Column: Giant Asymmetric Badge / Callout */}
-          <div className="lg:col-span-4 flex justify-end">
-            <div className="relative p-8 bg-card-bg/60 backdrop-blur-md border border-card-border rounded-2xl max-w-sm w-full shadow-2xl transform lg:rotate-3 hover:rotate-0 transition-transform duration-500 hover:border-neon-pink/40">
-              <div className="absolute -top-4 -left-4 bg-neon-pink text-black text-xs font-black px-3 py-1 uppercase tracking-widest rounded-md shadow-md">
-                Active System
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-neon-blue">
-                  <Star className="w-5 h-5 fill-current" />
-                  <span className="text-xs font-extrabold uppercase tracking-widest">
-                    Interactive Map Live
-                  </span>
-                </div>
-                <h3 className="text-2xl font-black uppercase text-white tracking-tight">
-                  Lore Connections
-                </h3>
-                <p className="text-sm text-foreground/70 leading-relaxed">
-                  Analyze and trace dynamic relationships between core protagonists, hidden secrets, and physical locations within the city.
-                </p>
-                <Link
-                  href="/lore-map"
-                  className="inline-flex items-center gap-2 text-xs font-black text-neon-pink uppercase tracking-widest hover:underline pt-2"
-                >
-                  Explore Lore Map <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+          {/* Right Column: Atmospheric vertical text watermark */}
+          <div className="lg:col-span-5 flex justify-end h-full relative min-h-[300px] lg:min-h-[500px] hidden lg:flex">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-0">
+              <span
+                className="font-anton text-[12rem] lg:text-[18rem] uppercase leading-none tracking-tighter opacity-10 bg-gradient-to-b from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent"
+                style={{
+                  writingMode: "vertical-rl",
+                }}
+              >
+                VICE
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Spotlight: Dramatic Split-Screen Featured Article */}
+      {/* Auto-scrolling Ticker Strip */}
+      {tickerItems.length > 0 && (
+        <div className="w-full bg-[#150C1F] border-t border-b border-[rgba(245,240,250,0.14)] py-3 overflow-hidden z-20 relative">
+          <div className="ticker-marquee whitespace-nowrap flex items-center">
+            {tickerItems.map((item, index) => (
+              <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-[#9C8FAE] tracking-wider">
+                <span className="inline-block w-2 h-2 bg-[#FF2E88] rounded-full mr-3 animate-pulse" />
+                <span className="text-[#00E5FF] font-bold mr-2">LATEST INTEL:</span>
+                <Link href={`/news/${item.slug}`} className="hover:text-white transition-colors underline decoration-dotted">
+                  {item.title}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Featured Article Spotlight */}
       {featuredArticle && (
-        <section className="relative border-b border-card-border overflow-hidden bg-gradient-to-r from-card-bg via-background to-background">
+        <section
+          className="relative bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-12 lg:py-0 overflow-hidden z-20"
+          style={{
+            clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
+          }}
+        >
           <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[500px]">
-              {/* Left Cinematic Diagonal Sliced Image Block */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[550px] items-stretch">
+              {/* Left Cinematic Image Block */}
               <div className="lg:col-span-7 relative overflow-hidden diagonal-split-left min-h-[350px] lg:min-h-full group">
                 <Image
                   src={getImageUrl(featuredArticle.featured_image)}
                   alt={featuredArticle.title}
                   fill
-                  className="object-cover group-hover:scale-[1.05] transition-transform duration-1000 ease-out"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                   priority
                   sizes="(max-w-1024px) 100vw, 60vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent lg:hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#150C1F] via-[#150C1F]/40 to-transparent lg:hidden" />
+
+                {/* Small bordered "Featured" tag overlay */}
+                <div className="absolute top-6 left-6 z-30 font-mono text-[10px] tracking-widest text-[#FF2E88] bg-[#0B0710]/90 border border-[#FF2E88] px-3 py-1 uppercase rounded-sm shadow-xl">
+                  Featured Article
+                </div>
               </div>
 
               {/* Right Typographic Content Block */}
-              <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-black text-neon-pink uppercase tracking-widest px-3 py-1 bg-neon-pink/15 border border-neon-pink/30 rounded">
-                    Spotlight Article
+              <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10 bg-[#150C1F]">
+                <div className="flex items-center space-x-3">
+                  <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
+                    SPOTLIGHT INTEL
                   </span>
                   {featuredArticle.category && (
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-neon-blue">
-                      {(featuredArticle.category as any).name}
-                    </span>
+                    <>
+                      <span className="text-[#9C8FAE] font-mono text-xs">/</span>
+                      <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
+                        {(featuredArticle.category as any).name}
+                      </span>
+                    </>
                   )}
                 </div>
 
-                <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight leading-tight hover:text-neon-pink transition-colors">
+                <h2 className="text-3xl sm:text-5xl font-anton uppercase text-[#F5F0FA] tracking-normal leading-[0.95] hover:text-[#FF2E88] transition-colors">
                   <Link href={`/news/${featuredArticle.slug}`}>
                     {featuredArticle.title}
                   </Link>
                 </h2>
 
-                <p className="text-foreground/80 text-base leading-relaxed line-clamp-4">
+                <p className="text-[#9C8FAE] text-sm sm:text-base leading-relaxed line-clamp-4">
                   {featuredArticle.excerpt}
                 </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-card-border/60">
-                  <span className="text-xs text-foreground/40 font-bold uppercase tracking-wider">
-                    Published: {formatDate(featuredArticle.published_at)}
+                <div className="flex items-center justify-between pt-6 border-t border-[rgba(245,240,250,0.1)]">
+                  <span className="text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase">
+                    PUBLISHED: {formatDate(featuredArticle.published_at)}
                   </span>
                   <Link
                     href={`/news/${featuredArticle.slug}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-neon-pink hover:underline uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#FF2E88] hover:underline uppercase tracking-wider font-mono"
                   >
-                    Read Article <ArrowRight className="w-4 h-4" />
+                    READ ARTICLE <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
@@ -437,84 +470,62 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* High-Impact Full-Bleed Cinematic Countdown Timer Section */}
-      <section className="relative py-24 px-4 bg-gradient-to-b from-[#111015] to-[#0c0b0f] border-b border-card-border overflow-hidden mesh-glow-2">
-        <div className="absolute right-1/4 top-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-neon-blue/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
+      {/* Main Editorial Content Area */}
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-16 space-y-24 z-10 relative">
+        {/* Latest Content Grid Section */}
+        <section className="space-y-10">
           <ScrollReveal>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-neon-blue/10 border border-neon-blue/30 text-neon-blue text-xs font-black uppercase tracking-widest mb-2">
-              <Flame className="w-4 h-4 animate-bounce" /> Time Remaining Until Launch
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black uppercase text-white tracking-tight leading-none">
-              Count down to Leonida
-            </h2>
-            <p className="text-foreground/70 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Every second counts. Prepare for the largest open world sandbox experience in virtual history.
-            </p>
-            <div className="pt-6">
-              <CountdownTimer targetDate={countdownTarget} />
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Main Multi-Column Editorial Layout without Generic Sidebars */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-20 space-y-24">
-
-        {/* News Grid Block */}
-        <section className="space-y-12">
-          <ScrollReveal>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-card-border pb-4">
+            <div className="flex items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4">
               <div className="space-y-1">
-                <span className="text-xs font-black text-neon-pink uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
                   Hot Off The Press
                 </span>
-                <h2 className="text-4xl font-black uppercase tracking-tight text-white leading-none">
-                  Latest Insights
+                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
+                  Latest Intel
                 </h2>
               </div>
               <Link
                 href="/news"
-                className="text-xs font-bold text-neon-pink hover:underline uppercase tracking-wider inline-flex items-center gap-1 bg-neon-pink/10 px-3 py-1.5 rounded border border-neon-pink/20"
+                className="text-xs font-bold font-mono text-[#00E5FF] hover:underline uppercase tracking-wider flex items-center gap-1.5"
               >
-                View Newsroom <ArrowRight className="w-3.5 h-3.5" />
+                View All <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </ScrollReveal>
 
-          {latestNews && latestNews.length > 0 ? (
+          {gridNews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestNews.map((art, index) => (
+              {gridNews.map((art, index) => (
                 <ScrollReveal key={art.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between bg-[#15131a] border border-card-border rounded-xl overflow-hidden hover:border-neon-pink/30 hover:shadow-[0_0_30px_rgba(255,0,127,0.05)] transition-all duration-300">
+                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#FF2E88] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#FF2E88] shadow-lg">
                     <div>
-                      <div className="relative w-full h-56 overflow-hidden">
+                      <div className="relative w-full h-52 overflow-hidden bg-[#0B0710]">
                         <Image
                           src={getImageUrl(art.featured_image)}
                           alt={art.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                           sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 30vw"
                         />
                       </div>
                       <div className="p-6 space-y-3">
                         {art.category && (
-                          <span className="text-[10px] font-black uppercase tracking-widest text-neon-blue">
+                          <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-[#00E5FF]">
                             {(art.category as any).name}
                           </span>
                         )}
-                        <h4 className="text-xl font-black text-white group-hover:text-neon-pink transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-lg font-bold text-[#F5F0FA] group-hover:text-[#FF2E88] transition-colors line-clamp-2 leading-snug">
                           <Link href={`/news/${art.slug}`}>{art.title}</Link>
                         </h4>
-                        <p className="text-sm text-foreground/60 leading-relaxed line-clamp-3">
+                        <p className="text-sm text-[#9C8FAE] leading-relaxed line-clamp-3">
                           {art.excerpt}
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 pt-0 border-t border-card-border/30 mt-4 flex items-center justify-between text-[11px] text-foreground/40 font-bold uppercase tracking-wider">
+                    <div className="p-6 pt-0 mt-4 flex items-center justify-between text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase">
                       <span>{formatDate(art.published_at)}</span>
-                      <Link href={`/news/${art.slug}`} className="text-neon-pink hover:underline font-extrabold flex items-center gap-1">
-                        Read <ArrowRight className="w-3 h-3" />
+                      <Link href={`/news/${art.slug}`} className="text-[#FF2E88] hover:underline font-bold flex items-center gap-1">
+                        READ <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
                   </article>
@@ -522,29 +533,29 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-card-border rounded-xl text-foreground/40 text-sm">
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
               No news items posted yet. Check back soon.
             </div>
           )}
         </section>
 
         {/* Dynamic Walkthroughs section */}
-        <section className="space-y-12">
+        <section className="space-y-10">
           <ScrollReveal>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-card-border pb-4">
+            <div className="flex items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4">
               <div className="space-y-1">
-                <span className="text-xs font-black text-neon-blue uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
                   Pro Walkthroughs
                 </span>
-                <h2 className="text-4xl font-black uppercase tracking-tight text-white leading-none">
+                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
                   Expert Guides
                 </h2>
               </div>
               <Link
                 href="/guides"
-                className="text-xs font-bold text-neon-blue hover:underline uppercase tracking-wider inline-flex items-center gap-1 bg-neon-blue/10 px-3 py-1.5 rounded border border-neon-blue/20"
+                className="text-xs font-bold font-mono text-[#00E5FF] hover:underline uppercase tracking-wider flex items-center gap-1.5"
               >
-                Browse All Guides <ArrowRight className="w-3.5 h-3.5" />
+                Browse All <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </ScrollReveal>
@@ -553,20 +564,20 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestGuides.map((guide, index) => (
                 <ScrollReveal key={guide.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between bg-[#15131a] border border-card-border rounded-xl overflow-hidden hover:border-neon-blue/30 hover:shadow-[0_0_30px_rgba(0,240,255,0.05)] transition-all duration-300">
+                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#00E5FF] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#00E5FF] shadow-lg">
                     <div>
-                      <div className="relative w-full h-48 overflow-hidden">
+                      <div className="relative w-full h-48 overflow-hidden bg-[#0B0710]">
                         <Image
                           src={getImageUrl(guide.featured_image)}
                           alt={guide.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                           sizes="(max-w-768px) 100vw, 30vw"
                         />
                       </div>
                       <div className="p-6 space-y-3">
-                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider">
-                          <span className="text-neon-purple">{guide.guide_category}</span>
+                        <div className="flex items-center justify-between text-[10px] font-bold font-mono uppercase tracking-wider">
+                          <span className="text-[#FF2E88]">{guide.guide_category}</span>
                           <span className={`px-2 py-0.5 rounded ${
                             guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                             guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
@@ -575,7 +586,7 @@ export default async function HomePage() {
                             {guide.difficulty}
                           </span>
                         </div>
-                        <h4 className="text-lg font-black text-white group-hover:text-neon-blue transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-lg font-bold text-[#F5F0FA] group-hover:text-[#00E5FF] transition-colors line-clamp-2 leading-snug">
                           <Link href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}>
                             {guide.title}
                           </Link>
@@ -585,7 +596,7 @@ export default async function HomePage() {
                     <div className="p-6 pt-0 mt-2">
                       <Link
                         href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}
-                        className="block text-center w-full py-2.5 rounded bg-background border border-card-border text-xs font-black uppercase tracking-wider hover:bg-neon-blue/5 hover:border-neon-blue/30 text-neon-blue transition-all duration-200"
+                        className="block text-center w-full py-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.14)] text-xs font-bold font-mono uppercase tracking-wider hover:bg-[#00E5FF]/5 hover:border-[#00E5FF] text-[#00E5FF] transition-all duration-200"
                       >
                         Read Walkthrough
                       </Link>
@@ -595,23 +606,23 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-card-border rounded-xl text-foreground/40 text-sm">
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
               No expert guides published yet.
             </div>
           )}
         </section>
 
         {/* Asymmetrical Staggered Segment: Community Poll, Recent updates & Social hubs */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pt-12">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pt-6">
 
           {/* Asymmetrical Column 1: Community Voice */}
           <div className="lg:col-span-7 space-y-8">
             <ScrollReveal>
               <div className="space-y-1 mb-6">
-                <span className="text-xs font-black text-neon-pink uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
                   Have Your Say
                 </span>
-                <h3 className="text-3xl font-black uppercase text-white tracking-tight">
+                <h3 className="text-3xl font-anton uppercase text-[#F5F0FA] tracking-normal">
                   Player Opinion
                 </h3>
               </div>
@@ -631,27 +642,27 @@ export default async function HomePage() {
 
             {/* Live Comments Stream */}
             <ScrollReveal>
-              <div className="bg-[#15131a] border border-card-border rounded-xl p-8 space-y-6">
-                <div className="border-b border-card-border pb-4">
-                  <h4 className="font-black text-xs uppercase tracking-widest text-foreground/50">
+              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+                <div className="border-b border-[rgba(245,240,250,0.1)] pb-4">
+                  <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE]">
                     Latest Intel / Comment Stream
                   </h4>
                 </div>
                 {sidebarComments && sidebarComments.length > 0 ? (
-                  <ul className="space-y-6 divider-y divide-card-border/30">
+                  <ul className="space-y-6 divide-y divide-[rgba(245,240,250,0.1)]">
                     {sidebarComments.map((com) => (
-                      <li key={com.id} className="space-y-2 pt-1 first:pt-0">
+                      <li key={com.id} className="space-y-2 pt-4 first:pt-0">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-black text-neon-blue">{com.name}</span>
-                          <span className="text-[10px] text-foreground/40 font-bold">{formatDate(com.created_at)}</span>
+                          <span className="font-bold font-mono text-[#00E5FF]">{com.name}</span>
+                          <span className="text-[10px] font-mono text-[#9C8FAE]/60 font-bold">{formatDate(com.created_at)}</span>
                         </div>
-                        <p className="text-foreground/80 text-sm italic leading-relaxed">
+                        <p className="text-[#F5F0FA]/85 text-sm italic leading-relaxed">
                           &ldquo;{com.content}&rdquo;
                         </p>
                         {com.articles && (
-                          <div className="text-[10px] text-foreground/40">
+                          <div className="text-[10px] font-mono text-[#9C8FAE]/60">
                             on{" "}
-                            <Link href={`/news/${(com.articles as any).slug}`} className="hover:underline text-neon-pink font-bold uppercase tracking-wider">
+                            <Link href={`/news/${(com.articles as any).slug}`} className="hover:underline text-[#FF2E88] font-bold uppercase tracking-wider">
                               {(com.articles as any).title}
                             </Link>
                           </div>
@@ -660,7 +671,7 @@ export default async function HomePage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-foreground/40">No live comments stream.</p>
+                  <p className="text-xs font-mono text-[#9C8FAE]">No live comments stream.</p>
                 )}
               </div>
             </ScrollReveal>
@@ -669,67 +680,33 @@ export default async function HomePage() {
           {/* Asymmetrical Column 2: Recent Updates List & High-Impact Social Cards */}
           <div className="lg:col-span-5 space-y-8">
             <ScrollReveal>
-              <div className="bg-[#15131a] border border-card-border rounded-xl p-8 space-y-6">
-                <h4 className="font-black text-xs uppercase tracking-widest text-foreground/50 border-b border-card-border pb-4">
+              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+                <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-4">
                   Quick Updates
                 </h4>
                 {sidebarArticles && sidebarArticles.length > 0 ? (
                   <ul className="space-y-4">
                     {sidebarArticles.map((art) => (
-                      <li key={art.id} className="group text-sm pb-3 border-b border-card-border/30 last:border-0 last:pb-0">
+                      <li key={art.id} className="group text-sm pb-3 border-b border-[rgba(245,240,250,0.1)] last:border-0 last:pb-0">
                         <Link
                           href={`/news/${art.slug}`}
-                          className="font-black text-white group-hover:text-neon-pink transition-colors line-clamp-2 leading-snug"
+                          className="font-bold text-[#F5F0FA] group-hover:text-[#FF2E88] transition-colors line-clamp-2 leading-snug"
                         >
                           {art.title}
                         </Link>
-                        <span className="text-[10px] text-foreground/40 font-bold block mt-1 uppercase tracking-widest">
+                        <span className="text-[10px] font-mono text-[#9C8FAE]/60 font-bold block mt-1 uppercase tracking-widest">
                           {formatDate(art.published_at)}
                         </span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-foreground/40">No recent updates.</p>
+                  <p className="text-xs font-mono text-[#9C8FAE]">No recent updates.</p>
                 )}
               </div>
             </ScrollReveal>
-
-            {/* Gorgeous Cinematic Social Blocks */}
-            {socials.length > 0 && (
-              <ScrollReveal>
-                <div className="bg-[#15131a] border border-card-border rounded-xl p-8 space-y-6">
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-neon-pink">
-                      Join The Syndicate
-                    </span>
-                    <h4 className="font-black text-lg text-white uppercase tracking-tight">
-                      Fan Networks
-                    </h4>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {socials.map((s) => {
-                      const Icon = s.icon
-                      return (
-                        <a
-                          key={s.key}
-                          href={settings[s.key]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`flex flex-col items-center justify-center p-4 rounded-lg bg-background border border-card-border transition-all duration-300 group font-bold text-xs gap-2 text-center hover:border-white/20 hover:-translate-y-1 ${s.color}`}
-                        >
-                          <Icon className="w-6 h-6 transition-transform group-hover:scale-110" />
-                          <span className="text-white uppercase tracking-wider font-extrabold">{s.name}</span>
-                        </a>
-                      )
-                    })}
-                  </div>
-                </div>
-              </ScrollReveal>
-            )}
           </div>
         </section>
-
       </div>
     </div>
   )

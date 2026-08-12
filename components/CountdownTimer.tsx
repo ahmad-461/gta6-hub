@@ -46,28 +46,28 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
 
   if (timeLeft.isExpired) {
     return (
-      <div className="text-neon-pink font-bold uppercase tracking-wider text-sm">
-        GTA VI is here!
+      <div className="text-[#FF2E88] font-mono font-bold uppercase tracking-widest text-sm">
+        GTA VI IS NOW ACTIVE
       </div>
     )
   }
 
   return (
-    <div className="flex justify-center items-center gap-3 sm:gap-6 mt-4">
+    <div className="grid grid-cols-4 gap-2 sm:gap-4 font-mono">
       {[
-        { label: "Days", value: timeLeft.days },
-        { label: "Hours", value: timeLeft.hours },
-        { label: "Mins", value: timeLeft.minutes },
-        { label: "Secs", value: timeLeft.seconds },
+        { label: "DAYS", value: timeLeft.days },
+        { label: "HRS", value: timeLeft.hours },
+        { label: "MIN", value: timeLeft.minutes },
+        { label: "SEC", value: timeLeft.seconds },
       ].map((item, index) => (
         <div
           key={index}
-          className="flex flex-col items-center bg-background/60 backdrop-blur-md border border-card-border rounded-lg p-2.5 sm:p-4 min-w-[64px] sm:min-w-[80px]"
+          className="flex flex-col items-center bg-[#0B0710]/80 border border-[rgba(245,240,250,0.14)] p-2 sm:p-3 rounded"
         >
-          <span className="text-xl sm:text-3xl font-extrabold text-neon-pink tabular-nums">
+          <span className="text-xl sm:text-2xl font-bold text-[#FF2E88] tracking-wider tabular-nums">
             {String(item.value).padStart(2, "0")}
           </span>
-          <span className="text-[10px] sm:text-xs text-foreground/50 uppercase font-bold tracking-wider mt-1">
+          <span className="text-[9px] sm:text-[10px] text-[#9C8FAE] tracking-widest mt-1">
             {item.label}
           </span>
         </div>

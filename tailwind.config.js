@@ -21,7 +21,20 @@ module.exports = {
         brand: {
           orange: "#f97316",
           dark: "#0b0a0e",
-        }
+        },
+        // Exact Reference Design Tokens
+        ink: "#0B0710",
+        "ink-2": "#150C1F",
+        paper: "#F5F0FA",
+        "paper-dim": "#9C8FAE",
+        magenta: "#FF2E88",
+        cyan: "#00E5FF",
+        violet: "#6C1FB5",
+        hairline: "rgba(245,240,250,0.14)",
+      },
+      fontFamily: {
+        anton: ["var(--font-anton)", "sans-serif"],
+        mono: ["var(--font-space-mono)", "monospace"],
       },
     },
   },

@@ -6,20 +6,23 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1977ms
+ ✓ Ready in 1882ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1005ms (127 modules)
+ ✓ Compiled /middleware in 1071ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 6.3s (797 modules)
- HEAD / 200 in 7060ms
+ ✓ Compiled / in 6.6s (813 modules)
+ HEAD / 200 in 7147ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 122ms
+ GET / 200 in 89ms
  ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1925ms (800 modules)
- GET /og-image.jpg 404 in 2137ms
+ ✓ Compiled /_not-found in 1593ms (798 modules)
+ GET /og-image.jpg 404 in 1788ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 1276ms
+ GET /og-image.jpg 404 in 195ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- ✓ Compiled in 773ms (798 modules)
- ✓ Compiled in 895ms (798 modules)
+ GET / 200 in 172ms
+ GET /og-image.jpg 404 in 47ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 28ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8

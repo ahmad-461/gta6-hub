@@ -18,13 +18,13 @@ export default function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 bg-card-bg/95 backdrop-blur-md border-b border-card-border">
+    <header className="sticky top-0 z-50 bg-[#150C1F]/95 backdrop-blur-md border-b border-[rgba(245,240,250,0.14)] font-mono">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-extrabold tracking-wider bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue bg-clip-text text-transparent hover:brightness-110 transition-all duration-300">
-                GTA VI HUB
+            <Link href="/" className="flex items-center">
+              <span className="text-xl font-extrabold tracking-wider text-[#F5F0FA] hover:text-[#FF2E88] transition-colors">
+                GTA6<span className="text-[#FF2E88]">HUB</span>
               </span>
             </Link>
           </div>
@@ -36,9 +36,9 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center space-x-1.5 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:text-neon-pink hover:bg-background/80 transition-all duration-200"
+                  className="flex items-center space-x-1.5 px-3 py-2 rounded-md text-xs font-bold text-[#9C8FAE] hover:text-[#FF2E88] transition-all duration-200 uppercase"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 text-[#00E5FF]" />
                   <span>{item.name}</span>
                 </Link>
               )
@@ -49,15 +49,15 @@ export default function Header() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-neon-pink hover:bg-background/80 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-[#F5F0FA] hover:text-[#FF2E88] focus:outline-none"
               aria-controls="mobile-menu"
               aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>
               {isOpen ? (
-                <X className="block h-6 w-6 text-neon-pink" aria-hidden="true" />
+                <X className="block h-6 w-6 text-[#FF2E88]" aria-hidden="true" />
               ) : (
-                <Menu className="block h-6 w-6 text-neon-blue" aria-hidden="true" />
+                <Menu className="block h-6 w-6 text-[#00E5FF]" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -65,7 +65,7 @@ export default function Header() {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-card-bg border-b border-card-border" id="mobile-menu">
+        <div className="md:hidden bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)]" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => {
               const Icon = item.icon
@@ -74,9 +74,9 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center space-x-3 px-3 py-2.5 rounded-md text-base font-medium text-foreground hover:text-neon-pink hover:bg-background/80 transition-all duration-200"
+                  className="flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm font-bold text-[#F5F0FA] hover:text-[#FF2E88] hover:bg-[#150C1F]/80 transition-all duration-200 uppercase"
                 >
-                  <Icon className="w-5 h-5 text-neon-blue" />
+                  <Icon className="w-5 h-5 text-[#00E5FF]" />
                   <span>{item.name}</span>
                 </Link>
               )

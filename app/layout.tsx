@@ -5,6 +5,21 @@ import Footer from "@/components/Footer"
 import ChatWidget from "@/components/ChatWidget"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
+import { Anton, Space_Mono } from "next/font/google"
+
+const anton = Anton({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-anton",
+  display: "swap",
+})
+
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: {
@@ -48,8 +63,8 @@ export default function RootLayout({
   const isAdminRoute = pathname.startsWith("/admin")
 
   return (
-    <html lang="en">
-      <body className="flex flex-col min-h-screen bg-background text-foreground antialiased selection:bg-neon-pink selection:text-white">
+    <html lang="en" className={`${anton.variable} ${spaceMono.variable}`}>
+      <body className="flex flex-col min-h-screen bg-[#0B0710] text-[#F5F0FA] antialiased selection:bg-[#FF2E88] selection:text-white font-sans">
         {!isAdminRoute && <Header />}
         <main className="flex-grow flex flex-col">
           {children}
