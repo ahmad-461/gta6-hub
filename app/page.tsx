@@ -602,8 +602,9 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
-              No news items posted yet. Check back soon.
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono space-y-2 max-w-xl mx-auto">
+              <p className="font-bold text-white uppercase tracking-widest text-sm">AWAITING INTEL FEED TRANSMISSION</p>
+              <p className="text-xs text-[#9C8FAE]/80 leading-relaxed">No published news items located in local telemetry registers. (Note: Homepage population depends on Phase 14&apos;s seed.sql database seeding script being executed).</p>
             </div>
           )}
         </section>
@@ -684,8 +685,9 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
-              No expert guides published yet.
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono space-y-2 max-w-xl mx-auto">
+              <p className="font-bold text-white uppercase tracking-widest text-sm">TACTICAL ENCRYPTIONS DECONSTRUCTED</p>
+              <p className="text-xs text-[#9C8FAE]/80 leading-relaxed">Walkthrough directories are currently offline. Awaiting secure manual database seeding via seed.sql.</p>
             </div>
           )}
         </section>

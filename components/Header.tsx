@@ -181,11 +181,11 @@ export default function Header() {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center space-x-2 group">
                 <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF8A3D] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF8A3D]"></span>
                 </span>
-                <span className="text-xl font-normal tracking-wider text-[#F5F0FA] font-anton uppercase">
-                  GTA6<span className="text-[#FF2E88]">HUB</span>
+                <span className="text-xl font-normal tracking-wider text-[#F5F5F7] font-anton uppercase">
+                  GTA6<span className="text-[#FF2D8D]">HUB</span>
                 </span>
               </Link>
             </div>
@@ -462,11 +462,11 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-b border-[rgba(245,240,250,0.08)]">
             <div className="flex items-center space-x-2">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF8A3D] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF8A3D]"></span>
               </span>
-              <span className="text-xl font-normal tracking-wider text-[#F5F0FA] font-anton uppercase">
-                GTA6<span className="text-[#FF2E88]">SYSTEM</span>
+              <span className="text-xl font-normal tracking-wider text-[#F5F5F7] font-anton uppercase">
+                GTA6<span className="text-[#FF2D8D]">SYSTEM</span>
               </span>
             </div>
 
