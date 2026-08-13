@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
+import EmptyState from "@/components/ui/EmptyState"
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import { toast } from "sonner"
 import {
   Plus,
@@ -311,9 +313,7 @@ export default function GuideManagerPage() {
 
       {/* Guides Table */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
-        </div>
+        <LoadingSkeleton type="table" rows={6} cols={5} />
       ) : filteredGuides.length > 0 ? (
         <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
@@ -430,10 +430,11 @@ export default function GuideManagerPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 border border-dashed border-[rgba(245,240,250,0.14)] rounded">
-          <BookOpen size={40} className="mx-auto text-[#9C8FAE]/30 mb-3" />
-          <p className="text-[#9C8FAE] text-xs">No guides found matching search criteria.</p>
-        </div>
+        <EmptyState
+          icon={<BookOpen size={40} />}
+          title="No Guides Found"
+          description="Create your first published or draft strategy guide to help players navigate Leonida."
+        />
       )}
     </div>
   )

@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     const guideIds = matches.filter((m: any) => m.content_type === "guide").map((m: any) => m.content_id)
 
     const articlesMap = new Map<string, { title: string; slug: string }>()
-    const guidesMap = new Map<string, { title: string; slug: string }>()
+    const guidesMap = new Map<string, { title: string; slug: string; guide_category: string }>()
 
     if (articleIds.length > 0) {
       const { data: articles } = await supabaseAdmin
@@ -118,18 +118,20 @@ export async function POST(request: Request) {
     if (guideIds.length > 0) {
       const { data: guides } = await supabaseAdmin
         .from("guides")
-        .select("id, title, slug")
+        .select("id, title, slug, guide_category")
         .in("id", guideIds)
 
       guides?.forEach((g: any) => {
-        guidesMap.set(g.id, { title: g.title, slug: g.slug })
+        guidesMap.set(g.id, { title: g.title, slug: g.slug, guide_category: g.guide_category })
       })
     }
 
     // 5. Construct Gemini system/user prompt
     const contextSegments = matches.map((m: any) => {
       const source = m.content_type === "article" ? articlesMap.get(m.content_id) : guidesMap.get(m.content_id)
-      const path = m.content_type === "article" ? `/news/${source?.slug || ""}` : `/guides/${source?.slug || ""}`
+      const path = m.content_type === "article"
+        ? `/news/${source?.slug || ""}`
+        : `/guides/${encodeURIComponent((source as any)?.guide_category || "Getting Started")}/${source?.slug || ""}`
       return `Source: ${source?.title || "GTA 6 Hub Content"}\nURL: ${path}\nText: ${m.chunk_text}`
     }).join("\n\n---\n\n")
 
@@ -162,12 +164,45 @@ export async function POST(request: Request) {
       },
     })
 
+    // Expose similarity and source documents as headers
+    const topSimilarity = matches && matches.length > 0 ? (matches[0].similarity ?? 0) : 0
+    const uniqueSources: Array<{ title: string; href: string; type: string }> = []
+    const processedKeys = new Set<string>()
+
+    matches.forEach((m: any) => {
+      const key = `${m.content_type}:${m.content_id}`
+      if (processedKeys.has(key)) return
+      processedKeys.add(key)
+
+      if (m.content_type === "article") {
+        const art = articlesMap.get(m.content_id)
+        if (art) {
+          uniqueSources.push({
+            title: art.title,
+            href: `/news/${art.slug}`,
+            type: "article"
+          })
+        }
+      } else if (m.content_type === "guide") {
+        const gd = guidesMap.get(m.content_id)
+        if (gd) {
+          uniqueSources.push({
+            title: gd.title,
+            href: `/guides/${encodeURIComponent(gd.guide_category || "Getting Started")}/${gd.slug}`,
+            type: "guide"
+          })
+        }
+      }
+    })
+
     const response = new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
-        "Set-Cookie": `gta6_chat_session=${sessionId}; Path=/; Max-Age=${60 * 60 * 24}`
+        "Set-Cookie": `gta6_chat_session=${sessionId}; Path=/; Max-Age=${60 * 60 * 24}`,
+        "X-Similarity-Score": topSimilarity.toString(),
+        "X-Source-Documents": JSON.stringify(uniqueSources)
       }
     })
 
