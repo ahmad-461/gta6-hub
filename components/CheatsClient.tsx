@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { ShieldAlert, Copy, Check, ChevronDown, ChevronUp, Search } from "lucide-react"
+import { ShieldAlert, Copy, Check, ChevronDown, ChevronUp, Search, HelpCircle } from "lucide-react"
+import EmptyState from "@/components/ui/EmptyState"
 
 interface CheatCode {
   id: string
@@ -198,9 +199,11 @@ export default function CheatsClient({ initialCheats }: CheatsClientProps) {
           })}
         </div>
       ) : (
-        <div className="border border-dashed border-card-border p-16 text-center rounded-xl bg-card-bg/40">
-          <p className="text-foreground/40 text-sm">No cheat codes found matching your filters.</p>
-        </div>
+        <EmptyState
+          icon={<HelpCircle className="w-12 h-12 text-neon-yellow/30 mx-auto" />}
+          title="No active bypass algorithms matched"
+          description="Our developmental systems have not cataloged any cheat inputs matching these criteria. Standing by."
+        />
       )}
     </div>
   )

@@ -3,7 +3,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Compass, BookOpen, Globe, Zap, EyeOff, Calendar, ArrowLeft } from "lucide-react"
+import { Compass, BookOpen, Globe, Zap, EyeOff, Calendar, ArrowLeft, Award } from "lucide-react"
+import EmptyState from "@/components/ui/EmptyState"
 
 export const revalidate = 3600
 
@@ -79,7 +80,8 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
       slug,
       difficulty,
       featured_image,
-      published_at
+      published_at,
+      updated_at
     `)
     .eq("guide_category", meta.name)
     .eq("status", "published")
@@ -151,7 +153,7 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
               <div className="p-5 pt-0 mt-2 border-t border-card-border/30 flex items-center justify-between text-[11px] text-foreground/40 font-semibold">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-foreground/30" />
-                  {formatDate(guide.published_at)}
+                  Last Verified: {formatDate(guide.updated_at || guide.published_at)}
                 </span>
                 <Link
                   href={`/guides/${params.category}/${guide.slug}`}
@@ -164,12 +166,16 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
           ))}
         </div>
       ) : (
-        <div className="border border-dashed border-card-border p-16 text-center rounded-xl bg-card-bg/40">
-          <p className="text-foreground/40 text-lg mb-4">No guides published in this category yet.</p>
-          <Link href="/guides" className="text-neon-blue hover:underline text-sm font-semibold">
-            Return to Categories &rarr;
-          </Link>
-        </div>
+        <EmptyState
+          icon={<Award className="w-12 h-12 text-neon-blue/30 mx-auto" />}
+          title="No strategy files compiled"
+          description="Field intelligence has not cleared this sector's tactical guides yet. Standing by."
+          action={
+            <Link href="/guides" className="text-neon-blue hover:underline text-xs font-bold font-mono uppercase tracking-wider">
+              Return to Categories &rarr;
+            </Link>
+          }
+        />
       )}
     </div>
   )

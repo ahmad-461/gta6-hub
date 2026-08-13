@@ -2,7 +2,8 @@ import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Folder, Calendar } from "lucide-react"
+import { Folder, Calendar, FileText } from "lucide-react"
+import EmptyState from "@/components/ui/EmptyState"
 
 export const revalidate = 3600
 
@@ -188,12 +189,16 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
           ))}
         </div>
       ) : (
-        <div className="border border-dashed border-card-border p-16 text-center rounded-xl bg-card-bg/40">
-          <p className="text-foreground/40 text-lg mb-4">No articles found in this section.</p>
-          <Link href="/news" className="text-neon-pink hover:underline text-sm font-semibold">
-            Clear Filters &rarr;
-          </Link>
-        </div>
+        <EmptyState
+          icon={<FileText className="w-12 h-12 text-neon-pink/30 mx-auto" />}
+          title="No confirmed transmissions yet"
+          description="We are standing by for active telemetry. Check back soon."
+          action={
+            <Link href="/news" className="text-neon-pink hover:underline text-xs font-bold font-mono uppercase tracking-wider">
+              Clear Filters &rarr;
+            </Link>
+          }
+        />
       )}
 
       {/* Numbered Pagination */}

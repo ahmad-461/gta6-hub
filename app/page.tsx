@@ -175,7 +175,8 @@ export default async function HomePage() {
           guide_category,
           difficulty,
           featured_image,
-          published_at
+          published_at,
+          updated_at
         `)
         .eq("status", "published")
         .order("published_at", { ascending: false })
@@ -396,6 +397,19 @@ export default async function HomePage() {
                 <Button variant="ghost" size="lg">
                   Explore Leonida
                 </Button>
+              </Link>
+            </div>
+
+            {/* AI Investigator Highlight Link */}
+            <div className="flex items-center space-x-2 text-xs font-mono pt-1">
+              <span className="text-neon-pink">★</span>
+              <span className="text-[#9C8FAE]">ARCHIVE ACCESS MODE:</span>
+              <Link
+                href="/investigate"
+                className="text-[#00E5FF] hover:underline font-bold uppercase tracking-wider flex items-center gap-1 group"
+              >
+                Query the AI Investigator RAG
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
 
@@ -655,6 +669,9 @@ export default async function HomePage() {
                       </div>
                     </div>
                     <div className="p-6 pt-0 mt-2">
+                      <div className="text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase mb-4 text-center">
+                        Last Verified: {formatDate(guide.updated_at || guide.published_at)}
+                      </div>
                       <Link
                         href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}
                         className="block text-center w-full py-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.14)] text-xs font-bold font-mono uppercase tracking-wider hover:bg-[#00E5FF]/5 hover:border-[#00E5FF] text-[#00E5FF] transition-all duration-200"

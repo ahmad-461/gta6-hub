@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 
-Sitemap: https://gta6-hub.vercel.app/sitemap.xml
+Sitemap: https://gta6-hub-liard.vercel.app/sitemap.xml

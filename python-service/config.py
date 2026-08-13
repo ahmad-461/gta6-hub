@@ -2,6 +2,7 @@ import os
 
 # Security and CORS
 CORS_ORIGINS = [
+    "https://gta6-hub-liard.vercel.app",
     "https://gta6-hub.vercel.app",
     "http://localhost:3000",
     "http://127.0.0.1:3000",

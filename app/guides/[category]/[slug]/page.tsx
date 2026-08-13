@@ -166,7 +166,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
       "name": "GTA 6 Hub",
       "logo": {
         "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"}/logo.png`
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/logo.png`
       }
     }
   }
