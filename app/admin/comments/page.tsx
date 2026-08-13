@@ -1,33 +1,38 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import EmptyState from "@/components/ui/EmptyState"
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import { toast } from "sonner"
+import { logAdminActivity } from "@/lib/activity"
 import {
   MessageSquare,
   Check,
   Trash2,
   AlertOctagon,
   Search,
-  Filter,
   Loader2,
   Clock,
-  FolderOpen,
   CheckSquare,
-  Square
+  Square,
+  ArrowUpDown
 } from "lucide-react"
 
 export default function CommentModerationPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [comments, setComments] = useState<any[]>([])
   const [articles, setArticles] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // Filters
-  const [selectedStatus, setSelectedStatus] = useState("pending")
-  const [selectedArticle, setSelectedArticle] = useState("")
-  const [searchQuery, setSearchQuery] = useState("")
+  // Filters from URL query params or fallbacks
+  const [selectedStatus, setSelectedStatus] = useState(searchParams.get("status") || "pending")
+  const [selectedArticle, setSelectedArticle] = useState(searchParams.get("article") || "")
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">((searchParams.get("sortOrder") as "asc" | "desc") || "desc")
 
   // Bulk Selection
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -36,6 +41,17 @@ export default function CommentModerationPage() {
     fetchComments()
     fetchArticles()
   }, [])
+
+  // Sync state to URL params
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedStatus) params.set("status", selectedStatus)
+    if (selectedArticle) params.set("article", selectedArticle)
+    if (searchQuery) params.set("query", searchQuery)
+    if (sortOrder) params.set("sortOrder", sortOrder)
+
+    router.replace(`/admin/comments?${params.toString()}`)
+  }, [selectedStatus, selectedArticle, searchQuery, sortOrder, router])
 
   const fetchComments = async () => {
     setIsLoading(true)
@@ -55,7 +71,6 @@ export default function CommentModerationPage() {
             title
           )
         `)
-        .order("created_at", { ascending: false })
 
       if (error) throw error
       setComments(data || [])
@@ -77,7 +92,6 @@ export default function CommentModerationPage() {
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
-      // Find comment first to check anon_id for points trigger
       const targetComment = comments.find((c) => c.id === id)
 
       const { error } = await supabase
@@ -87,10 +101,16 @@ export default function CommentModerationPage() {
 
       if (error) throw error
 
+      await logAdminActivity({
+        action: newStatus as any,
+        entityType: "comment",
+        entityId: id,
+        entityTitle: `Comment by ${targetComment?.name || "User"}`
+      })
+
       // Award +10 community points if a comment is approved and has an anon_id
       if (newStatus === "approved" && targetComment?.anon_id) {
         try {
-          // Check existing points for that user
           const { data: ptsData } = await supabase
             .from("community_points")
             .select("points")
@@ -126,6 +146,14 @@ export default function CommentModerationPage() {
   const handleDeleteComment = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this comment?")) return
     try {
+      const target = comments.find((c) => c.id === id)
+      await logAdminActivity({
+        action: "deleted",
+        entityType: "comment",
+        entityId: id,
+        entityTitle: `Comment by ${target?.name || "User"}`
+      })
+
       const { error } = await supabase.from("comments").delete().eq("id", id)
       if (error) throw error
       toast.success("Comment deleted successfully.")
@@ -139,7 +167,6 @@ export default function CommentModerationPage() {
   const handleBulkApprove = async () => {
     if (selectedIds.length === 0) return
     try {
-      // Bulk update comments status
       const { error } = await supabase
         .from("comments")
         .update({ status: "approved", updated_at: new Date().toISOString() })
@@ -147,9 +174,15 @@ export default function CommentModerationPage() {
 
       if (error) throw error
 
-      // Award +10 points to each approved comment's anon_id
       for (const id of selectedIds) {
         const target = comments.find((c) => c.id === id)
+        await logAdminActivity({
+          action: "approved",
+          entityType: "comment",
+          entityId: id,
+          entityTitle: `Comment by ${target?.name || "User"}`
+        })
+
         if (target?.anon_id) {
           try {
             const { data: ptsData } = await supabase
@@ -186,8 +219,18 @@ export default function CommentModerationPage() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedIds.length} comments?`)) return
+    if (!confirm(`Are you sure you want to permanently delete ${selectedIds.length} comments?`)) return
     try {
+      for (const id of selectedIds) {
+        const target = comments.find((c) => c.id === id)
+        await logAdminActivity({
+          action: "deleted",
+          entityType: "comment",
+          entityId: id,
+          entityTitle: `Comment by ${target?.name || "User"}`
+        })
+      }
+
       const { error } = await supabase.from("comments").delete().in("id", selectedIds)
       if (error) throw error
       toast.success(`Deleted ${selectedIds.length} comments.`)
@@ -214,43 +257,46 @@ export default function CommentModerationPage() {
     }
   }
 
-  // Filtered comments list
-  const filteredComments = comments.filter((comment) => {
-    const matchesStatus = selectedStatus ? comment.status === selectedStatus : true
-    const matchesArticle = selectedArticle ? comment.article_id === selectedArticle : true
-    const matchesSearch =
-      comment.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      comment.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      comment.email.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filtered & Sorted comments list
+  const filteredComments = comments
+    .filter((comment) => {
+      const matchesStatus = selectedStatus ? comment.status === selectedStatus : true
+      const matchesArticle = selectedArticle ? comment.article_id === selectedArticle : true
+      const matchesSearch =
+        comment.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        comment.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        comment.email.toLowerCase().includes(searchQuery.toLowerCase())
 
-    return matchesStatus && matchesArticle && matchesSearch
-  })
+      return matchesStatus && matchesArticle && matchesSearch
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime()
+      const dateB = new Date(b.created_at).getTime()
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA
+    })
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-mono">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+      <div className="border-b border-[rgba(245,240,250,0.14)] pb-6">
+        <h1 className="text-3xl font-normal text-white tracking-widest sm:text-4xl font-anton uppercase">
           Comment Moderation
         </h1>
-        <p className="mt-2 text-sm text-foreground/60">
+        <p className="mt-2 text-xs text-[#9C8FAE]">
           Review, approve, reject or flag user comments from public article comment sections.
         </p>
       </div>
 
       {/* Filter Row */}
-      <div className="bg-card-bg border border-card-border p-5 rounded-xl gap-4 flex flex-col md:flex-row md:items-center">
+      <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded gap-4 flex flex-col md:flex-row md:items-center">
         {/* Search */}
         <div className="relative flex-grow">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground/40">
-            <Search size={18} />
-          </div>
           <input
             type="text"
             placeholder="Search by commentator name, email or keyword..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition duration-150 text-sm"
+            className="block w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs"
           />
         </div>
 
@@ -261,7 +307,7 @@ export default function CommentModerationPage() {
             setSelectedStatus(e.target.value)
             setSelectedIds([]) // reset selection
           }}
-          className="px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none cursor-pointer"
+          className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none cursor-pointer font-bold"
         >
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
@@ -274,7 +320,7 @@ export default function CommentModerationPage() {
         <select
           value={selectedArticle}
           onChange={(e) => setSelectedArticle(e.target.value)}
-          className="px-3 py-2 bg-[#100e16] border border-card-border rounded-lg text-white text-sm focus:outline-none cursor-pointer max-w-xs truncate"
+          className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none cursor-pointer max-w-xs truncate font-bold"
         >
           <option value="">All Articles</option>
           {articles.map((art) => (
@@ -283,24 +329,32 @@ export default function CommentModerationPage() {
             </option>
           ))}
         </select>
+
+        <button
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          className="px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs hover:border-[#FF2E88]/40 transition flex items-center space-x-1"
+        >
+          <span>Sort Chrono</span>
+          <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+        </button>
       </div>
 
       {/* Bulk actions */}
       {selectedIds.length > 0 && (
-        <div className="bg-neon-pink/10 border border-neon-pink/25 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-none">
-          <p className="text-sm text-neon-pink font-semibold">
+        <div className="bg-[#FF2E88]/10 border border-[#FF2E88]/25 rounded p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-xs text-[#FF2E88] font-bold uppercase tracking-wider">
             {selectedIds.length} comments selected
           </p>
           <div className="flex items-center space-x-2">
             <button
               onClick={handleBulkApprove}
-              className="px-3.5 py-1.5 bg-neon-blue hover:bg-neon-blue/90 text-black text-xs font-bold rounded uppercase transition flex items-center"
+              className="px-3.5 py-1.5 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-black text-[10px] font-bold rounded uppercase tracking-wider transition flex items-center"
             >
               <Check size={14} className="mr-1" /> Approve Selected
             </button>
             <button
               onClick={handleBulkDelete}
-              className="px-3.5 py-1.5 bg-neon-pink hover:bg-neon-pink/90 text-white text-xs font-bold rounded uppercase transition flex items-center"
+              className="px-3.5 py-1.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white text-[10px] font-bold rounded uppercase tracking-wider transition flex items-center"
             >
               <Trash2 size={14} className="mr-1" /> Delete Selected
             </button>
@@ -314,10 +368,10 @@ export default function CommentModerationPage() {
       ) : filteredComments.length > 0 ? (
         <div className="space-y-4">
           {/* Header Action checkbox */}
-          <div className="flex items-center space-x-3 px-4 py-2 bg-[#110f17] border border-card-border rounded-lg text-xs font-bold text-foreground/50 uppercase tracking-wider">
-            <button onClick={handleSelectAll} className="text-foreground/60 hover:text-white transition">
+          <div className="flex items-center space-x-3 px-4 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-xs font-bold text-[#9C8FAE]/50 uppercase tracking-wider">
+            <button onClick={handleSelectAll} className="text-[#9C8FAE]/60 hover:text-white transition">
               {selectedIds.length === filteredComments.length ? (
-                <CheckSquare size={18} className="text-neon-pink" />
+                <CheckSquare size={18} className="text-[#FF2E88]" />
               ) : (
                 <Square size={18} />
               )}
@@ -333,17 +387,17 @@ export default function CommentModerationPage() {
               return (
                 <div
                   key={comment.id}
-                  className={`bg-card-bg border rounded-xl p-6 transition-all duration-200 flex items-start space-x-4 ${
-                    isSelected ? "border-neon-pink bg-neon-pink/5" : "border-card-border hover:border-card-border/80"
+                  className={`bg-[#150C1F] border rounded-xl p-6 transition-all duration-200 flex items-start space-x-4 ${
+                    isSelected ? "border-[#FF2E88] bg-[#FF2E88]/5" : "border-[rgba(245,240,250,0.14)] hover:border-white/20"
                   }`}
                 >
                   {/* Selector */}
                   <button
                     onClick={() => handleSelectId(comment.id)}
-                    className="text-foreground/40 hover:text-white transition flex-shrink-0 mt-1"
+                    className="text-[#9C8FAE]/40 hover:text-white transition flex-shrink-0 mt-1"
                   >
                     {isSelected ? (
-                      <CheckSquare size={20} className="text-neon-pink" />
+                      <CheckSquare size={20} className="text-[#FF2E88]" />
                     ) : (
                       <Square size={20} />
                     )}
@@ -354,19 +408,19 @@ export default function CommentModerationPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
                       <div>
                         <span className="font-bold text-white text-sm">{comment.name}</span>
-                        <span className="text-xs text-foreground/40 font-mono ml-2">({comment.email})</span>
+                        <span className="text-xs text-[#9C8FAE]/40 font-mono ml-2">({comment.email})</span>
                       </div>
-                      <span className="text-xs text-foreground/45 flex items-center">
+                      <span className="text-xs text-[#9C8FAE]/45 flex items-center">
                         <Clock size={12} className="mr-1" />
                         {new Date(comment.created_at).toLocaleString()}
                       </span>
                     </div>
 
-                    <p className="text-xs text-foreground/45 italic">
-                      on <span className="text-neon-blue">&quot;{articleTitle}&quot;</span>
+                    <p className="text-xs text-[#9C8FAE]/45 italic">
+                      on <span className="text-[#00E5FF]">&quot;{articleTitle}&quot;</span>
                     </p>
 
-                    <div className="bg-[#100e16] border border-card-border/60 p-4 rounded-lg text-sm text-foreground/80 leading-relaxed break-words">
+                    <div className="bg-[#0B0710] border border-[rgba(245,240,250,0.08)] p-4 rounded-lg text-sm text-[#F5F0FA]/80 leading-relaxed break-words">
                       {comment.content}
                     </div>
 
@@ -375,12 +429,12 @@ export default function CommentModerationPage() {
                       {/* Status label */}
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                         comment.status === "approved"
-                          ? "bg-neon-blue/15 text-neon-blue"
+                          ? "bg-emerald-500/10 text-emerald-400"
                           : comment.status === "spam"
-                          ? "bg-neon-yellow/15 text-neon-yellow"
+                          ? "bg-amber-500/10 text-amber-500"
                           : comment.status === "deleted"
-                          ? "bg-foreground/5 text-foreground/40"
-                          : "bg-neon-pink/15 text-neon-pink"
+                          ? "bg-white/5 text-[#9C8FAE]"
+                          : "bg-[#FF2E88]/10 text-[#FF2E88]"
                       }`}>
                         {comment.status}
                       </span>
@@ -390,7 +444,7 @@ export default function CommentModerationPage() {
                         {comment.status !== "approved" && (
                           <button
                             onClick={() => handleUpdateStatus(comment.id, "approved")}
-                            className="inline-flex items-center px-2.5 py-1 bg-neon-blue/10 hover:bg-neon-blue/20 text-neon-blue rounded text-xs font-semibold transition"
+                            className="inline-flex items-center px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded text-xs font-semibold transition border border-emerald-500/20"
                             title="Approve comment"
                           >
                             <Check size={12} className="mr-1" /> Approve
@@ -399,7 +453,7 @@ export default function CommentModerationPage() {
                         {comment.status !== "spam" && (
                           <button
                             onClick={() => handleUpdateStatus(comment.id, "spam")}
-                            className="inline-flex items-center px-2.5 py-1 bg-neon-yellow/10 hover:bg-neon-yellow/20 text-neon-yellow rounded text-xs font-semibold transition"
+                            className="inline-flex items-center px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 rounded text-xs font-semibold transition border border-amber-500/20"
                             title="Mark comment as spam"
                           >
                             <AlertOctagon size={12} className="mr-1" /> Mark Spam
@@ -407,7 +461,7 @@ export default function CommentModerationPage() {
                         )}
                         <button
                           onClick={() => handleDeleteComment(comment.id)}
-                          className="inline-flex items-center px-2.5 py-1 bg-neon-pink/10 hover:bg-neon-pink/20 text-neon-pink rounded text-xs font-semibold transition"
+                          className="inline-flex items-center px-2.5 py-1 bg-[#FF2E88]/10 hover:bg-[#FF2E88]/20 text-[#FF2E88] rounded text-xs font-semibold transition border border-[#FF2E88]/20"
                           title="Delete permanently"
                         >
                           <Trash2 size={12} className="mr-1" /> Delete

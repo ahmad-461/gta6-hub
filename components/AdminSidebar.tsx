@@ -22,7 +22,8 @@ import {
   Power,
   Compass,
   MapPin,
-  Video
+  Video,
+  Clock
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -81,6 +82,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     { name: "Comments", href: "/admin/comments", icon: MessageSquare, roles: ["admin", "editor"] },
     { name: "Site Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
     { name: "User Manager", href: "/admin/users", icon: Users2, roles: ["admin"] },
+    { name: "Audit Trail", href: "/admin/activity", icon: Clock, roles: ["admin"] },
   ]
 
   const filteredItems = menuItems.filter((item) => item.roles.includes(user.role))

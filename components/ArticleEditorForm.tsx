@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { logAdminActivity } from "@/lib/activity"
 import NextImage from "next/image"
 import { z } from "zod"
 import { toast } from "sonner"
@@ -210,10 +211,15 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
   const wordCount = textOnly.split(/\s+/).filter(Boolean).length
   const readTime = Math.ceil(wordCount / 200)
 
+  // Ref to prevent keyboard shortcut stale closure issues
+  const handleSaveRef = useRef<any>(null)
+
   // Submit Handler
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSave = async (e?: React.FormEvent, statusOverride?: "draft" | "published" | "archived") => {
+    if (e) e.preventDefault()
     setIsSaving(true)
+
+    const targetStatus = statusOverride || status
 
     // Run background similarity duplicate check on save
     if (!duplicateWarning) {
@@ -237,7 +243,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       content,
       excerpt,
       category,
-      status,
+      status: targetStatus,
       publishedAt: publishedAt || undefined,
       seoTitle: seoTitle || undefined,
       featuredImage: featuredImage || undefined,
@@ -263,11 +269,11 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         content,
         excerpt: excerpt || null,
         category: category || null,
-        status,
+        status: targetStatus,
         featured_image: featuredImage || null,
         seo_title: seoTitle || null,
         seo_description: seoDescription || null,
-        published_at: publishedAt ? new Date(publishedAt).toISOString() : (status === "published" ? new Date().toISOString() : null),
+        published_at: publishedAt ? new Date(publishedAt).toISOString() : (targetStatus === "published" ? new Date().toISOString() : null),
         author_id: authorId,
         updated_at: new Date().toISOString(),
         rumor_status: rumorStatus || null,
@@ -335,6 +341,16 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
         }
       }
 
+      // Log audit trail action
+      if (savedArticleId) {
+        await logAdminActivity({
+          action: isEditing ? "updated" : "created",
+          entityType: "article",
+          entityId: savedArticleId,
+          entityTitle: title
+        })
+      }
+
       toast.success(isEditing ? "Article updated successfully!" : "Article published/created successfully!")
 
       // Trigger embeddings generation via server action
@@ -353,6 +369,31 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
       setIsSaving(false)
     }
   }
+
+  // Update handleSaveRef
+  handleSaveRef.current = handleSave
+
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+S or Ctrl+S -> Save Draft
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault()
+        toast.info("Saving draft via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "draft")
+      }
+
+      // Cmd+Enter or Ctrl+Enter -> Publish
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault()
+        toast.info("Publishing via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "published")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   if (isLoading) {
     return (

@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { logAdminActivity } from "@/lib/activity"
 import { z } from "zod"
 import { toast } from "sonner"
 import TiptapEditor from "@/components/TiptapEditor"
@@ -195,10 +196,15 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
   const wordCount = textOnly.split(/\s+/).filter(Boolean).length
   const readTime = Math.ceil(wordCount / 200)
 
+  // Ref to prevent keyboard shortcut stale closure issues
+  const handleSaveRef = useRef<any>(null)
+
   // Submit Handler
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSave = async (e?: React.FormEvent, statusOverride?: "draft" | "published" | "archived") => {
+    if (e) e.preventDefault()
     setIsSaving(true)
+
+    const targetStatus = statusOverride || status
 
     // Run background similarity duplicate check on save
     if (!duplicateWarning) {
@@ -221,7 +227,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       content,
       guideCategory,
       difficulty,
-      status,
+      status: targetStatus,
       publishedAt: publishedAt || undefined,
       featuredImage: featuredImage || undefined,
       seoTitle: seoTitle || undefined,
@@ -247,11 +253,11 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         content,
         guide_category: guideCategory,
         difficulty,
-        status,
+        status: targetStatus,
         featured_image: featuredImage || null,
         word_count: wordCount,
         toc: toc, // save table of contents JSONB dynamically!
-        published_at: publishedAt ? new Date(publishedAt).toISOString() : (status === "published" ? new Date().toISOString() : null),
+        published_at: publishedAt ? new Date(publishedAt).toISOString() : (targetStatus === "published" ? new Date().toISOString() : null),
         author_id: authorId,
         seo_title: seoTitle || null,
         seo_description: seoDescription || null,
@@ -282,6 +288,16 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         savedGuideId = data?.id
       }
 
+      // Log audit trail action
+      if (savedGuideId) {
+        await logAdminActivity({
+          action: isEditing ? "updated" : "created",
+          entityType: "guide",
+          entityId: savedGuideId,
+          entityTitle: title
+        })
+      }
+
       toast.success(isEditing ? "Guide updated successfully!" : "Guide published/created successfully!")
 
       // Trigger embeddings generation via server action
@@ -300,6 +316,31 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       setIsSaving(false)
     }
   }
+
+  // Update handleSaveRef
+  handleSaveRef.current = handleSave
+
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+S or Ctrl+S -> Save Draft
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault()
+        toast.info("Saving draft via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "draft")
+      }
+
+      // Cmd+Enter or Ctrl+Enter -> Publish
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault()
+        toast.info("Publishing via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "published")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   if (isLoading) {
     return (

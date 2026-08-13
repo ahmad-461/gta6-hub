@@ -1,6 +1,8 @@
-import React from "react"
+"use client"
+
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { createSupabaseServerClient } from "@/lib/supabase-server"
+import { supabase } from "@/lib/supabase"
 import {
   FileText,
   BookOpen,
@@ -10,175 +12,216 @@ import {
   Clock,
   ArrowRight,
   ShieldCheck,
-  Plus
+  Plus,
+  Loader2
 } from "lucide-react"
 import SystemHealth from "@/components/SystemHealth"
 import SEOSummaryCard from "@/components/SEOSummaryCard"
+import Sparkline from "@/components/ui/Sparkline"
 
-export const dynamic = "force-dynamic"
+export default function AdminDashboardPage() {
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<any[]>([])
+  const [pendingCount, setPendingCount] = useState(0)
+  const [pendingComments, setPendingComments] = useState<any[]>([])
+  const [recentActivities, setRecentActivities] = useState<any[]>([])
+  const [activityTrends, setActivityTrends] = useState<Record<string, number[]>>({
+    article: [0, 0, 0, 0, 0, 0, 0],
+    guide: [0, 0, 0, 0, 0, 0, 0],
+    character: [0, 0, 0, 0, 0, 0, 0],
+    cheat_code: [0, 0, 0, 0, 0, 0, 0]
+  })
+  const [trendDiffs, setTrendDiffs] = useState<Record<string, number>>({
+    article: 0,
+    guide: 0,
+    character: 0,
+    cheat_code: 0
+  })
 
-export default async function AdminDashboardPage() {
-  const supabase = createSupabaseServerClient()
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
 
-  // 1. Fetch counts
-  const [
-    articlesCount,
-    guidesCount,
-    charactersCount,
-    cheatsCount,
-    commentsCount
-  ] = await Promise.all([
-    supabase.from("articles").select("*", { count: "exact", head: true }),
-    supabase.from("guides").select("*", { count: "exact", head: true }),
-    supabase.from("characters").select("*", { count: "exact", head: true }),
-    supabase.from("cheat_codes").select("*", { count: "exact", head: true }),
-    supabase.from("comments").select("*", { count: "exact", head: true }).eq("status", "pending")
-  ])
+  const fetchDashboardData = async () => {
+    setLoading(true)
+    try {
+      // 1. Fetch counts
+      const [
+        articlesCount,
+        guidesCount,
+        charactersCount,
+        cheatsCount,
+        commentsCount
+      ] = await Promise.all([
+        supabase.from("articles").select("*", { count: "exact", head: true }),
+        supabase.from("guides").select("*", { count: "exact", head: true }),
+        supabase.from("characters").select("*", { count: "exact", head: true }),
+        supabase.from("cheat_codes").select("*", { count: "exact", head: true }),
+        supabase.from("comments").select("*", { count: "exact", head: true }).eq("status", "pending")
+      ])
 
-  // 2. Fetch pending comments
-  const { data: pendingComments } = await supabase
-    .from("comments")
-    .select("id, name, content, created_at, article_id, articles(title)")
-    .eq("status", "pending")
-    .order("created_at", { ascending: false })
-    .limit(5)
+      setPendingCount(commentsCount.count || 0)
 
-  // 3. Fetch recently updated content
-  const [
-    recentArticles,
-    recentGuides,
-    recentCharacters,
-    recentCheats
-  ] = await Promise.all([
-    supabase.from("articles").select("id, title, updated_at").order("updated_at", { ascending: false }).limit(3),
-    supabase.from("guides").select("id, title, updated_at").order("updated_at", { ascending: false }).limit(3),
-    supabase.from("characters").select("id, name, updated_at").order("updated_at", { ascending: false }).limit(3),
-    supabase.from("cheat_codes").select("id, title, updated_at").order("updated_at", { ascending: false }).limit(3),
-  ])
+      // 2. Fetch pending comments
+      const { data: commentsData } = await supabase
+        .from("comments")
+        .select("id, name, content, created_at, article_id, articles(title)")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(5)
 
-  // Format and merge recently updated content
-  const recentlyUpdated: any[] = []
+      setPendingComments(commentsData || [])
 
-  if (recentArticles.data) {
-    recentArticles.data.forEach((item) => {
-      recentlyUpdated.push({
-        id: item.id,
-        title: item.title,
-        type: "Article",
-        href: `/admin/articles/${item.id}`,
-        updatedAt: new Date(item.updated_at),
-        color: "text-[#FF2E88] bg-[#FF2E88]/10 border border-[#FF2E88]/15"
+      // 3. Fetch activity log feed (last 10)
+      const { data: activitiesData } = await supabase
+        .from("activity_log")
+        .select(`
+          id,
+          action,
+          entity_type,
+          entity_id,
+          entity_title,
+          created_at,
+          actor_id,
+          profiles (name)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(10)
+
+      const safeActivities = (activitiesData || []).map((act) => ({
+        id: act.id,
+        action: act.action,
+        entityType: act.entity_type,
+        entityId: act.entity_id,
+        entityTitle: act.entity_title || `${act.entity_type} ${act.action}`,
+        createdAt: new Date(act.created_at),
+        actorName: (act.profiles as any)?.name || "System"
+      }))
+      setRecentActivities(safeActivities)
+
+      // 4. Compute 7-day activity sparkline data
+      // We will count activity_log occurrences for each content type over the last 7 days (including today)
+      const days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date()
+        d.setDate(d.getDate() - (6 - i))
+        return d.toDateString()
       })
-    })
+
+      // Fetch all activity_logs for content types in the last 7 days
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      const { data: logsData } = await supabase
+        .from("activity_log")
+        .select("entity_type, created_at")
+        .gte("created_at", sevenDaysAgo.toISOString())
+
+      const counts: Record<string, number[]> = {
+        article: [0, 0, 0, 0, 0, 0, 0],
+        guide: [0, 0, 0, 0, 0, 0, 0],
+        character: [0, 0, 0, 0, 0, 0, 0],
+        cheat_code: [0, 0, 0, 0, 0, 0, 0]
+      }
+
+      const diffs: Record<string, number> = {
+        article: 0,
+        guide: 0,
+        character: 0,
+        cheat_code: 0
+      }
+
+      if (logsData) {
+        logsData.forEach((log) => {
+          const type = log.entity_type
+          if (counts[type]) {
+            const logDate = new Date(log.created_at).toDateString()
+            const dayIndex = days.indexOf(logDate)
+            if (dayIndex !== -1) {
+              counts[type][dayIndex] += 1
+            }
+          }
+        })
+
+        // Compute "this week" change diff
+        Object.keys(counts).forEach((key) => {
+          diffs[key] = counts[key].reduce((sum, val) => sum + val, 0)
+        })
+      }
+
+      setActivityTrends(counts)
+      setTrendDiffs(diffs)
+
+      setStats([
+        {
+          name: "Articles",
+          count: articlesCount.count || 0,
+          trend: counts.article,
+          diff: diffs.article,
+          icon: FileText,
+          href: "/admin/articles",
+          color: "#FF2E88",
+          borderColor: "hover:border-[#FF2E88]/40",
+          bg: "bg-[#FF2E88]/10",
+          entityKey: "article"
+        },
+        {
+          name: "Guides",
+          count: guidesCount.count || 0,
+          trend: counts.guide,
+          diff: diffs.guide,
+          icon: BookOpen,
+          href: "/admin/guides",
+          color: "#00E5FF",
+          borderColor: "hover:border-[#00E5FF]/40",
+          bg: "bg-[#00E5FF]/10",
+          entityKey: "guide"
+        },
+        {
+          name: "Characters",
+          count: charactersCount.count || 0,
+          trend: counts.character,
+          diff: diffs.character,
+          icon: Users,
+          href: "/admin/characters",
+          color: "#FF8A3D",
+          borderColor: "hover:border-[#FF8A3D]/40",
+          bg: "bg-[#FF8A3D]/10",
+          entityKey: "character"
+        },
+        {
+          name: "Cheat Codes",
+          count: cheatsCount.count || 0,
+          trend: counts.cheat_code,
+          diff: diffs.cheat_code,
+          icon: Key,
+          href: "/admin/cheats",
+          color: "#A78BFA",
+          borderColor: "hover:border-[#A78BFA]/40",
+          bg: "bg-[#A78BFA]/10",
+          entityKey: "cheat_code"
+        },
+      ])
+
+    } catch (err) {
+      console.error("Dashboard loaded error:", err)
+    } finally {
+      setLoading(false)
+    }
   }
-  if (recentGuides.data) {
-    recentGuides.data.forEach((item) => {
-      recentlyUpdated.push({
-        id: item.id,
-        title: item.title,
-        type: "Guide",
-        href: `/admin/guides/${item.id}`,
-        updatedAt: new Date(item.updated_at),
-        color: "text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/15"
-      })
-    })
-  }
-  if (recentCharacters.data) {
-    recentCharacters.data.forEach((item) => {
-      recentlyUpdated.push({
-        id: item.id,
-        title: item.name,
-        type: "Character",
-        href: `/admin/characters/${item.id}`,
-        updatedAt: new Date(item.updated_at),
-        color: "text-[#6C1FB5] bg-[#6C1FB5]/10 border border-[#6C1FB5]/15"
-      })
-    })
-  }
-  if (recentCheats.data) {
-    recentCheats.data.forEach((item) => {
-      recentlyUpdated.push({
-        id: item.id,
-        title: `${item.title}`,
-        type: "Cheat Code",
-        href: `/admin/cheats`,
-        updatedAt: new Date(item.updated_at),
-        color: "text-amber-400 bg-amber-400/10 border border-amber-400/15"
-      })
-    })
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 font-mono">
+        <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
+      </div>
+    )
   }
 
-  // Sort by updatedAt descending
-  recentlyUpdated.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  const recentUpdatesToShow = recentlyUpdated.slice(0, 5)
-
-  const stats = [
-    {
-      name: "Articles",
-      count: articlesCount.count || 0,
-      icon: FileText,
-      href: "/admin/articles",
-      color: "text-[#FF2E88]",
-      borderColor: "hover:border-[#FF2E88]/40",
-      bg: "bg-[#FF2E88]/10"
-    },
-    {
-      name: "Guides",
-      count: guidesCount.count || 0,
-      icon: BookOpen,
-      href: "/admin/guides",
-      color: "text-[#00E5FF]",
-      borderColor: "hover:border-[#00E5FF]/40",
-      bg: "bg-[#00E5FF]/10"
-    },
-    {
-      name: "Characters",
-      count: charactersCount.count || 0,
-      icon: Users,
-      href: "/admin/characters",
-      color: "text-[#6C1FB5]",
-      borderColor: "hover:border-[#6C1FB5]/40",
-      bg: "bg-[#6C1FB5]/10"
-    },
-    {
-      name: "Cheat Codes",
-      count: cheatsCount.count || 0,
-      icon: Key,
-      href: "/admin/cheats",
-      color: "text-amber-400",
-      borderColor: "hover:border-amber-400/40",
-      bg: "bg-amber-400/10"
-    },
-  ]
-
-  // Content Pulse math
-  const pulseCounts = {
-    articles: articlesCount.count || 0,
-    guides: guidesCount.count || 0,
-    characters: charactersCount.count || 0,
-    cheats: cheatsCount.count || 0,
-  }
-
-  const maxCount = Math.max(
-    pulseCounts.articles,
-    pulseCounts.guides,
-    pulseCounts.characters,
-    pulseCounts.cheats,
-    1
-  )
-
-  const pulseItems = [
-    { label: "Articles", count: pulseCounts.articles, percentage: (pulseCounts.articles / maxCount) * 100, color: "bg-[#FF2E88]" },
-    { label: "Guides", count: pulseCounts.guides, percentage: (pulseCounts.guides / maxCount) * 100, color: "bg-[#00E5FF]" },
-    { label: "Characters", count: pulseCounts.characters, percentage: (pulseCounts.characters / maxCount) * 100, color: "bg-[#6C1FB5]" },
-    { label: "Cheat Codes", count: pulseCounts.cheats, percentage: (pulseCounts.cheats / maxCount) * 100, color: "bg-amber-400" },
-  ]
-
-  const isPulseEmpty = pulseCounts.articles === 0 && pulseCounts.guides === 0 && pulseCounts.characters === 0 && pulseCounts.cheats === 0
-
-  // Date Formatting for Server Rendering
-  const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-  const formattedDate = new Date().toLocaleDateString('en-US', dateOptions)
+  const formattedDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 
   return (
     <div className="space-y-8 animate-fade-in font-mono">
@@ -216,10 +259,11 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 2. PREMIUM STATS GRID */}
+      {/* 2. PREMIUM STATS GRID WITH SPARKLINE TRENDS */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {stats.map((stat) => {
           const Icon = stat.icon
+          const isPositive = stat.diff > 0
           return (
             <Link
               key={stat.name}
@@ -228,24 +272,38 @@ export default async function AdminDashboardPage() {
               className={`group relative bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-5 rounded transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-md ${stat.borderColor} hover:-translate-y-1`}
             >
               {/* Colored top indicator */}
-              <div className={`absolute top-0 left-0 right-0 h-[2px] ${stat.bg} ${stat.color} opacity-40 group-hover:opacity-100 transition-opacity`}></div>
+              <div
+                className={`absolute top-0 left-0 right-0 h-[2px] opacity-40 group-hover:opacity-100 transition-opacity`}
+                style={{ backgroundColor: stat.color }}
+              ></div>
 
               <div className="flex items-center justify-between w-full">
                 <span className="text-[10px] font-bold text-[#9C8FAE] uppercase tracking-widest">
                   {stat.name}
                 </span>
-                <div className={`p-2 rounded ${stat.bg} ${stat.color} transition-transform duration-300 group-hover:scale-105`}>
+                <div
+                  className={`p-2 rounded ${stat.bg} transition-transform duration-300 group-hover:scale-105`}
+                  style={{ color: stat.color }}
+                >
                   <Icon size={16} />
                 </div>
               </div>
 
               <div className="mt-4">
-                <p className="text-3xl font-bold text-white leading-none tracking-tight font-space-mono">
-                  {stat.count}
-                </p>
-                <p className="text-[10px] text-[#9C8FAE]/40 font-bold uppercase tracking-wider mt-1">
+                <div className="flex items-baseline space-x-2">
+                  <p className="text-3xl font-bold text-white leading-none tracking-tight font-space-mono">
+                    {stat.count}
+                  </p>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${isPositive ? "text-emerald-400" : "text-[#9C8FAE]/40"}`}>
+                    {isPositive ? `+${stat.diff} acts` : "static"}
+                  </span>
+                </div>
+                <p className="text-[10px] text-[#9C8FAE]/40 font-bold uppercase tracking-wider mt-1 mb-2">
                   Total Records
                 </p>
+
+                {/* 7-Day Sparkline Render */}
+                <Sparkline data={stat.trend} color={stat.color} />
               </div>
             </Link>
           )
@@ -309,10 +367,10 @@ export default async function AdminDashboardPage() {
               <Link
                 href="/admin/characters/new"
                 prefetch={false}
-                className="flex items-start justify-between p-4 bg-[#0B0710]/60 border border-[rgba(245,240,250,0.14)] rounded hover:border-[#6C1FB5]/40 hover:bg-[#6C1FB5]/5 transition duration-300 group"
+                className="flex items-start justify-between p-4 bg-[#0B0710]/60 border border-[rgba(245,240,250,0.14)] rounded hover:border-[#FF8A3D]/40 hover:bg-[#FF8A3D]/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
-                  <div className="p-2 bg-[#6C1FB5]/10 text-[#6C1FB5] border border-[#6C1FB5]/20 rounded group-hover:bg-[#6C1FB5]/20 transition shrink-0 mt-0.5">
+                  <div className="p-2 bg-[#FF8A3D]/10 text-[#FF8A3D] border border-[#FF8A3D]/20 rounded group-hover:bg-[#FF8A3D]/20 transition shrink-0 mt-0.5">
                     <Plus size={16} />
                   </div>
                   <div>
@@ -320,17 +378,17 @@ export default async function AdminDashboardPage() {
                     <p className="text-[11px] text-[#9C8FAE] mt-1 font-medium leading-relaxed">Populate the Wiki with biographical info, voice actors, and stats.</p>
                   </div>
                 </div>
-                <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-[#6C1FB5] group-hover:translate-x-1 transition shrink-0 mt-1" />
+                <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-[#FF8A3D] group-hover:translate-x-1 transition shrink-0 mt-1" />
               </Link>
 
               {/* Shortcut 4: Cheats */}
               <Link
                 href="/admin/cheats"
                 prefetch={false}
-                className="flex items-start justify-between p-4 bg-[#0B0710]/60 border border-[rgba(245,240,250,0.14)] rounded hover:border-amber-400/40 hover:bg-amber-400/5 transition duration-300 group"
+                className="flex items-start justify-between p-4 bg-[#0B0710]/60 border border-[rgba(245,240,250,0.14)] rounded hover:border-[#A78BFA]/40 hover:bg-[#A78BFA]/5 transition duration-300 group"
               >
                 <div className="flex space-x-3.5">
-                  <div className="p-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 rounded group-hover:bg-amber-400/20 transition shrink-0 mt-0.5">
+                  <div className="p-2 bg-[#A78BFA]/10 text-[#A78BFA] border border-[#A78BFA]/20 rounded group-hover:bg-[#A78BFA]/20 transition shrink-0 mt-0.5">
                     <Plus size={16} />
                   </div>
                   <div>
@@ -338,7 +396,7 @@ export default async function AdminDashboardPage() {
                     <p className="text-[11px] text-[#9C8FAE] mt-1 font-medium leading-relaxed">Add codes, platforms, CSV batch uploads, or modify visibility.</p>
                   </div>
                 </div>
-                <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-amber-400 group-hover:translate-x-1 transition shrink-0 mt-1" />
+                <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-[#A78BFA] group-hover:translate-x-1 transition shrink-0 mt-1" />
               </Link>
             </div>
           </div>
@@ -360,13 +418,16 @@ export default async function AdminDashboardPage() {
               </span>
             </div>
 
-            {isPulseEmpty ? (
-              <div className="text-center py-8 border border-dashed border-[rgba(245,240,250,0.14)] rounded bg-[#0B0710]/40">
-                <p className="text-xs text-[#9C8FAE] font-medium">No recorded content found.</p>
-              </div>
-            ) : (
-              <div className="space-y-3.5">
-                {pulseItems.map((item) => (
+            <div className="space-y-3.5">
+              {[
+                { label: "Articles", count: stats[0]?.count || 0, color: "bg-[#FF2E88]" },
+                { label: "Guides", count: stats[1]?.count || 0, color: "bg-[#00E5FF]" },
+                { label: "Characters", count: stats[2]?.count || 0, color: "bg-[#FF8A3D]" },
+                { label: "Cheat Codes", count: stats[3]?.count || 0, color: "bg-[#A78BFA]" },
+              ].map((item) => {
+                const max = Math.max(stats[0]?.count || 1, stats[1]?.count || 1, stats[2]?.count || 1, stats[3]?.count || 1)
+                const percentage = (item.count / max) * 100
+                return (
                   <div key={item.label} className="space-y-1.5">
                     <div className="flex justify-between items-center text-xs font-semibold">
                       <span className="text-[#9C8FAE] uppercase text-[10px] tracking-wider">{item.label}</span>
@@ -375,18 +436,17 @@ export default async function AdminDashboardPage() {
                     <div className="h-1.5 w-full bg-[#0B0710] rounded overflow-hidden border border-[rgba(245,240,250,0.08)]">
                       <div
                         className={`h-full ${item.color} rounded transition-all duration-1000 ease-out`}
-                        style={{ width: `${item.percentage}%` }}
+                        style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                )
+              })}
+            </div>
           </div>
 
-          {/* Leonida Status Card (Subtle signature easter egg) */}
+          {/* Leonida Status Card */}
           <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded relative overflow-hidden shadow-xl min-h-[170px] flex flex-col justify-between group">
-            {/* Very low opacity grid/radar graphics */}
             <div className="absolute inset-0 bg-[radial-gradient(#ff007f08_1.2px,transparent_1.2px)] [background-size:16px_16px] pointer-events-none"></div>
 
             <div className="flex justify-between items-start relative z-10">
@@ -434,18 +494,18 @@ export default async function AdminDashboardPage() {
                 </h2>
               </div>
               <span className="bg-[#FF2E88]/15 text-[#FF2E88] border border-[#FF2E88]/20 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
-                {commentsCount.count || 0} Awaiting
+                {pendingCount} Awaiting
               </span>
             </div>
 
-            {pendingComments && pendingComments.length > 0 ? (
+            {pendingComments.length > 0 ? (
               <div className="space-y-4 divide-y divide-[rgba(245,240,250,0.14)]">
                 {pendingComments.map((comment) => (
                   <div key={comment.id} className="pt-4 first:pt-0 space-y-1.5">
                     <div className="flex justify-between items-start">
                       <p className="text-xs font-bold text-white tracking-wide">{comment.name}</p>
                       <span className="text-[10px] text-[#9C8FAE]/40">
-                        {new Date(comment.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        {new Date(comment.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                       </span>
                     </div>
                     <p className="text-[10px] text-[#9C8FAE]/50 italic truncate">
@@ -468,7 +528,7 @@ export default async function AdminDashboardPage() {
             )}
           </div>
 
-          {pendingComments && pendingComments.length > 0 && (
+          {pendingComments.length > 0 && (
             <div className="mt-6 pt-4 border-t border-[rgba(245,240,250,0.14)]">
               <Link
                 href="/admin/comments"
@@ -496,34 +556,44 @@ export default async function AdminDashboardPage() {
               </span>
             </div>
 
-            {recentUpdatesToShow.length > 0 ? (
+            {recentActivities.length > 0 ? (
               <div className="space-y-4">
-                {recentUpdatesToShow.map((item, idx) => (
-                  <div key={idx} className="flex items-start justify-between bg-[#0B0710]/40 p-3 border border-[rgba(245,240,250,0.08)] rounded hover:border-[rgba(245,240,250,0.14)] transition duration-150 group">
-                    <div className="min-w-0 flex items-center space-x-3">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider shrink-0 ${item.color}`}>
-                        {item.type}
-                      </span>
-                      <p className="text-xs font-bold text-white truncate leading-tight group-hover:text-[#00E5FF] transition-colors">
-                        {item.title}
-                      </p>
+                {recentActivities.map((item, idx) => {
+                  let badgeColor = "text-[#FF2E88] bg-[#FF2E88]/10 border border-[#FF2E88]/15"
+                  if (item.entityType === "guide") {
+                    badgeColor = "text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/15"
+                  } else if (item.entityType === "character") {
+                    badgeColor = "text-[#FF8A3D] bg-[#FF8A3D]/10 border border-[#FF8A3D]/15"
+                  } else if (item.entityType === "cheat_code") {
+                    badgeColor = "text-[#A78BFA] bg-[#A78BFA]/10 border border-[#A78BFA]/15"
+                  }
+
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-start justify-between bg-[#0B0710]/40 p-3 border border-[rgba(245,240,250,0.08)] rounded hover:border-[rgba(245,240,250,0.14)] transition duration-150 group"
+                    >
+                      <div className="min-w-0 flex items-center space-x-3">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider shrink-0 ${badgeColor}`}>
+                          {item.entityType.replace("_", " ")}
+                        </span>
+                        <div>
+                          <p className="text-xs font-bold text-white truncate leading-tight transition-colors">
+                            {item.entityTitle}
+                          </p>
+                          <p className="text-[9px] text-[#9C8FAE]/50 mt-0.5 uppercase tracking-wider font-mono">
+                            By {item.actorName} &bull; {item.action}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right flex items-center space-x-3 shrink-0 ml-4 font-space-mono text-xs">
+                        <span className="text-[10px] text-[#9C8FAE]/40">
+                          {item.createdAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right flex items-center space-x-3 shrink-0 ml-4 font-space-mono text-xs">
-                      <span className="text-[10px] text-[#9C8FAE]/40">
-                        {item.updatedAt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                      </span>
-                      {item.href && (
-                        <Link
-                          href={item.href}
-                          prefetch={false}
-                          className="text-[10px] font-bold text-[#00E5FF] uppercase tracking-widest hover:underline"
-                        >
-                          Edit
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <div className="text-center py-12 border border-dashed border-[rgba(245,240,250,0.14)] rounded bg-[#0B0710]/30 flex flex-col items-center justify-center space-y-2">
