@@ -149,7 +149,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       "name": "GTA 6 Hub",
       "logo": {
         "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"}/logo.png`
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/logo.png`
       }
     }
   }
@@ -206,7 +206,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   // Construct absolute article URL for sharing
-  const articleUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"}/news/${article.slug}`
+  const articleUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/news/${article.slug}`
   const encodedTitle = encodeURIComponent(article.title)
   const encodedUrl = encodeURIComponent(articleUrl)
 

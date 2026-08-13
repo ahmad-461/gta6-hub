@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s | GTA 6 Hub",
   },
   description: "The ultimate resource for Grand Theft Auto VI. Find dynamic cheat codes, comprehensive character guides, news, and custom modding tools.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"),
   openGraph: {
     title: "GTA 6 Hub",
     description: "The ultimate Grand Theft Auto VI portal.",

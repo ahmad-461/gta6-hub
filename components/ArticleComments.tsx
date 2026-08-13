@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { MessageSquare, Send, CheckCircle2 } from "lucide-react"
+import EmptyState from "@/components/ui/EmptyState"
 
 interface Comment {
   id: string
@@ -116,9 +117,12 @@ export default function ArticleComments({ articleId, initialComments }: ArticleC
             </div>
           ))
         ) : (
-          <p className="text-foreground/40 text-sm italic">
-            No approved comments yet. Be the first to start the discussion!
-          </p>
+          <EmptyState
+            icon={<MessageSquare className="w-8 h-8 text-neon-pink/30 mx-auto" />}
+            title="No citizen transmissions decrypted yet"
+            description="Initiate the feed and start the discussion below."
+            className="p-6 border-dashed"
+          />
         )}
       </div>
 

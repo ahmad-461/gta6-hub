@@ -54,6 +54,7 @@ export default function IntelligencePage() {
           excerpt,
           featured_image,
           published_at,
+          updated_at,
           category,
           rumor_status
         `)
@@ -301,7 +302,7 @@ export default function IntelligencePage() {
                       </span>
                       <span className="flex items-center gap-1 text-[#9C8FAE]">
                         <Calendar className="w-3.5 h-3.5 text-[#9C8FAE]/60" />
-                        {formatDate(rumor.published_at)}
+                        Last Verified: {formatDate(rumor.updated_at || rumor.published_at)}
                       </span>
                     </div>
 
@@ -362,8 +363,8 @@ export default function IntelligencePage() {
       ) : (
         <EmptyState
           icon={<HelpCircle className="w-12 h-12 text-[#9C8FAE]/30 mx-auto" />}
-          title="No Dossiers Located"
-          description="There are currently no published intelligence files, rumors, or debunked alerts matching this active credibility filter."
+          title="No intercepted whispers matching filter"
+          description="This signal tier is quiet. Meticulous tracking continues. Standing by."
         />
       )}
     </div>

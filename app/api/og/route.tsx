@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
               textTransform: "uppercase",
             }}
           >
-            gta6-hub.vercel.app
+            gta6-hub-liard.vercel.app
           </div>
         </div>
       ),

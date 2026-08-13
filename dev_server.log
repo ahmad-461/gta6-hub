@@ -6,26 +6,22 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 2.8s
+ ✓ Ready in 1851ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1189ms (127 modules)
+ ✓ Compiled /middleware in 1172ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.3s (887 modules)
- HEAD / 200 in 7876ms
+ ✓ Compiled / in 9.4s (887 modules)
+ GET / 200 in 10868ms
+ ○ Compiling /_not-found ...
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 104ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1873ms (872 modules)
- GET /og-image.jpg 404 in 2135ms
+ ✓ Compiled /_not-found in 10.2s (872 modules)
+ GET /og-image.jpg 404 in 10461ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 420ms
+ GET /og-image.jpg 404 in 9778ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- ○ Compiling /intelligence ...
- ✓ Compiled /intelligence in 615ms (884 modules)
- GET /intelligence 200 in 892ms
- ✓ Compiled /investigate in 483ms (902 modules)
- GET /investigate 200 in 671ms
- ✓ Compiled in 640ms (415 modules)
- ✓ Compiled in 511ms (415 modules)
- ✓ Compiled in 1079ms (803 modules)
+ GET /?_rsc=r3yhw 200 in 79ms
+ ✓ Compiled /news in 353ms (867 modules)
+ GET /news 200 in 14509ms
+ ✓ Compiled /cheats in 428ms (884 modules)
+ GET /cheats 200 in 7574ms
