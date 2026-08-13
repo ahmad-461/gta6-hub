@@ -10,6 +10,7 @@ import ArticleComments from "@/components/ArticleComments"
 import CopyLinkButton from "@/components/CopyLinkButton"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
+import ArticleContentRenderer from "@/components/ArticleContentRenderer"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
 
@@ -319,10 +320,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             )}
 
             {/* Article Content Area */}
-            {/* H2 Headings styled with left border accent using theme's neon accent color */}
-            <div className="prose prose-invert max-w-none prose-headings:font-black [&_h2]:border-l-4 [&_h2]:border-neon-pink [&_h2]:pl-4 [&_h2]:my-6 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:text-2xl [&_p]:leading-relaxed [&_p]:text-foreground/90 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4">
-              <div dangerouslySetInnerHTML={{ __html: articleContentWithAffiliate }} />
-            </div>
+            <ArticleContentRenderer content={articleContentWithAffiliate} />
 
             {/* Social Share Row */}
             <div className="flex flex-wrap items-center gap-3 border-y border-card-border/60 py-4">

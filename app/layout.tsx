@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import ChatWidget from "@/components/ChatWidget"
+import RadioWidget from "@/components/RadioWidget"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
 import { Anton, Space_Mono } from "next/font/google"
@@ -70,6 +71,8 @@ export default function RootLayout({
           {children}
         </main>
         {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <ChatWidget />}
+        {!isAdminRoute && <RadioWidget />}
         <Toaster
           theme="dark"
           richColors

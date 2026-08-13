@@ -1,19 +1,67 @@
+
+> gta6-hub@0.1.0 dev
+> next dev
+
   ▲ Next.js 14.2.16
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1781ms
+ ✓ Ready in 1901ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1189ms (127 modules)
+ ✓ Compiled /middleware in 1093ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.2s (831 modules)
- HEAD / 200 in 7758ms
+ ✓ Compiled / in 7.5s (872 modules)
+ HEAD / 200 in 8027ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 97ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1725ms (816 modules)
- GET /og-image.jpg 404 in 2056ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 456ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ○ Compiling /tools/wishlist ...
+ ✓ Compiled /tools/wishlist in 2.4s (765 modules)
+ GET /tools/wishlist 200 in 3097ms
+ ○ Compiling /api/wishlist ...
+ ✓ Compiled /api/wishlist in 660ms (456 modules)
+Failed to increment vote for slug: assault-rifle {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ POST /api/wishlist 200 in 3569ms
+ GET /api/wishlist 200 in 7702ms
+Could not load wishlist votes from DB, using empty fallback {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+Failed to increment vote for slug: sports-car {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+Failed to increment vote for slug: heist-planner {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
+    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}

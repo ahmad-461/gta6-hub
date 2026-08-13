@@ -70,6 +70,32 @@ span[data-spoiler].revealed {
   user-select: text;
 }
 
+/* Redacted Text Styling */
+span[data-redacted] {
+  background-color: #000000 !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
+  border-radius: 2px;
+  padding: 0 4px;
+  transition: all 0.25s ease-in-out;
+  border: 1px solid #111111;
+  user-select: none;
+  /* subtle repeating linear-gradient for a grain/texture effect */
+  background-image: repeating-linear-gradient(45deg, #020202, #020202 2px, #121212 2px, #121212 4px) !important;
+}
+span[data-redacted]:hover,
+span[data-redacted]:focus,
+span[data-redacted]:active,
+span[data-redacted].revealed,
+span[data-redacted].is-revealed {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  border-color: transparent !important;
+  user-select: text;
+}
+
 /* Diagonal/Angled Clip Paths and Cinematic Helpers */
 .diagonal-split-left {
   clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);

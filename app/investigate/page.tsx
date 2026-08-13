@@ -38,7 +38,43 @@ export default function InvestigatePage() {
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [sessionCount, setSessionCount] = useState<number>(0)
+  const [isExportingMap, setIsExportingMap] = useState<Record<string, boolean>>({})
   const reportsEndRef = useRef<HTMLDivElement>(null)
+
+  const handleExportPDF = async (report: IntelligenceReport) => {
+    setIsExportingMap(prev => ({ ...prev, [report.id]: true }))
+    try {
+      const response = await fetch("/api/investigate/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: report.question,
+          answer: report.answer,
+          sources: report.sources,
+          similarityScore: report.similarityScore
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error("Terminal compilation failure.")
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `gta6_case_file_${report.id.slice(0, 8)}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error(e)
+      alert("Failed to compile PDF Case File. Terminal error.")
+    } finally {
+      setIsExportingMap(prev => ({ ...prev, [report.id]: false }))
+    }
+  }
 
   useEffect(() => {
     reportsEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -310,11 +346,27 @@ export default function InvestigatePage() {
                         </p>
                       </div>
 
-                      {/* Score Badge */}
+                      {/* Score Badge & Export Button */}
                       {!isPending && !isError && (
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border ${confConfig.class}`}>
-                          {confConfig.icon}
-                          {confConfig.label} ({Math.round(report.similarityScore * 100)}% Match)
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border ${confConfig.class}`}>
+                            {confConfig.icon}
+                            {confConfig.label} ({Math.round(report.similarityScore * 100)}% Match)
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(report)}
+                            disabled={isExportingMap[report.id]}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border border-[#00E5FF]/30 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF]/25 hover:border-[#00E5FF] disabled:opacity-50 transition-all duration-200"
+                            title="Download PDF Case File"
+                          >
+                            {isExportingMap[report.id] ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <FileText className="w-3.5 h-3.5" />
+                            )}
+                            {isExportingMap[report.id] ? "COMPILING..." : "EXPORT CASE FILE"}
+                          </button>
                         </div>
                       )}
                     </div>
