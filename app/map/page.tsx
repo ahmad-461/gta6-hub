@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import NextImage from "next/image"
 import { supabase } from "@/lib/supabase"
@@ -38,6 +38,53 @@ export default function LeonidaMapPage() {
       setIsLoading(false)
     }
   }
+
+  // Handle location view counting & opening
+  const handleOpenLocation = async (loc: any) => {
+    setSelectedLocation(loc)
+
+    // Check if viewed in this session to deduplicate/debounce view count inflation
+    const sessionViewed = sessionStorage.getItem("gta6_viewed_locations")
+    let viewedIds: string[] = []
+    if (sessionViewed) {
+      try {
+        viewedIds = JSON.parse(sessionViewed)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    if (!viewedIds.includes(loc.id)) {
+      try {
+        await fetch("/api/map/view", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locationId: loc.id }),
+        })
+
+        // Update local views state so heat glow recalculated instantly
+        setLocations((prev) =>
+          prev.map((item) => {
+            if (item.id === loc.id) {
+              return { ...item, view_count: (item.view_count || 0) + 1 }
+            }
+            return item
+          })
+        )
+
+        viewedIds.push(loc.id)
+        sessionStorage.setItem("gta6_viewed_locations", JSON.stringify(viewedIds))
+      } catch (err) {
+        console.error("Failed to record location view telemetry", err)
+      }
+    }
+  }
+
+  // Maximum view count for normalizing heatmap glow
+  const maxViewCount = useMemo(() => {
+    if (locations.length === 0) return 0
+    return Math.max(...locations.map((loc) => loc.view_count || 0))
+  }, [locations])
 
   // Filter Locations
   const filteredLocations = locations.filter((loc) => {
@@ -230,31 +277,51 @@ export default function LeonidaMapPage() {
                 const isSelected = selectedLocation?.id === loc.id
 
                 let pinColor = "text-[#FF2E88]"
-                let bgColor = "bg-[#FF2E88]"
+                let rgbColor = "255, 46, 136" // Default magenta
 
                 if (loc.category === "city") {
                   pinColor = "text-[#00E5FF]"
-                  bgColor = "bg-[#00E5FF]"
+                  rgbColor = "0, 229, 255"
                 } else if (loc.category === "landmark") {
                   pinColor = "text-[#6C1FB5]"
-                  bgColor = "bg-[#6C1FB5]"
+                  rgbColor = "108, 31, 181"
                 } else if (loc.category === "easter-egg") {
                   pinColor = "text-amber-400"
-                  bgColor = "bg-amber-400"
+                  rgbColor = "251, 191, 36"
                 }
+
+                // Recalculate heat glow intensity normalized against max counts
+                const viewCount = loc.view_count || 0
+                const intensity = maxViewCount > 0 ? viewCount / maxViewCount : 0
+
+                // Keep scaling curve gentle and very subtle
+                const glowSize = Math.round(10 + intensity * 35) // 10px to 45px
+                const glowOpacity = Math.max(0.04, Math.min(0.7, 0.08 + intensity * 0.58)) // 0.08 to 0.66
 
                 return (
                   <button
                     key={loc.id}
-                    onClick={() => setSelectedLocation(loc)}
+                    onClick={() => handleOpenLocation(loc)}
                     className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300 hover:scale-135 focus:outline-none group"
                     style={{
                       left: `${loc.x_coord}%`,
                       top: `${loc.y_coord}%`,
                     }}
                   >
-                    {/* Pulsing ring */}
-                    <span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 animate-ping -left-1.5 -top-1.5 ${bgColor}`} />
+                    {/* Normalized Trending Heat Glow Halo */}
+                    <span
+                      className="absolute rounded-full pointer-events-none transition-all duration-500 animate-pulse"
+                      style={{
+                        width: `${glowSize}px`,
+                        height: `${glowSize}px`,
+                        boxShadow: `0 0 ${glowSize}px ${Math.round(glowSize / 2)}px rgba(${rgbColor}, ${glowOpacity})`,
+                        opacity: glowOpacity,
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: -1,
+                      }}
+                    />
 
                     <div className="relative flex items-center justify-center">
                       <MapPin className={`w-5 h-5 ${pinColor} filter drop-shadow-[0_0_8px_currentColor]`} />

@@ -8,7 +8,8 @@ import {
   CheckSquare,
   Wrench,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  ShoppingBag
 } from "lucide-react"
 
 export const metadata = {
@@ -66,6 +67,16 @@ const FAN_TOOLS = [
     color: "border-emerald-500 text-emerald-400 hover:bg-emerald-500/[0.04]",
     accent: "text-emerald-400",
     iconBg: "bg-emerald-500/10"
+  },
+  {
+    title: "Ammu-Nation Wishlist",
+    description: "Construct your dream criminal payload (weapons, vehicles, features) and compare your items against live community Wanted Charts.",
+    href: "/tools/wishlist",
+    icon: ShoppingBag,
+    badge: "Supabase Tally",
+    color: "border-neon-blue text-neon-blue hover:bg-neon-blue/[0.04]",
+    accent: "text-neon-blue",
+    iconBg: "bg-neon-blue/10"
   }
 ]
 

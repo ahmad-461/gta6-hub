@@ -22,6 +22,7 @@ import {
   Youtube as YoutubeIcon,
   Minus,
   EyeOff,
+  Lock,
   Undo,
   Redo,
   X,
@@ -53,6 +54,33 @@ const Spoiler = Mark.create({
 
   renderHTML({ HTMLAttributes }) {
     return ["span", mergeAttributes({ "data-spoiler": "" }, this.options.HTMLAttributes, HTMLAttributes), 0]
+  },
+})
+
+// Define custom Redacted Tiptap Mark
+const Redacted = Mark.create({
+  name: "redacted",
+
+  addOptions() {
+    return {
+      HTMLAttributes: {
+        class: "bg-black text-black cursor-pointer select-none px-1 rounded transition-colors duration-200 hover:bg-neutral-900 border border-neutral-800 [mask-image:none] [&.is-revealed]:bg-transparent [&.is-revealed]:text-inherit",
+        onclick: "this.classList.toggle('is-revealed')",
+        tabindex: "0",
+      },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: "span[data-redacted]",
+      },
+    ]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ["span", mergeAttributes({ "data-redacted": "" }, this.options.HTMLAttributes, HTMLAttributes), 0]
   },
 })
 
@@ -94,6 +122,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
         },
       }),
       Spoiler,
+      Redacted,
     ],
     content: content,
     onUpdate: ({ editor }) => {
@@ -293,6 +322,16 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
           title="Spoiler Text (Reveal on Click)"
         >
           <EyeOff size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleMark("redacted").run()}
+          className={`p-2 rounded hover:bg-card-border transition text-foreground/80 hover:text-white ${
+            editor.isActive("redacted") ? "bg-neon-blue/20 text-neon-blue font-bold" : ""
+          }`}
+          title="Redacted Text (Reveal on Hover/Tap)"
+        >
+          <Lock size={16} />
         </button>
         <div className="w-px h-6 bg-card-border mx-1"></div>
         <button
