@@ -7,16 +7,19 @@ import {
   Send,
   Loader2,
   FileText,
-  AlertCircle,
   HelpCircle,
   CheckCircle2,
-  Lock,
-  ChevronRight,
   ShieldCheck,
-  RefreshCw,
   Clock,
   ExternalLink
 } from "lucide-react"
+
+import Card from "@/components/ui/Card"
+import Button from "@/components/ui/Button"
+import Badge from "@/components/ui/Badge"
+import Input from "@/components/ui/Input"
+import EmptyState from "@/components/ui/EmptyState"
+import ErrorState from "@/components/ui/ErrorState"
 
 interface EvidenceSource {
   title: string
@@ -32,6 +35,13 @@ interface IntelligenceReport {
   similarityScore: number
   status: "pending" | "streaming" | "complete" | "error"
 }
+
+const SUGGESTED_QUESTIONS = [
+  "Who is Lucia?",
+  "What's confirmed about map size?",
+  "Tell me about Jason.",
+  "Are there any GTA 6 cheats?"
+]
 
 export default function InvestigatePage() {
   const [reports, setReports] = useState<IntelligenceReport[]>([])
@@ -95,7 +105,11 @@ export default function InvestigatePage() {
 
   const handleInvestigate = async (e: React.FormEvent) => {
     e.preventDefault()
-    const question = input.trim()
+    submitQuestion(input)
+  }
+
+  const submitQuestion = async (questionText: string) => {
+    const question = questionText.trim()
     if (!question || isTyping) return
 
     if (sessionCount >= 10) {
@@ -211,19 +225,19 @@ export default function InvestigatePage() {
     if (score > 0.7) {
       return {
         label: "Confirmed Alignment",
-        class: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+        color: "green" as const,
         icon: <CheckCircle2 className="w-3.5 h-3.5" />
       }
     } else if (score >= 0.5) {
       return {
         label: "Likely Matches",
-        class: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
+        color: "cyan" as const,
         icon: <Sparkles className="w-3.5 h-3.5" />
       }
     } else {
       return {
         label: "Unverified / Extrapolated",
-        class: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+        color: "yellow" as const,
         icon: <HelpCircle className="w-3.5 h-3.5" />
       }
     }
@@ -266,13 +280,8 @@ export default function InvestigatePage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow flex flex-col space-y-8 text-[#F5F0FA]">
 
-      {/* Page header banner */}
-      <div className="relative border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/60 backdrop-blur-md p-8 rounded-xl shadow-2xl overflow-hidden">
-        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
-
+      {/* Page header banner with Card Primitive */}
+      <Card variant="standard" padding="lg" showCornerBrackets className="relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-[#00E5FF]">
@@ -300,29 +309,18 @@ export default function InvestigatePage() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Main Terminal Feed */}
-      <div className="flex-grow flex flex-col min-h-[400px] border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/40 backdrop-blur rounded-xl overflow-hidden relative">
+      <Card variant="transparent" padding="none" className="flex-grow flex flex-col min-h-[400px] rounded-xl overflow-hidden relative">
         <div className="flex-grow p-6 overflow-y-auto space-y-6">
 
           {reports.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center py-16 space-y-4">
-              <div className="relative flex items-center justify-center">
-                <span className="animate-ping absolute inline-flex h-12 w-12 rounded-full bg-[#00E5FF]/20" />
-                <div className="p-4 bg-[#150C1F] border border-[rgba(245,240,250,0.12)] rounded-full text-[#00E5FF]">
-                  <Sparkles size={28} />
-                </div>
-              </div>
-              <div className="max-w-md space-y-2">
-                <h3 className="text-lg font-bold text-white uppercase font-mono tracking-wider">
-                  Terminal Online. Awaiting Queries...
-                </h3>
-                <p className="text-xs text-[#9C8FAE] leading-relaxed">
-                  Enter your inquiry below to trigger a similarity lookup over our vector database index and compile an official Intelligence Report.
-                </p>
-              </div>
-            </div>
+            <EmptyState
+              icon={<Sparkles size={28} className="text-[#00E5FF]" />}
+              title="Terminal Online. Awaiting Queries..."
+              description="Enter your inquiry below or choose a suggest chip to trigger a similarity lookup over our vector database index and compile an official Intelligence Report."
+            />
           ) : (
             <div className="space-y-8">
               {reports.map((report) => {
@@ -330,10 +328,27 @@ export default function InvestigatePage() {
                 const isError = report.status === "error"
                 const confConfig = getConfidenceConfig(report.similarityScore)
 
+                if (isError) {
+                  return (
+                    <ErrorState
+                      key={report.id}
+                      title="Telemetry Error"
+                      description={report.answer}
+                      action={
+                        <Button variant="destructive" size="sm" onClick={() => submitQuestion(report.question)}>
+                          Retry Query
+                        </Button>
+                      }
+                    />
+                  )
+                }
+
                 return (
-                  <div
+                  <Card
                     key={report.id}
-                    className="border border-[rgba(245,240,250,0.14)] rounded-xl bg-[#0B0710]/95 p-6 space-y-6 shadow-2xl relative"
+                    variant="standard"
+                    padding="md"
+                    className="space-y-6 relative border-[rgba(245,240,250,0.14)]"
                   >
                     {/* Header Row */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[rgba(245,240,250,0.1)] pb-4 gap-4">
@@ -349,24 +364,29 @@ export default function InvestigatePage() {
                       {/* Score Badge & Export Button */}
                       {!isPending && !isError && (
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border ${confConfig.class}`}>
+                          <Badge
+                            color={confConfig.color}
+                            variant="subtle"
+                            className="gap-1 px-3 py-1.5"
+                          >
                             {confConfig.icon}
                             {confConfig.label} ({Math.round(report.similarityScore * 100)}% Match)
-                          </div>
-                          <button
-                            type="button"
+                          </Badge>
+                          <Button
                             onClick={() => handleExportPDF(report)}
                             disabled={isExportingMap[report.id]}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border border-[#00E5FF]/30 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF]/25 hover:border-[#00E5FF] disabled:opacity-50 transition-all duration-200"
+                            variant="cyan"
+                            size="sm"
+                            className="!text-[10px] h-8 shrink-0"
                             title="Download PDF Case File"
                           >
                             {isExportingMap[report.id] ? (
-                              <Loader2 className="w-3 h-3 animate-spin" />
+                              <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
                             ) : (
-                              <FileText className="w-3.5 h-3.5" />
+                              <FileText className="w-3.5 h-3.5 mr-1.5" />
                             )}
                             {isExportingMap[report.id] ? "COMPILING..." : "EXPORT CASE FILE"}
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -415,7 +435,7 @@ export default function InvestigatePage() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </Card>
                 )
               })}
             </div>
@@ -423,32 +443,50 @@ export default function InvestigatePage() {
           <div ref={reportsEndRef} />
         </div>
 
-        {/* Input Form Footer */}
+        {/* Input Form Footer with suggested-chips and primitives */}
         <div className="p-4 border-t border-[rgba(245,240,250,0.12)] bg-[#150C1F]/70 relative">
-          <form onSubmit={handleInvestigate} className="flex gap-3 max-w-4xl mx-auto">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask the Investigator (e.g. Jason, walkthrough secrets, heist locations)..."
-              disabled={isTyping}
-              className="flex-grow bg-[#0B0710] border border-[rgba(245,240,250,0.14)] focus:border-[#FF2E88] focus:ring-1 focus:ring-[#FF2E88] outline-none rounded-lg px-4 py-3 text-sm text-white placeholder-foreground/30 transition-all font-mono"
-            />
-            <button
+          {/* Suggested Question Chips */}
+          <div className="flex flex-wrap gap-1.5 mb-3.5 max-w-4xl mx-auto">
+            {SUGGESTED_QUESTIONS.map((q, idx) => (
+              <button
+                key={idx}
+                type="button"
+                disabled={isTyping}
+                onClick={() => submitQuestion(q)}
+                className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider bg-white/5 border border-[rgba(245,240,250,0.1)] hover:border-magenta text-paper-dim hover:text-white rounded transition-all duration-150 disabled:opacity-45"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleInvestigate} className="flex gap-3 max-w-4xl mx-auto items-end">
+            <div className="flex-grow">
+              <Input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask the Investigator (e.g. Jason, walkthrough secrets, heist locations)..."
+                disabled={isTyping}
+                className="font-mono"
+              />
+            </div>
+            <Button
               type="submit"
               disabled={isTyping || !input.trim() || sessionCount >= 10}
-              className="px-6 py-3 bg-[#FF2E88] hover:bg-[#FF2E88]/90 disabled:opacity-40 text-white font-mono text-xs font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,46,136,0.3)] hover:shadow-[0_0_25px_rgba(255,46,136,0.5)]"
+              variant="primary"
+              className="h-[42px] px-6 shrink-0"
             >
               {isTyping ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 mr-2" />
               )}
               Investigate
-            </button>
+            </Button>
           </form>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

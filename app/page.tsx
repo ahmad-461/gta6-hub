@@ -2,7 +2,7 @@ import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { ArrowRight, Star, Flame } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import CountdownTimer from "@/components/CountdownTimer"
 import CommunityPollWidget from "@/components/CommunityPollWidget"
 import ScrollReveal from "@/components/ScrollReveal"
@@ -326,12 +326,12 @@ export default async function HomePage() {
       {/* Cinematic Global Noise Texture */}
       <div className="film-grain" />
 
-      {/* Background Atmosphere */}
+      {/* Background Atmosphere - Polished to feel restrained and premium with reduced opacity */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Glow Blob 1 (magenta top-right) */}
-        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#FF2E88]/10 blur-[130px] z-0" />
-        {/* Glow Blob 2 (cyan bottom-left) */}
-        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00E5FF]/8 blur-[130px] z-0" />
+        {/* Glow Blob 1 (magenta top-right) - Reduced from bg-[#FF2E88]/10 to bg-[#FF2E88]/05 */}
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#FF2E88]/05 blur-[140px] z-0" />
+        {/* Glow Blob 2 (cyan bottom-left) - Reduced from bg-[#00E5FF]/8 to bg-[#00E5FF]/04 */}
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00E5FF]/04 blur-[140px] z-0" />
       </div>
 
       {/* Hero Section */}
@@ -343,7 +343,7 @@ export default async function HomePage() {
       >
         {/* Mobile horizontal watermark, centered behind hero text */}
         <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-0 overflow-hidden lg:hidden">
-          <span className="font-anton text-[11rem] sm:text-[16rem] uppercase leading-none tracking-tighter opacity-[0.03] bg-gradient-to-r from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent">
+          <span className="font-anton text-[11rem] sm:text-[16rem] uppercase leading-none tracking-tighter opacity-[0.02] bg-gradient-to-r from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent">
             VICE
           </span>
         </div>
@@ -404,7 +404,7 @@ export default async function HomePage() {
               {/* Pulsing dot + label row */}
               <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-cyan">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75 animate-duration-1000"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan"></span>
                 </span>
                 <span>SYSTEM COUNTDOWN TELEMETRY</span>
@@ -419,7 +419,7 @@ export default async function HomePage() {
           <div className="lg:col-span-5 flex justify-end h-full relative min-h-[300px] lg:min-h-[500px] hidden lg:flex">
             <div className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-0">
               <span
-                className="font-anton text-[12rem] lg:text-[18rem] uppercase leading-none tracking-tighter opacity-10 bg-gradient-to-b from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent"
+                className="font-anton text-[12rem] lg:text-[18rem] uppercase leading-none tracking-tighter opacity-[0.05] bg-gradient-to-b from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent"
                 style={{
                   writingMode: "vertical-rl",
                 }}
@@ -464,7 +464,7 @@ export default async function HomePage() {
                   src={getImageUrl(featuredArticle.featured_image)}
                   alt={featuredArticle.title}
                   fill
-                  className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-[1.01] transition-transform duration-700 ease-out motion-reduce:group-hover:scale-100"
                   priority
                   sizes="(max-w-1024px) 100vw, 60vw"
                 />
@@ -546,14 +546,20 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {gridNews.map((art, index) => (
                 <ScrollReveal key={art.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#FF2E88] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#FF2E88] shadow-lg">
+                  <Card
+                    padding="none"
+                    variant="standard"
+                    hoverGlow="magenta"
+                    interactive
+                    className="group flex flex-col justify-between h-full shadow-lg"
+                  >
                     <div>
                       <div className="relative w-full h-52 overflow-hidden bg-[#0B0710]">
                         <Image
                           src={getImageUrl(art.featured_image)}
                           alt={art.title}
                           fill
-                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                          className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out motion-reduce:group-hover:scale-100"
                           sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 30vw"
                         />
                       </div>
@@ -577,7 +583,7 @@ export default async function HomePage() {
                         READ <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
-                  </article>
+                  </Card>
                 </ScrollReveal>
               ))}
             </div>
@@ -613,14 +619,20 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestGuides.map((guide, index) => (
                 <ScrollReveal key={guide.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#00E5FF] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#00E5FF] shadow-lg">
+                  <Card
+                    padding="none"
+                    variant="standard"
+                    hoverGlow="cyan"
+                    interactive
+                    className="group flex flex-col justify-between h-full shadow-lg"
+                  >
                     <div>
                       <div className="relative w-full h-48 overflow-hidden bg-[#0B0710]">
                         <Image
                           src={getImageUrl(guide.featured_image)}
                           alt={guide.title}
                           fill
-                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                          className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out motion-reduce:group-hover:scale-100"
                           sizes="(max-w-768px) 100vw, 30vw"
                         />
                       </div>
@@ -650,7 +662,7 @@ export default async function HomePage() {
                         Read Walkthrough
                       </Link>
                     </div>
-                  </article>
+                  </Card>
                 </ScrollReveal>
               ))}
             </div>
@@ -676,7 +688,7 @@ export default async function HomePage() {
                 </h3>
               </div>
               {activePoll && (
-                <div className="transform hover:scale-[1.01] transition-transform duration-300">
+                <div className="transform hover:scale-[1.01] transition-transform duration-300 motion-reduce:transform-none">
                   <CommunityPollWidget
                     initialPoll={{
                       id: activePoll.id,
