@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
+import EmptyState from "@/components/ui/EmptyState"
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import { toast } from "sonner"
 import {
   MessageSquare,
@@ -308,9 +310,7 @@ export default function CommentModerationPage() {
 
       {/* Main Comment Feed / List */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-neon-blue h-8 w-8" />
-        </div>
+        <LoadingSkeleton type="table" rows={6} cols={4} />
       ) : filteredComments.length > 0 ? (
         <div className="space-y-4">
           {/* Header Action checkbox */}
@@ -421,10 +421,11 @@ export default function CommentModerationPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 border border-dashed border-card-border rounded-xl bg-card-bg/50">
-          <MessageSquare size={40} className="mx-auto text-foreground/30 mb-3" />
-          <p className="text-foreground/50 text-base">No comments found matching the filters.</p>
-        </div>
+        <EmptyState
+          icon={<MessageSquare size={40} />}
+          title="No Comments Found"
+          description="Approve or review public article comment boards once readers begin submitting feedback."
+        />
       )}
     </div>
   )

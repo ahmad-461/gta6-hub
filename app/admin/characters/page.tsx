@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
+import EmptyState from "@/components/ui/EmptyState"
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import NextImage from "next/image"
 import { toast } from "sonner"
 import {
@@ -118,8 +120,10 @@ export default function CharacterManagerPage() {
 
       {/* Grid of Characters */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-neon-blue h-8 w-8" />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <LoadingSkeleton type="card" />
+          <LoadingSkeleton type="card" />
+          <LoadingSkeleton type="card" />
         </div>
       ) : filteredCharacters.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -222,10 +226,11 @@ export default function CharacterManagerPage() {
           })}
         </div>
       ) : (
-        <div className="text-center py-20 border border-dashed border-card-border rounded-xl bg-card-bg/50">
-          <Users size={40} className="mx-auto text-foreground/30 mb-3" />
-          <p className="text-foreground/50 text-base">No character profiles found matching search criteria.</p>
-        </div>
+        <EmptyState
+          icon={<Users size={40} />}
+          title="No Curated Characters Found"
+          description="Build character lore cards to link into the Lore connections interactive node map."
+        />
       )}
     </div>
   )

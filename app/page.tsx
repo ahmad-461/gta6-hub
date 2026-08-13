@@ -7,6 +7,8 @@ import CountdownTimer from "@/components/CountdownTimer"
 import CommunityPollWidget from "@/components/CommunityPollWidget"
 import ScrollReveal from "@/components/ScrollReveal"
 import SiteDepthIndex from "@/components/SiteDepthIndex"
+import Button from "@/components/ui/Button"
+import Card from "@/components/ui/Card"
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return ""
@@ -385,40 +387,32 @@ export default async function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 pt-2">
-              <Link
-                href="/news"
-                className="px-8 py-3.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
-              >
-                Enter The Hub
+              <Link href="/news" passHref legacyBehavior>
+                <Button variant="primary" size="lg">
+                  Latest Intelligence
+                </Button>
               </Link>
-              <Link
-                href="/lore-map"
-                className="px-8 py-3.5 bg-transparent hover:bg-[rgba(245,240,250,0.06)] border border-[#FF2E88] text-[#F5F0FA] font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono active:scale-95 duration-100"
-              >
-                Explore The Map
+              <Link href="/map" passHref legacyBehavior>
+                <Button variant="ghost" size="lg">
+                  Explore Leonida
+                </Button>
               </Link>
             </div>
 
-            {/* HUD Countdown Module */}
-            <div className="relative border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/60 backdrop-blur-md p-6 max-w-lg rounded shadow-2xl overflow-hidden mt-8">
-              {/* Corner-bracket accents (like a targeting reticle) */}
-              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
-
+            {/* HUD Countdown Module using Part A Console Card primitive */}
+            <Card variant="console" padding="md" showCornerBrackets className="max-w-lg mt-8">
               {/* Pulsing dot + label row */}
-              <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-[#00E5FF]">
+              <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-cyan">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan"></span>
                 </span>
                 <span>SYSTEM COUNTDOWN TELEMETRY</span>
               </div>
 
               {/* Countdown Numbers */}
               <CountdownTimer targetDate={countdownTarget} />
-            </div>
+            </Card>
           </div>
 
           {/* Right Column: Atmospheric vertical text watermark */}
@@ -697,7 +691,7 @@ export default async function HomePage() {
 
             {/* Live Comments Stream */}
             <ScrollReveal>
-              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+              <Card variant="standard" padding="lg" className="space-y-6">
                 <div className="border-b border-[rgba(245,240,250,0.1)] pb-4">
                   <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE]">
                     Latest Intel / Comment Stream
@@ -728,14 +722,14 @@ export default async function HomePage() {
                 ) : (
                   <p className="text-xs font-mono text-[#9C8FAE]">No live comments stream.</p>
                 )}
-              </div>
+              </Card>
             </ScrollReveal>
           </div>
 
           {/* Asymmetrical Column 2: Recent Updates List & High-Impact Social Cards */}
           <div className="lg:col-span-5 space-y-8">
             <ScrollReveal>
-              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+              <Card variant="standard" padding="lg" className="space-y-6">
                 <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-4">
                   Quick Updates
                 </h4>
@@ -758,7 +752,7 @@ export default async function HomePage() {
                 ) : (
                   <p className="text-xs font-mono text-[#9C8FAE]">No recent updates.</p>
                 )}
-              </div>
+              </Card>
             </ScrollReveal>
           </div>
         </section>

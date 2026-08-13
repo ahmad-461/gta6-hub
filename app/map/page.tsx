@@ -4,7 +4,10 @@ import React, { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import NextImage from "next/image"
 import { supabase } from "@/lib/supabase"
-import { MapPin, X, Compass, Layers, CheckCircle2, AlertTriangle, ExternalLink, Loader2, Sliders } from "lucide-react"
+import { MapPin, X, Compass, Layers, CheckCircle2, AlertTriangle, ExternalLink, Loader2 } from "lucide-react"
+import Button from "@/components/ui/Button"
+import Card from "@/components/ui/Card"
+import Badge from "@/components/ui/Badge"
 
 export default function LeonidaMapPage() {
   const [locations, setLocations] = useState<any[]>([])
@@ -114,6 +117,14 @@ export default function LeonidaMapPage() {
 
   const relatedContentList = selectedLocation ? getRelatedContent(selectedLocation) : []
 
+  const categories = [
+    { id: "all", name: "All Locations" },
+    { id: "city", name: "Cities" },
+    { id: "landmark", name: "Landmarks" },
+    { id: "poi", name: "Points of Interest" },
+    { id: "easter-egg", name: "Easter Eggs" },
+  ]
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-8 text-[#F5F0FA]">
 
@@ -142,7 +153,6 @@ export default function LeonidaMapPage() {
 
           {/* Responsive aspect-ratio-locked relative map container */}
           <div className="relative w-full aspect-[16/10] bg-[#0c0a10] rounded-lg overflow-hidden border border-[rgba(245,240,250,0.08)]">
-
             {/* Dark Neon stylized region map SVG/Canvas background */}
             <svg
               className="absolute inset-0 w-full h-full opacity-65 pointer-events-none"
@@ -236,36 +246,36 @@ export default function LeonidaMapPage() {
             </div>
 
             {/* FLOATING CONSOLE: Category Selector (Overlaid in bottom-right) */}
-            <div className="absolute bottom-6 right-6 z-20 bg-[#150C1F]/95 backdrop-blur-md border border-[rgba(245,240,250,0.14)] p-4 rounded shadow-2xl flex flex-col gap-2.5 font-mono max-w-[240px]">
+            <Card
+              variant="console"
+              padding="sm"
+              showCornerBrackets
+              className="absolute bottom-6 right-6 z-20 bg-[#150C1F]/95 backdrop-blur-md border border-[rgba(245,240,250,0.14)] p-4 rounded shadow-2xl flex flex-col gap-2.5 font-mono max-w-[240px]"
+            >
               <div className="flex items-center gap-1.5 text-[9px] font-black tracking-widest text-[#00E5FF]">
-                <Sliders className="w-3.5 h-3.5 animate-pulse" />
+                <Compass className="w-3.5 h-3.5 animate-spin-slow" />
                 <span>HOTSPOT TELEMETRY CONSOLE</span>
               </div>
               <div className="flex flex-col gap-1.5">
-                {[
-                  { id: "all", name: "All Locations" },
-                  { id: "city", name: "Cities" },
-                  { id: "landmark", name: "Landmarks" },
-                  { id: "poi", name: "Points of Interest" },
-                  { id: "easter-egg", name: "Easter Eggs" },
-                ].map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setActiveCategory(cat.id)
-                      setSelectedLocation(null)
-                    }}
-                    className={`px-2.5 py-1.5 text-[10px] text-left font-black tracking-wider border rounded uppercase transition-all duration-300 ${
-                      activeCategory === cat.id
-                        ? "bg-[#0B0710] text-[#00E5FF] border-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.25)]"
-                        : "bg-transparent text-[#9C8FAE] border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/40 hover:text-white"
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
+                {categories.map((cat) => {
+                  const isActive = activeCategory === cat.id
+                  return (
+                    <Button
+                      key={cat.id}
+                      onClick={() => {
+                        setActiveCategory(cat.id)
+                        setSelectedLocation(null)
+                      }}
+                      variant={isActive ? "primary" : "ghost"}
+                      size="sm"
+                      className="font-mono text-[10px] tracking-wider uppercase font-bold justify-start"
+                    >
+                      {cat.name}
+                    </Button>
+                  )
+                })}
               </div>
-            </div>
+            </Card>
 
             {/* Hotspot markers rendered using percentages */}
             {isLoading ? (
@@ -345,104 +355,111 @@ export default function LeonidaMapPage() {
           </div>
         </div>
 
-        {/* Right Info Overlay Side Panel (1 col) */}
-        <div className="lg:col-span-1 flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[400px] shadow-2xl relative">
-          {selectedLocation ? (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] font-black tracking-widest text-[#00E5FF] uppercase font-mono">
-                  COORDINATES DOSSIER
-                </span>
-                <button
-                  onClick={() => setSelectedLocation(null)}
-                  className="p-1 hover:bg-white/5 rounded text-[#9C8FAE] hover:text-white transition"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Image thumbnail if exists */}
-              {selectedLocation.image && (
-                <div className="aspect-video relative rounded-lg overflow-hidden border border-[rgba(245,240,250,0.12)] bg-[#0B0710]">
-                  <NextImage
-                    src={selectedLocation.image}
-                    alt={selectedLocation.name}
-                    fill
-                    className="object-cover"
-                    sizes="250px"
-                  />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white leading-tight">
-                  {selectedLocation.name}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded bg-[#0B0710] text-[#9C8FAE] border border-[rgba(245,240,250,0.06)] font-mono">
-                    {selectedLocation.category === "poi" ? "POI" : selectedLocation.category.replace("-", " ")}
+        {/* Right Info Overlay Side Panel styled with Part A Card primitive */}
+        <div className="lg:col-span-1">
+          <Card
+            variant="standard"
+            padding="sm"
+            className="h-full min-h-[450px] flex flex-col justify-between shadow-xl animate-in fade-in slide-in-from-right-4 duration-200"
+          >
+            {selectedLocation ? (
+              <div className="space-y-6 flex-grow flex flex-col">
+                <div className="flex justify-between items-start border-b border-[rgba(245,240,250,0.08)] pb-2.5">
+                  <span className="text-[10px] font-black tracking-widest text-[#00E5FF] uppercase font-mono">
+                    COORDINATES DOSSIER
                   </span>
-                  <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded border flex items-center gap-1 font-mono ${
-                    selectedLocation.status === "confirmed"
-                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25"
-                      : "bg-amber-500/10 text-amber-400 border-amber-500/25"
-                  }`}>
-                    {selectedLocation.status === "confirmed" ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                    {selectedLocation.status}
-                  </span>
+                  <button
+                    onClick={() => setSelectedLocation(null)}
+                    className="p-1 hover:bg-white/5 rounded text-[#9C8FAE] hover:text-white transition"
+                    aria-label="Deselect location"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
-              </div>
 
-              <p className="text-xs text-[#9C8FAE] leading-relaxed bg-[#0B0710]/50 border border-[rgba(245,240,250,0.06)] p-3.5 rounded-lg">
-                {selectedLocation.description || "No sector classification files available."}
-              </p>
-
-              {/* Related content / Evidence Section */}
-              <div className="space-y-3 pt-3 border-t border-[rgba(245,240,250,0.1)]">
-                <h4 className="text-[10px] font-black uppercase text-[#FF2E88] tracking-widest font-mono">
-                  VERIFIED EVIDENCE ({relatedContentList.length})
-                </h4>
-                {relatedContentList.length > 0 ? (
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
-                    {relatedContentList.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        className="flex items-center justify-between p-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
-                      >
-                        <span className="text-xs font-semibold text-[#9C8FAE] group-hover:text-white truncate pr-2">
-                          {item.title}
-                        </span>
-                        <ExternalLink size={12} className="text-[#9C8FAE]/40 group-hover:text-[#FF2E88] shrink-0" />
-                      </Link>
-                    ))}
+                {/* Image thumbnail if exists */}
+                {selectedLocation.image && (
+                  <div className="aspect-video relative rounded-lg overflow-hidden border border-[rgba(245,240,250,0.12)] bg-[#0B0710]">
+                    <NextImage
+                      src={selectedLocation.image}
+                      alt={selectedLocation.name}
+                      fill
+                      className="object-cover"
+                      sizes="250px"
+                    />
                   </div>
-                ) : (
-                  <p className="text-[10px] text-[#9C8FAE]/40 font-mono font-bold italic">
-                    No related articles or coordinate walkthrough files linked.
-                  </p>
                 )}
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-12">
-              <Layers className="w-10 h-10 text-[#9C8FAE]/20 animate-pulse" />
-              <div className="space-y-1.5">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
-                  GRID SECTOR UNSECURED
-                </h3>
-                <p className="text-xs text-[#9C8FAE]/50 max-w-[180px] leading-relaxed">
-                  Click on any telemetry hotspot on the canvas grid to decode site files and coordinates.
-                </p>
-              </div>
-            </div>
-          )}
 
-          {/* Footer Coordinates monitor */}
-          <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 mt-6 text-[9px] font-mono text-[#9C8FAE]/45 flex justify-between items-center bg-[#0B0710]/40 p-2.5 rounded">
-            <span>MAP CODES:</span>
-            <span className="text-white font-bold">1600 X 1000px FLUID</span>
-          </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    {selectedLocation.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge color="cyan" variant="subtle">
+                      {selectedLocation.category === "poi" ? "Point of Interest" : selectedLocation.category.replace("-", " ")}
+                    </Badge>
+                    <Badge
+                      color={selectedLocation.status === "confirmed" ? "green" : "yellow"}
+                      variant="outline"
+                      className="gap-1"
+                    >
+                      {selectedLocation.status === "confirmed" ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+                      {selectedLocation.status}
+                    </Badge>
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#9C8FAE] leading-relaxed bg-[#0B0710]/50 border border-[rgba(245,240,250,0.06)] p-3.5 rounded-lg">
+                  {selectedLocation.description || "No sector classification files available."}
+                </p>
+
+                {/* Related content / Evidence Section */}
+                <div className="space-y-3 pt-3 border-t border-[rgba(245,240,250,0.1)]">
+                  <h4 className="text-[10px] font-black uppercase text-[#FF2E88] tracking-widest font-mono">
+                    VERIFIED EVIDENCE ({relatedContentList.length})
+                  </h4>
+                  {relatedContentList.length > 0 ? (
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {relatedContentList.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          className="flex items-center justify-between p-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
+                        >
+                          <span className="text-xs font-semibold text-[#9C8FAE] group-hover:text-white truncate pr-2">
+                            {item.title}
+                          </span>
+                          <ExternalLink size={12} className="text-[#9C8FAE]/40 group-hover:text-[#FF2E88] shrink-0" />
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-[#9C8FAE]/40 font-mono font-bold italic">
+                      No related articles or coordinate walkthrough files linked.
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-12">
+                <Layers className="w-10 h-10 text-[#9C8FAE]/20 animate-pulse" />
+                <div className="space-y-1.5">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+                    GRID SECTOR UNSECURED
+                  </h3>
+                  <p className="text-xs text-[#9C8FAE]/50 max-w-[180px] leading-relaxed">
+                    Click on any telemetry hotspot on the canvas grid to decode site files and coordinates.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Footer Coordinates monitor */}
+            <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 mt-6 text-[9px] font-mono text-[#9C8FAE]/45 flex justify-between items-center bg-[#0B0710]/40 p-2.5 rounded">
+              <span>MAP CODES:</span>
+              <span className="text-white font-bold">1600 X 1000px FLUID</span>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

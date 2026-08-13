@@ -1,6 +1,8 @@
 import React from "react"
 import Link from "next/link"
 import { ArrowRight, Newspaper, BookOpen, Cpu, Compass } from "lucide-react"
+import Card from "@/components/ui/Card"
+import Badge from "@/components/ui/Badge"
 
 interface SiteDepthIndexProps {
   newsCount: number | null
@@ -29,8 +31,7 @@ export default function SiteDepthIndex({
       suffix: "Articles Published",
       description: "Breaking leaks, updates, and chronological analysis of Rockstar's development cycle.",
       link: "/news",
-      colorClass: "hover:border-[#FF2E88]",
-      accentColor: "#FF2E88",
+      accent: "magenta" as const,
     },
     {
       title: "Strategy Guides",
@@ -40,8 +41,7 @@ export default function SiteDepthIndex({
       suffix: "Guides Available",
       description: "Tactical breakdown of missions, mechanics, and open world secrets in Leonida.",
       link: "/guides",
-      colorClass: "hover:border-[#00E5FF]",
-      accentColor: "#00E5FF",
+      accent: "cyan" as const,
     },
     {
       title: "Interactive Tools",
@@ -51,8 +51,7 @@ export default function SiteDepthIndex({
       suffix: "Tools Operational",
       description: "Compare vehicle stats, track 100% completion checklist, and run personality matchers.",
       link: "/tools",
-      colorClass: "hover:border-[#6C1FB5]",
-      accentColor: "#6C1FB5",
+      accent: "violet" as const,
     },
     {
       title: "Lore Connections",
@@ -62,8 +61,7 @@ export default function SiteDepthIndex({
       suffix: "Mapped Nodes",
       description: "Fully interactive relationship graph mapping co-occurrences of key characters and locations.",
       link: "/lore-map",
-      colorClass: "hover:border-[#FF2E88]",
-      accentColor: "#FF2E88",
+      accent: "magenta" as const,
     },
   ]
 
@@ -71,9 +69,9 @@ export default function SiteDepthIndex({
     <section className="space-y-10 py-12 relative">
       <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4 gap-4">
         <div className="space-y-1">
-          <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
+          <Badge color="cyan" variant="subtle">
             Ecosystem Directory
-          </span>
+          </Badge>
           <h3 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
             Site Depth Index
           </h3>
@@ -85,24 +83,20 @@ export default function SiteDepthIndex({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {panels.map((panel, idx) => (
-          <div
+          <Card
             key={idx}
-            className={`group relative flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-6 transition-all duration-300 ${panel.colorClass} hover:-translate-y-1 shadow-lg`}
+            interactive
+            hoverGlow={panel.accent}
+            variant="standard"
+            padding="md"
+            className="flex flex-col justify-between"
           >
-            {/* Soft inner glow on hover */}
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 pointer-events-none rounded"
-              style={{
-                background: `radial-gradient(circle at 50% 50%, ${panel.accentColor} 0%, transparent 70%)`,
-              }}
-            />
-
-            <div className="space-y-4 relative z-10">
+            <div className="space-y-4">
               {/* Header row */}
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold font-mono text-[#9C8FAE] uppercase tracking-widest">
+                <Badge color={panel.accent} variant="outline">
                   {panel.label}
-                </span>
+                </Badge>
                 {panel.icon}
               </div>
 
@@ -118,7 +112,7 @@ export default function SiteDepthIndex({
 
               {/* Title & Description */}
               <div className="space-y-2">
-                <h4 className="text-sm font-bold text-[#F5F0FA] group-hover:text-[#00E5FF] transition-colors">
+                <h4 className="text-sm font-bold text-[#F5F0FA] group-hover:text-cyan transition-colors">
                   {panel.title}
                 </h4>
                 <p className="text-xs text-[#9C8FAE] leading-relaxed">
@@ -128,15 +122,15 @@ export default function SiteDepthIndex({
             </div>
 
             {/* CTA Link at bottom */}
-            <div className="pt-6 mt-4 border-t border-[rgba(245,240,250,0.06)] relative z-10">
+            <div className="pt-6 mt-4 border-t border-[rgba(245,240,250,0.06)]">
               <Link
                 href={panel.link}
-                className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-[#FF2E88] group-hover:text-[#00E5FF] transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-[#FF2E88] hover:text-[#00E5FF] transition-colors"
               >
                 ACCESS MODULE <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </section>
