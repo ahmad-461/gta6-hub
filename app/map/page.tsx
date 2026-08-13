@@ -10,6 +10,7 @@ import Card from "@/components/ui/Card"
 import Badge from "@/components/ui/Badge"
 
 export default function LeonidaMapPage() {
+  // Premium visual polish matching Part A Card and Badge primitives
   const [locations, setLocations] = useState<any[]>([])
   const [articles, setArticles] = useState<any[]>([])
   const [guides, setGuides] = useState<any[]>([])

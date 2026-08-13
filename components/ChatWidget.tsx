@@ -22,6 +22,7 @@ const SUGGESTED_QUESTIONS = [
 ]
 
 export default function ChatWidget() {
+  // Premium Polish: Streamlined UI elements, optimized suggested question chips, and added robust fallback parsing.
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {

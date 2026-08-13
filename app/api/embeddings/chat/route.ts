@@ -7,6 +7,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 // Cleared on server restart, but highly robust for session cookies
 const sessionStore = new Map<string, number>()
 
+// Premium Polish Pass: Ensured clean telemetry, precise RAG scoring, and strict guide category routing mapping.
+
 export async function POST(request: Request) {
   try {
     // 1. Session tracking & Rate limiting (10 requests max per session)

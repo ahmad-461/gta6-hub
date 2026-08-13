@@ -6,38 +6,26 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
- ✓ Ready in 1915ms
+ ✓ Ready in 2.8s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1210ms (127 modules)
+ ✓ Compiled /middleware in 1189ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.5s (840 modules)
- HEAD / 200 in 8940ms
+ ✓ Compiled / in 7.3s (887 modules)
+ HEAD / 200 in 7876ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 103ms
+ GET / 200 in 104ms
  ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1850ms (825 modules)
- GET /og-image.jpg 404 in 2279ms
+ ✓ Compiled /_not-found in 1873ms (872 modules)
+ GET /og-image.jpg 404 in 2135ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 447ms
+ GET /og-image.jpg 404 in 420ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
  ○ Compiling /intelligence ...
- ✓ Compiled /intelligence in 977ms (833 modules)
- GET /intelligence 200 in 1452ms
- ✓ Compiled /investigate in 442ms (847 modules)
- GET /investigate 200 in 601ms
- ✓ Compiled /map in 498ms (861 modules)
- GET /map 200 in 608ms
- GET / 200 in 241ms
- GET /og-image.jpg 404 in 77ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 81ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /intelligence 200 in 92ms
- GET /investigate 200 in 72ms
- GET /map 200 in 60ms
+ ✓ Compiled /intelligence in 615ms (884 modules)
+ GET /intelligence 200 in 892ms
+ ✓ Compiled /investigate in 483ms (902 modules)
+ GET /investigate 200 in 671ms
+ ✓ Compiled in 640ms (415 modules)
+ ✓ Compiled in 511ms (415 modules)
+ ✓ Compiled in 1079ms (803 modules)
