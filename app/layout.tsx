@@ -4,6 +4,7 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import ChatWidget from "@/components/ChatWidget"
 import RadioWidget from "@/components/RadioWidget"
+import PageBanner from "@/components/PageBanner"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
 import { Anton, Space_Mono } from "next/font/google"
@@ -68,6 +69,7 @@ export default function RootLayout({
       <body className="flex flex-col min-h-screen bg-[#0B0710] text-[#F5F0FA] antialiased selection:bg-[#FF2E88] selection:text-white font-sans">
         {!isAdminRoute && <Header />}
         <main className="flex-grow flex flex-col">
+          {!isAdminRoute && pathname !== "/" && pathname !== "" && <PageBanner pathname={pathname} />}
           {children}
         </main>
         {!isAdminRoute && <Footer />}

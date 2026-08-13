@@ -6,22 +6,33 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1851ms
+ ✓ Ready in 1800ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1172ms (127 modules)
+ ✓ Compiled /middleware in 1143ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 9.4s (887 modules)
- GET / 200 in 10868ms
+ ✓ Compiled / in 7.5s (890 modules)
+ GET / 200 in 8734ms
  ○ Compiling /_not-found ...
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ✓ Compiled /_not-found in 10.2s (872 modules)
- GET /og-image.jpg 404 in 10461ms
+ ✓ Compiled /_not-found in 10.1s (875 modules)
+ GET /og-image.jpg 404 in 10392ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 9778ms
+ GET /og-image.jpg 404 in 9593ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /?_rsc=r3yhw 200 in 79ms
- ✓ Compiled /news in 353ms (867 modules)
- GET /news 200 in 14509ms
- ✓ Compiled /cheats in 428ms (884 modules)
- GET /cheats 200 in 7574ms
+ GET /?_rsc=r3yhw 200 in 92ms
+ ✓ Compiled /news in 343ms (870 modules)
+ GET /news 200 in 14486ms
+ GET / 200 in 160ms
+ GET /og-image.jpg 404 in 68ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 85ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /news 200 in 15308ms
+ GET /og-image.jpg 404 in 32ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 27ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ○ Compiling /guides ...
+ ✓ Compiled /guides in 726ms (878 modules)
+ GET /guides 200 in 8020ms
