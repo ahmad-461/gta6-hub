@@ -52,7 +52,7 @@ export default async function AdminLayout({
 
   // If there's no user, we render children (e.g. login page) or fallback.
   if (!user) {
-    return <div className="min-h-screen bg-[#0B0710]">{children}</div>
+    return <div className="min-h-screen bg-ink">{children}</div>
   }
 
   // Fetch the user's profile to build adminUser representation
@@ -78,24 +78,24 @@ export default async function AdminLayout({
   const breadcrumbs = getBreadcrumbs(pathname)
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#0B0710] text-[#F5F0FA]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-ink text-paper">
       <AdminSidebar user={adminUser} />
 
       <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
         {/* Dynamic Breadcrumbs and Status Header Bar */}
-        <header className="bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-4 px-6 lg:px-8 flex items-center justify-between font-mono shrink-0">
-          <div className="flex items-center space-x-2 text-xs font-bold text-[#9C8FAE]">
+        <header className="bg-ink-2 border-b border-[rgba(245,240,250,0.14)] py-4 px-6 lg:px-8 flex items-center justify-between font-mono shrink-0">
+          <div className="flex items-center space-x-2 text-xs font-bold text-paper-dim">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
-                {idx > 0 && <span className="text-[#FF2E88]">/</span>}
-                <span className={idx === breadcrumbs.length - 1 ? "text-[#F5F0FA]" : ""}>{crumb}</span>
+                {idx > 0 && <span className="text-magenta">/</span>}
+                <span className={idx === breadcrumbs.length - 1 ? "text-paper" : ""}>{crumb}</span>
               </React.Fragment>
             ))}
           </div>
 
           <div className="flex items-center space-x-4">
             {/* Status / Role Badge */}
-            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#FF2E88]/10 text-[#FF2E88] border border-[#FF2E88]/15">
+            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-magenta/10 text-magenta border border-magenta/15">
               {adminUser.role}
             </span>
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" title="System Online" />

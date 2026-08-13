@@ -46,7 +46,7 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
 
   if (timeLeft.isExpired) {
     return (
-      <div className="text-[#FF2E88] font-mono font-bold uppercase tracking-widest text-sm">
+      <div className="text-magenta font-mono font-bold uppercase tracking-widest text-sm">
         GTA VI IS NOW ACTIVE
       </div>
     )
@@ -62,12 +62,12 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
       ].map((item, index) => (
         <div
           key={index}
-          className="flex flex-col items-center bg-[#0B0710]/80 border border-[rgba(245,240,250,0.14)] p-2 sm:p-3 rounded"
+          className="flex flex-col items-center bg-ink/80 border border-[rgba(245,240,250,0.14)] p-2 sm:p-3 rounded"
         >
-          <span className="text-xl sm:text-2xl font-bold text-[#FF2E88] tracking-wider tabular-nums">
+          <span className="text-xl sm:text-2xl font-bold text-magenta tracking-wider tabular-nums">
             {String(item.value).padStart(2, "0")}
           </span>
-          <span className="text-[9px] sm:text-[10px] text-[#9C8FAE] tracking-widest mt-1">
+          <span className="text-[9px] sm:text-[10px] text-paper-dim tracking-widest mt-1">
             {item.label}
           </span>
         </div>

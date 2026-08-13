@@ -182,9 +182,9 @@ export default function WishlistPage() {
             "rgba(108, 31, 181, 0.75)" // Violet
           ),
           borderColor: sortedChartData.map(it =>
-            it.category === "Weapons" ? "#FF2E88" :
-            it.category === "Vehicles" ? "#00E5FF" :
-            "#6C1FB5"
+            it.category === "Weapons" ? "#FF2D8D" :
+            it.category === "Vehicles" ? "#FF8A3D" :
+            "#832258"
           ),
           borderWidth: 1.5,
           borderRadius: 4,
@@ -209,7 +209,7 @@ export default function WishlistPage() {
           color: "rgba(245, 240, 250, 0.08)"
         },
         ticks: {
-          color: "#9C8FAE",
+          color: "#9E9EA8",
           font: {
             family: "monospace",
             size: 10
@@ -221,7 +221,7 @@ export default function WishlistPage() {
           display: false
         },
         ticks: {
-          color: "#F5F0FA",
+          color: "#F5F5F7",
           font: {
             family: "monospace",
             size: 10,
@@ -235,11 +235,11 @@ export default function WishlistPage() {
         display: false
       },
       tooltip: {
-        backgroundColor: "#150C1F",
+        backgroundColor: "#16161B",
         borderColor: "rgba(245, 240, 250, 0.14)",
         borderWidth: 1,
-        titleColor: "#00E5FF",
-        bodyColor: "#F5F0FA",
+        titleColor: "#FF8A3D",
+        bodyColor: "#F5F5F7",
         titleFont: {
           family: "monospace",
           weight: "bold" as const
@@ -254,12 +254,12 @@ export default function WishlistPage() {
   if (!isMounted) return null
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-10 text-[#F5F0FA]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-10 text-paper">
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[rgba(245,240,250,0.14)] pb-6">
         <div>
-          <div className="flex items-center space-x-2 mb-2 text-[#00E5FF]">
+          <div className="flex items-center space-x-2 mb-2 text-orange">
             <ShoppingBag className="w-5 h-5 animate-pulse" />
             <span className="text-xs font-black tracking-widest uppercase font-mono">
               AMMU-NATION LOADOUT TELEMETRY
@@ -268,14 +268,14 @@ export default function WishlistPage() {
           <h1 className="text-4xl sm:text-6xl font-anton uppercase tracking-tight text-white leading-none">
             WISHLIST BUILDER
           </h1>
-          <p className="text-sm text-[#9C8FAE] max-w-2xl mt-2 leading-relaxed">
+          <p className="text-sm text-paper-dim max-w-2xl mt-2 leading-relaxed">
             Construct your dream criminal stash! Pick up to 3 options per category. Submit your payload to contribute anonymously to the most wanted aggregate leaderboard.
           </p>
         </div>
 
         <Link
           href="/tools"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF2E88] hover:underline bg-[#FF2E88]/5 border border-[#FF2E88]/20 rounded-lg px-4 py-2.5 self-start sm:self-center transition"
+          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta hover:underline bg-magenta/5 border border-magenta/20 rounded-lg px-4 py-2.5 self-start sm:self-center transition"
         >
           <ArrowLeft className="w-4 h-4" /> Back To Fan Tools
         </Link>
@@ -285,11 +285,11 @@ export default function WishlistPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
         {/* Loadout Selection Panel (7 Cols) */}
-        <div className="lg:col-span-7 space-y-8 flex flex-col justify-between bg-[#150C1F]/40 border border-[rgba(245,240,250,0.14)] rounded-xl p-6 relative">
-          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
+        <div className="lg:col-span-7 space-y-8 flex flex-col justify-between bg-ink-2/40 border border-[rgba(245,240,250,0.14)] rounded-xl p-6 relative">
+          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-orange" />
+          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-orange" />
+          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-orange" />
+          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-orange" />
 
           <div className="space-y-6">
             {CATEGORIES.map((cat) => {
@@ -303,7 +303,7 @@ export default function WishlistPage() {
                     <h3 className="font-anton text-lg tracking-wider text-white uppercase">
                       {cat}
                     </h3>
-                    <span className="font-mono text-xs text-[#9C8FAE] font-bold">
+                    <span className="font-mono text-xs text-paper-dim font-bold">
                       {selectedInCategoryCount} / 3 SELECTED
                     </span>
                   </div>
@@ -314,13 +314,13 @@ export default function WishlistPage() {
                       const isSelected = selectedItems.includes(item.id)
 
                       let accentBorder = "hover:border-[rgba(245,240,250,0.3)] border-[rgba(245,240,250,0.08)]"
-                      let accentBg = "bg-[#0B0710]/40"
+                      let accentBg = "bg-ink/40"
                       let checkboxColor = "border-[rgba(245,240,250,0.2)] text-transparent"
 
                       if (isSelected) {
-                        accentBg = cat === "Weapons" ? "bg-[#FF2E88]/10" : cat === "Vehicles" ? "bg-[#00E5FF]/10" : "bg-[#6C1FB5]/10"
-                        accentBorder = cat === "Weapons" ? "border-[#FF2E88]" : cat === "Vehicles" ? "border-[#00E5FF]" : "border-[#6C1FB5]"
-                        checkboxColor = cat === "Weapons" ? "bg-[#FF2E88] border-[#FF2E88] text-white" : cat === "Vehicles" ? "bg-[#00E5FF] border-[#00E5FF] text-black" : "bg-[#6C1FB5] border-[#6C1FB5] text-white"
+                        accentBg = cat === "Weapons" ? "bg-magenta/10" : cat === "Vehicles" ? "bg-orange/10" : "bg-violet/10"
+                        accentBorder = cat === "Weapons" ? "border-magenta" : cat === "Vehicles" ? "border-orange" : "border-violet"
+                        checkboxColor = cat === "Weapons" ? "bg-magenta border-magenta text-white" : cat === "Vehicles" ? "bg-orange border-orange text-black" : "bg-violet border-violet text-white"
                       }
 
                       return (
@@ -335,7 +335,7 @@ export default function WishlistPage() {
                               <h4 className="text-sm font-bold text-white truncate">
                                 {item.name}
                               </h4>
-                              <p className="text-[11px] text-[#9C8FAE] line-clamp-1 mt-0.5">
+                              <p className="text-[11px] text-paper-dim line-clamp-1 mt-0.5">
                                 {item.description}
                               </p>
                             </div>
@@ -356,7 +356,7 @@ export default function WishlistPage() {
 
           {/* Submission and Action Strip */}
           <div className="pt-6 border-t border-[rgba(245,240,250,0.1)] mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-xs text-[#9C8FAE] leading-relaxed max-w-sm">
+            <div className="text-xs text-paper-dim leading-relaxed max-w-sm">
               {hasSubmitted ? (
                 <span className="text-emerald-400 font-bold flex items-center gap-1.5 font-mono">
                   <CheckCircle2 size={14} /> YOUR PAYLOAD INTEL SECURELY REGISTERED. THANK YOU!
@@ -369,7 +369,7 @@ export default function WishlistPage() {
             <button
               onClick={handleSubmitLoadout}
               disabled={hasSubmitted || isSubmitting || selectedItems.length === 0}
-              className="px-8 py-3 bg-[#FF2E88] hover:bg-[#FF2E88]/90 disabled:opacity-40 text-white font-mono text-xs font-black uppercase tracking-widest rounded transition-all shadow-[0_0_15px_rgba(255,46,136,0.3)] disabled:shadow-none flex items-center gap-2 shrink-0"
+              className="px-8 py-3 bg-magenta hover:bg-magenta/90 disabled:opacity-40 text-white font-mono text-xs font-black uppercase tracking-widest rounded transition-all shadow-[0_0_15px_rgba(255,46,136,0.3)] disabled:shadow-none flex items-center gap-2 shrink-0"
             >
               {isSubmitting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -383,21 +383,21 @@ export default function WishlistPage() {
         </div>
 
         {/* Community Results Chart (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[480px] shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF2E88] via-[#6C1FB5] to-[#00E5FF]" />
+        <div className="lg:col-span-5 flex flex-col justify-between bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[480px] shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-magenta via-[#832258] to-orange" />
 
           <div className="flex items-center justify-between border-b border-[rgba(245,240,250,0.08)] pb-4 mb-4">
             <div>
               <h3 className="text-base font-anton uppercase text-white tracking-wider">
                 Most Wanted Picks
               </h3>
-              <p className="text-[11px] text-[#9C8FAE] font-mono uppercase font-bold">
+              <p className="text-[11px] text-paper-dim font-mono uppercase font-bold">
                 Tally reports across all virtual hubs
               </p>
             </div>
-            <div className="bg-[#00E5FF]/10 border border-[#00E5FF]/20 px-2.5 py-1 rounded flex items-center space-x-1.5">
-              <BarChart3 className="w-3.5 h-3.5 text-[#00E5FF]" />
-              <span className="text-[9px] font-black font-mono text-[#00E5FF] uppercase tracking-wider">TALLY ENGINE</span>
+            <div className="bg-orange/10 border border-orange/20 px-2.5 py-1 rounded flex items-center space-x-1.5">
+              <BarChart3 className="w-3.5 h-3.5 text-orange" />
+              <span className="text-[9px] font-black font-mono text-orange uppercase tracking-wider">TALLY ENGINE</span>
             </div>
           </div>
 
@@ -405,7 +405,7 @@ export default function WishlistPage() {
           <div className="relative flex-grow flex items-center justify-center min-h-[350px]">
             {isLoadingVotes ? (
               <div className="flex flex-col items-center justify-center space-y-2 text-foreground/45 font-mono">
-                <Loader2 className="w-8 h-8 text-[#FF2E88] animate-spin" />
+                <Loader2 className="w-8 h-8 text-magenta animate-spin" />
                 <span className="text-xs uppercase tracking-widest animate-pulse">Extracting counts database...</span>
               </div>
             ) : sortedChartData.length > 0 ? (
@@ -421,15 +421,15 @@ export default function WishlistPage() {
           </div>
 
           {/* Legend key footer */}
-          <div className="mt-4 pt-4 border-t border-[rgba(245,240,250,0.08)] flex justify-between gap-2 text-[8px] font-bold font-mono text-[#9C8FAE]/60">
+          <div className="mt-4 pt-4 border-t border-[rgba(245,240,250,0.08)] flex justify-between gap-2 text-[8px] font-bold font-mono text-paper-dim/60">
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded bg-[#FF2E88]" /> WEAPONS
+              <span className="w-2.5 h-2.5 rounded bg-magenta" /> WEAPONS
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded bg-[#00E5FF]" /> VEHICLES
+              <span className="w-2.5 h-2.5 rounded bg-orange" /> VEHICLES
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded bg-[#6C1FB5]" /> FEATURES
+              <span className="w-2.5 h-2.5 rounded bg-violet" /> FEATURES
             </span>
           </div>
 

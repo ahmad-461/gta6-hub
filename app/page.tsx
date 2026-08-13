@@ -320,28 +320,28 @@ export default async function HomePage() {
   const gridNews = latestNews ? latestNews.slice(0, 3) : []
 
   return (
-    <div className="flex-grow flex flex-col relative bg-[#0B0710] overflow-hidden text-[#F5F0FA]">
+    <div className="flex-grow flex flex-col relative bg-ink overflow-hidden text-paper">
       {/* Cinematic Global Noise Texture */}
       <div className="film-grain" />
 
       {/* Background Atmosphere */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Glow Blob 1 (magenta top-right) */}
-        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#FF2E88]/10 blur-[130px] z-0" />
-        {/* Glow Blob 2 (cyan bottom-left) */}
-        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00E5FF]/8 blur-[130px] z-0" />
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-magenta/10 blur-[130px] z-0" />
+        {/* Glow Blob 2 (orange bottom-left) */}
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-orange/8 blur-[130px] z-0" />
       </div>
 
       {/* Hero Section */}
       <section
-        className="relative min-h-[90vh] flex items-center pt-20 pb-32 px-4 sm:px-6 lg:px-12 overflow-hidden bg-[#0B0710] z-10 border-b border-[rgba(245,240,250,0.14)]"
+        className="relative min-h-[90vh] flex items-center pt-20 pb-32 px-4 sm:px-6 lg:px-12 overflow-hidden bg-ink z-10 border-b border-[rgba(245,240,250,0.14)]"
         style={{
           clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
         }}
       >
         {/* Mobile horizontal watermark, centered behind hero text */}
         <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-0 overflow-hidden lg:hidden">
-          <span className="font-anton text-[11rem] sm:text-[16rem] uppercase leading-none tracking-tighter opacity-[0.03] bg-gradient-to-r from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent">
+          <span className="font-anton text-[11rem] sm:text-[16rem] uppercase leading-none tracking-tighter opacity-[0.03] bg-gradient-to-r from-[#F5F5F7] to-magenta bg-clip-text text-transparent">
             VICE
           </span>
         </div>
@@ -350,35 +350,35 @@ export default async function HomePage() {
           {/* Asymmetric Left Column */}
           <div className="lg:col-span-7 space-y-8 text-left">
             {/* Small mono eyebrow label with a horizontal rule accent */}
-            <div className="flex items-center space-x-3 font-mono text-xs text-[#9C8FAE] tracking-widest uppercase">
+            <div className="flex items-center space-x-3 font-mono text-xs text-paper-dim tracking-widest uppercase">
               <span>UNOFFICIAL INTEL — EST. 2026</span>
-              <span className="h-[1px] w-12 bg-[#FF2E88]"></span>
+              <span className="h-[1px] w-12 bg-magenta"></span>
             </div>
 
             {/* Headline Block */}
             <div className="space-y-1">
-              <span className="block text-[#F5F0FA] text-lg sm:text-2xl font-mono tracking-wide">
+              <span className="block text-paper text-lg sm:text-2xl font-mono tracking-wide">
                 The Ultimate
               </span>
-              <h1 className="text-6xl sm:text-8xl lg:text-[7.5rem] font-anton font-bold uppercase tracking-tighter leading-[0.92] text-[#F5F0FA]">
+              <h1 className="text-6xl sm:text-8xl lg:text-[7.5rem] font-anton font-bold uppercase tracking-tighter leading-[0.92] text-paper">
                 GTA VI
               </h1>
-              <span className="block text-4xl sm:text-6xl lg:text-7xl font-anton uppercase tracking-tight bg-gradient-to-r from-[#FF2E88] to-[#00E5FF] bg-clip-text text-transparent leading-[0.92]">
+              <span className="block text-4xl sm:text-6xl lg:text-7xl font-anton uppercase tracking-tight bg-gradient-to-r from-magenta to-orange bg-clip-text text-transparent leading-[0.92]">
                 INTELLIGENCE HUB
               </span>
             </div>
 
             {/* Supporting Paragraph */}
-            <p className="text-base sm:text-lg text-[#9C8FAE] max-w-xl leading-relaxed font-normal">
+            <p className="text-base sm:text-lg text-paper-dim max-w-xl leading-relaxed font-normal">
               The premier hyper-focused fan ecosystem for Grand Theft Auto VI. Access immediate walkthroughs, real-time database lookups, and deep lore map tracing.
             </p>
 
             {/* Editorial Voice Moment */}
-            <div className="pl-4 border-l-2 border-[#FF2E88] max-w-xl space-y-1">
-              <span className="block font-mono text-[10px] tracking-widest text-[#FF2E88] uppercase font-bold">
+            <div className="pl-4 border-l-2 border-magenta max-w-xl space-y-1">
+              <span className="block font-mono text-[10px] tracking-widest text-magenta uppercase font-bold">
                 OUR COVENANT / EDITORIAL CRITERIA
               </span>
-              <p className="text-sm text-[#F5F0FA] leading-relaxed font-normal">
+              <p className="text-sm text-paper leading-relaxed font-normal">
                 Unlike mass-media outlets chasing algorithmic clicks, GTA 6 Hub is built on raw, verified telemetry and meticulous database indexing. We do not deal in baseless speculation. Our mission is to trace every coordinate of Leonida and map its narrative architecture with zero filler—providing the community with a high-fidelity intelligence layer they can actually trust.
               </p>
             </div>
@@ -387,31 +387,31 @@ export default async function HomePage() {
             <div className="flex flex-wrap gap-4 pt-2">
               <Link
                 href="/news"
-                className="px-8 py-3.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
+                className="px-8 py-3.5 bg-magenta hover:bg-magenta/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
               >
                 Enter The Hub
               </Link>
               <Link
                 href="/lore-map"
-                className="px-8 py-3.5 bg-transparent hover:bg-[rgba(245,240,250,0.06)] border border-[#FF2E88] text-[#F5F0FA] font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono active:scale-95 duration-100"
+                className="px-8 py-3.5 bg-transparent hover:bg-[rgba(245,240,250,0.06)] border border-magenta text-paper font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono active:scale-95 duration-100"
               >
                 Explore The Map
               </Link>
             </div>
 
             {/* HUD Countdown Module */}
-            <div className="relative border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/60 backdrop-blur-md p-6 max-w-lg rounded shadow-2xl overflow-hidden mt-8">
+            <div className="relative border border-[rgba(245,240,250,0.14)] bg-ink-2/60 backdrop-blur-md p-6 max-w-lg rounded shadow-2xl overflow-hidden mt-8">
               {/* Corner-bracket accents (like a targeting reticle) */}
-              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
+              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-orange" />
+              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-orange" />
+              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-orange" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-orange" />
 
               {/* Pulsing dot + label row */}
-              <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-[#00E5FF]">
+              <div className="flex items-center space-x-2 mb-4 font-mono text-[10px] tracking-widest text-orange">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange"></span>
                 </span>
                 <span>SYSTEM COUNTDOWN TELEMETRY</span>
               </div>
@@ -425,7 +425,7 @@ export default async function HomePage() {
           <div className="lg:col-span-5 flex justify-end h-full relative min-h-[300px] lg:min-h-[500px] hidden lg:flex">
             <div className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-0">
               <span
-                className="font-anton text-[12rem] lg:text-[18rem] uppercase leading-none tracking-tighter opacity-10 bg-gradient-to-b from-[#F5F0FA] to-[#FF2E88] bg-clip-text text-transparent"
+                className="font-anton text-[12rem] lg:text-[18rem] uppercase leading-none tracking-tighter opacity-10 bg-gradient-to-b from-[#F5F5F7] to-magenta bg-clip-text text-transparent"
                 style={{
                   writingMode: "vertical-rl",
                 }}
@@ -439,12 +439,12 @@ export default async function HomePage() {
 
       {/* Auto-scrolling Ticker Strip */}
       {tickerItems.length > 0 && (
-        <div className="w-full bg-[#150C1F] border-t border-b border-[rgba(245,240,250,0.14)] py-3 overflow-hidden z-20 relative">
+        <div className="w-full bg-ink-2 border-t border-b border-[rgba(245,240,250,0.14)] py-3 overflow-hidden z-20 relative">
           <div className="ticker-marquee whitespace-nowrap flex items-center">
             {tickerItems.map((item, index) => (
-              <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-[#9C8FAE] tracking-wider">
-                <span className="inline-block w-2 h-2 bg-[#FF2E88] rounded-full mr-3 animate-pulse" />
-                <span className="text-[#00E5FF] font-bold mr-2">LATEST INTEL:</span>
+              <div key={index} className="inline-flex items-center mx-8 font-mono text-xs text-paper-dim tracking-wider">
+                <span className="inline-block w-2 h-2 bg-magenta rounded-full mr-3 animate-pulse" />
+                <span className="text-orange font-bold mr-2">LATEST INTEL:</span>
                 <Link href={`/news/${item.slug}`} className="hover:text-white transition-colors underline decoration-dotted">
                   {item.title}
                 </Link>
@@ -457,7 +457,7 @@ export default async function HomePage() {
       {/* Featured Article Spotlight */}
       {featuredArticle && (
         <section
-          className="relative bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-12 lg:py-0 overflow-hidden z-20"
+          className="relative bg-ink-2 border-b border-[rgba(245,240,250,0.14)] py-12 lg:py-0 overflow-hidden z-20"
           style={{
             clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
           }}
@@ -474,47 +474,47 @@ export default async function HomePage() {
                   priority
                   sizes="(max-w-1024px) 100vw, 60vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#150C1F] via-[#150C1F]/40 to-transparent lg:hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#16161B] via-[#16161B]/40 to-transparent lg:hidden" />
 
                 {/* Small bordered "Featured" tag overlay */}
-                <div className="absolute top-6 left-6 z-30 font-mono text-[10px] tracking-widest text-[#FF2E88] bg-[#0B0710]/90 border border-[#FF2E88] px-3 py-1 uppercase rounded-sm shadow-xl">
+                <div className="absolute top-6 left-6 z-30 font-mono text-[10px] tracking-widest text-magenta bg-ink/90 border border-magenta px-3 py-1 uppercase rounded-sm shadow-xl">
                   Featured Article
                 </div>
               </div>
 
               {/* Right Typographic Content Block */}
-              <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10 bg-[#150C1F]">
+              <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10 bg-ink-2">
                 <div className="flex items-center space-x-3">
-                  <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
+                  <span className="text-xs font-bold font-mono text-magenta uppercase tracking-widest">
                     SPOTLIGHT INTEL
                   </span>
                   {featuredArticle.category && (
                     <>
-                      <span className="text-[#9C8FAE] font-mono text-xs">/</span>
-                      <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
+                      <span className="text-paper-dim font-mono text-xs">/</span>
+                      <span className="text-xs font-bold font-mono text-orange uppercase tracking-widest">
                         {(featuredArticle.category as any).name}
                       </span>
                     </>
                   )}
                 </div>
 
-                <h2 className="text-3xl sm:text-5xl font-anton uppercase text-[#F5F0FA] tracking-normal leading-[0.95] hover:text-[#FF2E88] transition-colors">
+                <h2 className="text-3xl sm:text-5xl font-anton uppercase text-paper tracking-normal leading-[0.95] hover:text-magenta transition-colors">
                   <Link href={`/news/${featuredArticle.slug}`}>
                     {featuredArticle.title}
                   </Link>
                 </h2>
 
-                <p className="text-[#9C8FAE] text-sm sm:text-base leading-relaxed line-clamp-4">
+                <p className="text-paper-dim text-sm sm:text-base leading-relaxed line-clamp-4">
                   {featuredArticle.excerpt}
                 </p>
 
                 <div className="flex items-center justify-between pt-6 border-t border-[rgba(245,240,250,0.1)]">
-                  <span className="text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase">
+                  <span className="text-[10px] text-paper-dim/60 font-mono tracking-widest uppercase">
                     PUBLISHED: {formatDate(featuredArticle.published_at)}
                   </span>
                   <Link
                     href={`/news/${featuredArticle.slug}`}
-                    className="inline-flex items-center gap-2 text-xs font-bold text-[#FF2E88] hover:underline uppercase tracking-wider font-mono"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-magenta hover:underline uppercase tracking-wider font-mono"
                   >
                     READ ARTICLE <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -532,16 +532,16 @@ export default async function HomePage() {
           <ScrollReveal>
             <div className="flex items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4">
               <div className="space-y-1">
-                <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-magenta uppercase tracking-widest">
                   Hot Off The Press
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
+                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-paper">
                   Latest Intel
                 </h2>
               </div>
               <Link
                 href="/news"
-                className="text-xs font-bold font-mono text-[#00E5FF] hover:underline uppercase tracking-wider flex items-center gap-1.5"
+                className="text-xs font-bold font-mono text-orange hover:underline uppercase tracking-wider flex items-center gap-1.5"
               >
                 View All <ArrowRight className="w-4 h-4" />
               </Link>
@@ -552,9 +552,9 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {gridNews.map((art, index) => (
                 <ScrollReveal key={art.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#FF2E88] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#FF2E88] shadow-lg">
+                  <article className="group flex flex-col justify-between h-full bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-magenta transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-magenta shadow-lg">
                     <div>
-                      <div className="relative w-full h-52 overflow-hidden bg-[#0B0710]">
+                      <div className="relative w-full h-52 overflow-hidden bg-ink">
                         <Image
                           src={getImageUrl(art.featured_image)}
                           alt={art.title}
@@ -565,21 +565,21 @@ export default async function HomePage() {
                       </div>
                       <div className="p-6 space-y-3">
                         {art.category && (
-                          <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-[#00E5FF]">
+                          <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-orange">
                             {(art.category as any).name}
                           </span>
                         )}
-                        <h4 className="text-lg font-bold text-[#F5F0FA] group-hover:text-[#FF2E88] transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-lg font-bold text-paper group-hover:text-magenta transition-colors line-clamp-2 leading-snug">
                           <Link href={`/news/${art.slug}`}>{art.title}</Link>
                         </h4>
-                        <p className="text-sm text-[#9C8FAE] leading-relaxed line-clamp-3">
+                        <p className="text-sm text-paper-dim leading-relaxed line-clamp-3">
                           {art.excerpt}
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 pt-0 mt-4 flex items-center justify-between text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase">
+                    <div className="p-6 pt-0 mt-4 flex items-center justify-between text-[10px] text-paper-dim/60 font-mono tracking-widest uppercase">
                       <span>{formatDate(art.published_at)}</span>
-                      <Link href={`/news/${art.slug}`} className="text-[#FF2E88] hover:underline font-bold flex items-center gap-1">
+                      <Link href={`/news/${art.slug}`} className="text-magenta hover:underline font-bold flex items-center gap-1">
                         READ <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -588,7 +588,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-paper-dim text-sm font-mono">
               No news items posted yet. Check back soon.
             </div>
           )}
@@ -599,16 +599,16 @@ export default async function HomePage() {
           <ScrollReveal>
             <div className="flex items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4">
               <div className="space-y-1">
-                <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-orange uppercase tracking-widest">
                   Pro Walkthroughs
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
+                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-paper">
                   Expert Guides
                 </h2>
               </div>
               <Link
                 href="/guides"
-                className="text-xs font-bold font-mono text-[#00E5FF] hover:underline uppercase tracking-wider flex items-center gap-1.5"
+                className="text-xs font-bold font-mono text-orange hover:underline uppercase tracking-wider flex items-center gap-1.5"
               >
                 Browse All <ArrowRight className="w-4 h-4" />
               </Link>
@@ -619,9 +619,9 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestGuides.map((guide, index) => (
                 <ScrollReveal key={guide.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <article className="group flex flex-col justify-between h-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-[#00E5FF] transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-[#00E5FF] shadow-lg">
+                  <article className="group flex flex-col justify-between h-full bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded overflow-hidden hover:-translate-y-1 hover:border-orange transition-all duration-300 motion-reduce:hover:translate-y-0 motion-reduce:hover:border-orange shadow-lg">
                     <div>
-                      <div className="relative w-full h-48 overflow-hidden bg-[#0B0710]">
+                      <div className="relative w-full h-48 overflow-hidden bg-ink">
                         <Image
                           src={getImageUrl(guide.featured_image)}
                           alt={guide.title}
@@ -632,7 +632,7 @@ export default async function HomePage() {
                       </div>
                       <div className="p-6 space-y-3">
                         <div className="flex items-center justify-between text-[10px] font-bold font-mono uppercase tracking-wider">
-                          <span className="text-[#FF2E88]">{guide.guide_category}</span>
+                          <span className="text-magenta">{guide.guide_category}</span>
                           <span className={`px-2 py-0.5 rounded ${
                             guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                             guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
@@ -641,7 +641,7 @@ export default async function HomePage() {
                             {guide.difficulty}
                           </span>
                         </div>
-                        <h4 className="text-lg font-bold text-[#F5F0FA] group-hover:text-[#00E5FF] transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-lg font-bold text-paper group-hover:text-orange transition-colors line-clamp-2 leading-snug">
                           <Link href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}>
                             {guide.title}
                           </Link>
@@ -651,7 +651,7 @@ export default async function HomePage() {
                     <div className="p-6 pt-0 mt-2">
                       <Link
                         href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}
-                        className="block text-center w-full py-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.14)] text-xs font-bold font-mono uppercase tracking-wider hover:bg-[#00E5FF]/5 hover:border-[#00E5FF] text-[#00E5FF] transition-all duration-200"
+                        className="block text-center w-full py-2.5 rounded bg-ink border border-[rgba(245,240,250,0.14)] text-xs font-bold font-mono uppercase tracking-wider hover:bg-orange/5 hover:border-orange text-orange transition-all duration-200"
                       >
                         Read Walkthrough
                       </Link>
@@ -661,7 +661,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono">
+            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-paper-dim text-sm font-mono">
               No expert guides published yet.
             </div>
           )}
@@ -674,10 +674,10 @@ export default async function HomePage() {
           <div className="lg:col-span-7 space-y-8">
             <ScrollReveal>
               <div className="space-y-1 mb-6">
-                <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
+                <span className="text-xs font-bold font-mono text-magenta uppercase tracking-widest">
                   Have Your Say
                 </span>
-                <h3 className="text-3xl font-anton uppercase text-[#F5F0FA] tracking-normal">
+                <h3 className="text-3xl font-anton uppercase text-paper tracking-normal">
                   Player Opinion
                 </h3>
               </div>
@@ -697,9 +697,9 @@ export default async function HomePage() {
 
             {/* Live Comments Stream */}
             <ScrollReveal>
-              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+              <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
                 <div className="border-b border-[rgba(245,240,250,0.1)] pb-4">
-                  <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE]">
+                  <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-paper-dim">
                     Latest Intel / Comment Stream
                   </h4>
                 </div>
@@ -708,16 +708,16 @@ export default async function HomePage() {
                     {sidebarComments.map((com) => (
                       <li key={com.id} className="space-y-2 pt-4 first:pt-0">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-bold font-mono text-[#00E5FF]">{com.name}</span>
-                          <span className="text-[10px] font-mono text-[#9C8FAE]/60 font-bold">{formatDate(com.created_at)}</span>
+                          <span className="font-bold font-mono text-orange">{com.name}</span>
+                          <span className="text-[10px] font-mono text-paper-dim/60 font-bold">{formatDate(com.created_at)}</span>
                         </div>
-                        <p className="text-[#F5F0FA]/85 text-sm italic leading-relaxed">
+                        <p className="text-paper/85 text-sm italic leading-relaxed">
                           &ldquo;{com.content}&rdquo;
                         </p>
                         {com.articles && (
-                          <div className="text-[10px] font-mono text-[#9C8FAE]/60">
+                          <div className="text-[10px] font-mono text-paper-dim/60">
                             on{" "}
-                            <Link href={`/news/${(com.articles as any).slug}`} className="hover:underline text-[#FF2E88] font-bold uppercase tracking-wider">
+                            <Link href={`/news/${(com.articles as any).slug}`} className="hover:underline text-magenta font-bold uppercase tracking-wider">
                               {(com.articles as any).title}
                             </Link>
                           </div>
@@ -726,7 +726,7 @@ export default async function HomePage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs font-mono text-[#9C8FAE]">No live comments stream.</p>
+                  <p className="text-xs font-mono text-paper-dim">No live comments stream.</p>
                 )}
               </div>
             </ScrollReveal>
@@ -735,8 +735,8 @@ export default async function HomePage() {
           {/* Asymmetrical Column 2: Recent Updates List & High-Impact Social Cards */}
           <div className="lg:col-span-5 space-y-8">
             <ScrollReveal>
-              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
-                <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-4">
+              <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6">
+                <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-paper-dim border-b border-[rgba(245,240,250,0.1)] pb-4">
                   Quick Updates
                 </h4>
                 {sidebarArticles && sidebarArticles.length > 0 ? (
@@ -745,18 +745,18 @@ export default async function HomePage() {
                       <li key={art.id} className="group text-sm pb-3 border-b border-[rgba(245,240,250,0.1)] last:border-0 last:pb-0">
                         <Link
                           href={`/news/${art.slug}`}
-                          className="font-bold text-[#F5F0FA] group-hover:text-[#FF2E88] transition-colors line-clamp-2 leading-snug"
+                          className="font-bold text-paper group-hover:text-magenta transition-colors line-clamp-2 leading-snug"
                         >
                           {art.title}
                         </Link>
-                        <span className="text-[10px] font-mono text-[#9C8FAE]/60 font-bold block mt-1 uppercase tracking-widest">
+                        <span className="text-[10px] font-mono text-paper-dim/60 font-bold block mt-1 uppercase tracking-widest">
                           {formatDate(art.published_at)}
                         </span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs font-mono text-[#9C8FAE]">No recent updates.</p>
+                  <p className="text-xs font-mono text-paper-dim">No recent updates.</p>
                 )}
               </div>
             </ScrollReveal>

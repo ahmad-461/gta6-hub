@@ -20,20 +20,20 @@ export default function PrivacyPage() {
   })
 
   return (
-    <div className="flex-grow flex flex-col relative bg-[#0B0710] text-[#F5F0FA]">
+    <div className="flex-grow flex flex-col relative bg-ink text-paper">
       {/* No heavy grain overlays or glow blobs on this page for optimized legal readability */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
 
         {/* Header Block */}
         <div className="border-b border-[rgba(245,240,250,0.14)] pb-8 mb-12 space-y-4">
-          <div className="flex items-center space-x-2.5 font-mono text-xs text-[#00E5FF] tracking-widest uppercase font-bold">
-            <ShieldCheck className="w-5 h-5 text-[#00E5FF]" />
+          <div className="flex items-center space-x-2.5 font-mono text-xs text-orange tracking-widest uppercase font-bold">
+            <ShieldCheck className="w-5 h-5 text-orange" />
             <span>SECURITY DEPLOYMENT & LEGAL</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-anton uppercase tracking-tight text-[#F5F0FA]">
+          <h1 className="text-4xl sm:text-5xl font-anton uppercase tracking-tight text-paper">
             Privacy Policy
           </h1>
-          <p className="text-xs font-mono text-[#9C8FAE]">
+          <p className="text-xs font-mono text-paper-dim">
             SYSTEM METRIC / LAST MODIFIED: {lastUpdated}
           </p>
         </div>
@@ -42,10 +42,10 @@ export default function PrivacyPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
           {/* Detailed Policy Text (8 cols) */}
-          <div className="lg:col-span-8 space-y-12 text-[#9C8FAE] text-sm leading-relaxed font-normal">
+          <div className="lg:col-span-8 space-y-12 text-paper-dim text-sm leading-relaxed font-normal">
 
             <section className="space-y-4">
-              <p className="text-[#F5F0FA] text-base">
+              <p className="text-paper text-base">
                 Welcome to the GTA 6 Hub privacy framework. This policy details how we handle user data, local storage session telemetry, and our absolute commitment to visitor tracking transparency.
               </p>
               <p>
@@ -55,13 +55,13 @@ export default function PrivacyPage() {
 
             {/* Section 1 */}
             <section id="what-we-collect" className="space-y-4 pt-4 scroll-mt-24">
-              <h2 className="text-2xl font-anton uppercase text-[#F5F0FA] tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
+              <h2 className="text-2xl font-anton uppercase text-paper tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
                 1. What We Collect
               </h2>
               <p>
                 To access the general features of GTA 6 Hub, including our news portal, interactive guides, cheats explorer, and lore connection mappings, you are not required to provide any personal data.
               </p>
-              <p className="text-[#F5F0FA]">
+              <p className="text-paper">
                 The only exceptions where we receive and process specific visitor telemetry are:
               </p>
               <ul className="list-disc list-inside pl-4 space-y-2">
@@ -79,11 +79,11 @@ export default function PrivacyPage() {
 
             {/* Section 2 */}
             <section id="cookies-storage" className="space-y-4 pt-4 scroll-mt-24">
-              <h2 className="text-2xl font-anton uppercase text-[#F5F0FA] tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
+              <h2 className="text-2xl font-anton uppercase text-paper tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
                 2. Cookies &amp; Local Storage
               </h2>
               <p>
-                We prioritize lightweight client-side storage states instead of tracking cookies. GTA 6 Hub leverages standard browser <code className="text-[#00E5FF] font-mono bg-[#150C1F] px-1.5 py-0.5 rounded">localStorage</code> to persist user preferences locally on your device:
+                We prioritize lightweight client-side storage states instead of tracking cookies. GTA 6 Hub leverages standard browser <code className="text-orange font-mono bg-ink-2 px-1.5 py-0.5 rounded">localStorage</code> to persist user preferences locally on your device:
               </p>
               <ul className="list-disc list-inside pl-4 space-y-2">
                 <li>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
 
             {/* Section 3 */}
             <section id="third-party" className="space-y-4 pt-4 scroll-mt-24">
-              <h2 className="text-2xl font-anton uppercase text-[#F5F0FA] tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
+              <h2 className="text-2xl font-anton uppercase text-paper tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
                 3. Third-Party Services
               </h2>
               <p>
@@ -127,23 +127,23 @@ export default function PrivacyPage() {
 
             {/* Section 4 */}
             <section id="contact-us" className="space-y-4 pt-4 scroll-mt-24">
-              <h2 className="text-2xl font-anton uppercase text-[#F5F0FA] tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
+              <h2 className="text-2xl font-anton uppercase text-paper tracking-tight border-b border-[rgba(245,240,250,0.08)] pb-2">
                 4. Contact Us
               </h2>
               <p>
                 If you have questions regarding this privacy framework, or if you wish to query the status of data sent via our contact terminal, you can reach out directly:
               </p>
-              <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded-lg max-w-xl flex items-center justify-between">
-                <div className="flex items-center space-x-3 text-xs text-[#9C8FAE]">
-                  <Mail className="w-5 h-5 text-[#00E5FF] shrink-0" />
+              <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded-lg max-w-xl flex items-center justify-between">
+                <div className="flex items-center space-x-3 text-xs text-paper-dim">
+                  <Mail className="w-5 h-5 text-orange shrink-0" />
                   <div>
                     <p className="font-bold text-white uppercase font-mono">Email Terminal</p>
-                    <p className="text-[10px] text-[#9C8FAE]/60 font-mono">REPLY EXPECTATION: &lt; 24H</p>
+                    <p className="text-[10px] text-paper-dim/60 font-mono">REPLY EXPECTATION: &lt; 24H</p>
                   </div>
                 </div>
                 <Link
                   href="/contact"
-                  className="px-4 py-2 bg-transparent hover:bg-[rgba(0,229,255,0.05)] border border-[#00E5FF] text-[#00E5FF] hover:text-white font-bold uppercase tracking-wider text-[10px] rounded transition-all duration-200 font-mono"
+                  className="px-4 py-2 bg-transparent hover:bg-[rgba(0,229,255,0.05)] border border-orange text-orange hover:text-white font-bold uppercase tracking-wider text-[10px] rounded transition-all duration-200 font-mono"
                 >
                   CONTACT FORM <ArrowRight className="inline-block w-3 h-3 ml-1" />
                 </Link>

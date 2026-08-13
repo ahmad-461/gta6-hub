@@ -123,14 +123,14 @@ export default function RadioWidget() {
         preload="auto"
       />
 
-      <div className="bg-[#150C1F]/95 backdrop-blur border border-[rgba(245,240,250,0.18)] rounded-xl shadow-[0_0_25px_rgba(255,46,136,0.15)] overflow-hidden">
+      <div className="bg-ink-2/95 backdrop-blur border border-[rgba(245,240,250,0.18)] rounded-xl shadow-[0_0_25px_rgba(255,46,136,0.15)] overflow-hidden">
         {/* Header bar / Minimize button */}
         <div
           onClick={() => setIsMinimized(!isMinimized)}
-          className="flex items-center justify-between px-3.5 py-1.5 bg-[#0B0710]/90 border-b border-[rgba(245,240,250,0.1)] cursor-pointer select-none text-[#9C8FAE] hover:text-white transition-colors"
+          className="flex items-center justify-between px-3.5 py-1.5 bg-ink/90 border-b border-[rgba(245,240,250,0.1)] cursor-pointer select-none text-paper-dim hover:text-white transition-colors"
         >
           <div className="flex items-center space-x-1.5">
-            <Radio size={12} className={`text-[#00E5FF] ${isPlaying ? "animate-pulse" : ""}`} />
+            <Radio size={12} className={`text-orange ${isPlaying ? "animate-pulse" : ""}`} />
             <span className="text-[10px] font-black tracking-widest uppercase">VICE AUDIO RECEIVER</span>
           </div>
           <button className="focus:outline-none">
@@ -142,33 +142,33 @@ export default function RadioWidget() {
         <div className={`transition-all duration-300 overflow-hidden ${isMinimized ? "h-0 opacity-0" : "p-4 space-y-4"}`}>
 
           {/* LCD/Segmented-style station screen */}
-          <div className="relative bg-[#0B0710] border border-[rgba(245,240,250,0.08)] p-3 rounded-lg overflow-hidden flex flex-col justify-center">
+          <div className="relative bg-ink border border-[rgba(245,240,250,0.08)] p-3 rounded-lg overflow-hidden flex flex-col justify-center">
             {/* Ambient waveform visualization */}
             {isPlaying && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-end gap-0.5 h-6 opacity-30 select-none pointer-events-none motion-reduce:hidden">
-                <span className="w-0.5 bg-[#00E5FF] animate-[pulse_0.8s_infinite] h-4" />
-                <span className="w-0.5 bg-[#FF2E88] animate-[pulse_1.2s_infinite] h-6" />
-                <span className="w-0.5 bg-[#00E5FF] animate-[pulse_0.9s_infinite] h-3" />
-                <span className="w-0.5 bg-[#FF2E88] animate-[pulse_1.1s_infinite] h-5" />
+                <span className="w-0.5 bg-orange animate-[pulse_0.8s_infinite] h-4" />
+                <span className="w-0.5 bg-magenta animate-[pulse_1.2s_infinite] h-6" />
+                <span className="w-0.5 bg-orange animate-[pulse_0.9s_infinite] h-3" />
+                <span className="w-0.5 bg-magenta animate-[pulse_1.1s_infinite] h-5" />
               </div>
             )}
 
-            <div className="text-[9px] text-[#9C8FAE] tracking-wider uppercase font-black mb-1 flex justify-between">
+            <div className="text-[9px] text-paper-dim tracking-wider uppercase font-black mb-1 flex justify-between">
               <span>TUNED STATION</span>
               {isPlaying ? (
-                <span className="text-[#00E5FF] animate-pulse">ON AIR</span>
+                <span className="text-orange animate-pulse">ON AIR</span>
               ) : (
-                <span className="text-[#9C8FAE]/50">STANDBY</span>
+                <span className="text-paper-dim/50">STANDBY</span>
               )}
             </div>
 
             {/* LCD station title */}
-            <div className="text-lg font-bold text-[#00E5FF] tracking-wide truncate uppercase select-all font-mono">
+            <div className="text-lg font-bold text-orange tracking-wide truncate uppercase select-all font-mono">
               {activeStation.name}
             </div>
 
             {/* Description sub-label */}
-            <div className="text-[10px] text-[#FF2E88] truncate mt-0.5 select-none leading-none">
+            <div className="text-[10px] text-magenta truncate mt-0.5 select-none leading-none">
               {activeStation.description}
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function RadioWidget() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={handlePrevStation}
-                className="p-2 bg-[#0B0710]/60 hover:bg-[#FF2E88]/10 border border-[rgba(245,240,250,0.08)] text-[#9C8FAE] hover:text-white rounded transition"
+                className="p-2 bg-ink/60 hover:bg-magenta/10 border border-[rgba(245,240,250,0.08)] text-paper-dim hover:text-white rounded transition"
                 title="Previous Station"
               >
                 <SkipBack size={14} />
@@ -186,7 +186,7 @@ export default function RadioWidget() {
 
               <button
                 onClick={handleTogglePlay}
-                className="p-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/95 text-white rounded-lg shadow-[0_0_10px_rgba(255,46,136,0.3)] transition transform hover:scale-105 active:scale-95"
+                className="p-2.5 bg-magenta hover:bg-magenta/95 text-white rounded-lg shadow-[0_0_10px_rgba(255,46,136,0.3)] transition transform hover:scale-105 active:scale-95"
                 title={isPlaying ? "Pause" : "Play Radio"}
               >
                 {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
@@ -194,7 +194,7 @@ export default function RadioWidget() {
 
               <button
                 onClick={handleNextStation}
-                className="p-2 bg-[#0B0710]/60 hover:bg-[#FF2E88]/10 border border-[rgba(245,240,250,0.08)] text-[#9C8FAE] hover:text-white rounded transition"
+                className="p-2 bg-ink/60 hover:bg-magenta/10 border border-[rgba(245,240,250,0.08)] text-paper-dim hover:text-white rounded transition"
                 title="Next Station"
               >
                 <SkipForward size={14} />
@@ -205,10 +205,10 @@ export default function RadioWidget() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleToggleMute}
-                className="p-2 text-[#9C8FAE] hover:text-white transition"
+                className="p-2 text-paper-dim hover:text-white transition"
                 title={isMuted ? "Unmute" : "Mute"}
               >
-                {isMuted || volume === 0 ? <VolumeX size={14} className="text-[#FF2E88]" /> : <Volume2 size={14} className="text-[#00E5FF]" />}
+                {isMuted || volume === 0 ? <VolumeX size={14} className="text-magenta" /> : <Volume2 size={14} className="text-orange" />}
               </button>
 
               <input
@@ -218,7 +218,7 @@ export default function RadioWidget() {
                 step="0.05"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                className="w-20 h-1 bg-[#0B0710] rounded-lg appearance-none cursor-pointer accent-[#FF2E88] focus:outline-none"
+                className="w-20 h-1 bg-ink rounded-lg appearance-none cursor-pointer accent-[#FF2D8D] focus:outline-none"
                 title="Receiver Volume"
               />
             </div>
@@ -228,10 +228,10 @@ export default function RadioWidget() {
         {/* Minimized strip view */}
         <div
           onClick={() => setIsMinimized(false)}
-          className={`flex items-center justify-between p-2.5 bg-[#150C1F] cursor-pointer hover:bg-[#1a0f28] transition-all duration-300 ${!isMinimized ? "h-0 p-0 overflow-hidden opacity-0 pointer-events-none" : "h-auto opacity-100"}`}
+          className={`flex items-center justify-between p-2.5 bg-ink-2 cursor-pointer hover:bg-[#1a0f28] transition-all duration-300 ${!isMinimized ? "h-0 p-0 overflow-hidden opacity-0 pointer-events-none" : "h-auto opacity-100"}`}
         >
           <div className="flex items-center space-x-2 truncate">
-            <Music size={12} className={`text-[#FF2E88] shrink-0 ${isPlaying ? "animate-spin-slow" : ""}`} />
+            <Music size={12} className={`text-magenta shrink-0 ${isPlaying ? "animate-spin-slow" : ""}`} />
             <span className="text-[10px] font-black text-white truncate uppercase">
               {isPlaying ? `NOW PLAYING: ${activeStation.name}` : "RADIO STANDBY"}
             </span>
@@ -242,7 +242,7 @@ export default function RadioWidget() {
               e.stopPropagation() // Prevent maximize trigger
               handleTogglePlay()
             }}
-            className="p-1 bg-[#FF2E88] text-white rounded text-xs transition active:scale-95 ml-2"
+            className="p-1 bg-magenta text-white rounded text-xs transition active:scale-95 ml-2"
           >
             {isPlaying ? <Pause size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}
           </button>

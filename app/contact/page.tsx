@@ -136,29 +136,29 @@ export default function ContactPage() {
   ]
 
   return (
-    <div className="flex-grow flex flex-col relative bg-[#0B0710] overflow-hidden text-[#F5F0FA]">
+    <div className="flex-grow flex flex-col relative bg-ink overflow-hidden text-paper">
       {/* Cinematic Global Noise Texture */}
       <div className="film-grain opacity-5 pointer-events-none" />
 
       {/* Background Atmosphere */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Glow Blob 1 (magenta top-right) */}
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#FF2E88]/5 blur-[120px] z-0" />
-        {/* Glow Blob 2 (cyan bottom-left) */}
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#00E5FF]/5 blur-[120px] z-0" />
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-magenta/5 blur-[120px] z-0" />
+        {/* Glow Blob 2 (orange bottom-left) */}
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-orange/5 blur-[120px] z-0" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 space-y-12">
         {/* Title row */}
         <div className="border-b border-[rgba(245,240,250,0.14)] pb-6">
-          <div className="flex items-center space-x-2.5 mb-1.5 font-mono text-xs text-[#FF2E88] tracking-widest uppercase font-bold">
-            <Send className="w-4 h-4 text-[#FF2E88] animate-pulse" />
+          <div className="flex items-center space-x-2.5 mb-1.5 font-mono text-xs text-magenta tracking-widest uppercase font-bold">
+            <Send className="w-4 h-4 text-magenta animate-pulse" />
             <span>COMMUNICATION PATHWAY</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-anton uppercase tracking-tight text-[#F5F0FA]">
+          <h1 className="text-4xl sm:text-5xl font-anton uppercase tracking-tight text-paper">
             Contact Terminal
           </h1>
-          <p className="text-xs sm:text-sm text-[#9C8FAE]">
+          <p className="text-xs sm:text-sm text-paper-dim">
             Secure upstream dispatch directly to the platform editorial core.
           </p>
         </div>
@@ -167,25 +167,25 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-14 items-start">
 
           {/* Left Column: Form (7 cols) */}
-          <div className="lg:col-span-7 bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 shadow-xl relative">
+          <div className="lg:col-span-7 bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-8 shadow-xl relative">
 
             {/* Design retention brackets */}
-            <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-[#00E5FF]/40" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#00E5FF]/40" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-[#00E5FF]/40" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#00E5FF]/40" />
+            <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-orange/40" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-orange/40" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-orange/40" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-orange/40" />
 
             {submissionStatus === "success" ? (
               // Success State Card
               <div className="text-center py-12 space-y-6">
-                <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30">
-                  <ShieldCheck className="w-8 h-8 text-[#00E5FF] animate-bounce" />
+                <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-orange/10 border border-orange/30">
+                  <ShieldCheck className="w-8 h-8 text-orange animate-bounce" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-anton uppercase text-[#F5F0FA]">
+                  <h3 className="text-2xl font-anton uppercase text-paper">
                     DISPATCH CONFIRMED
                   </h3>
-                  <p className="text-sm text-[#9C8FAE] max-w-md mx-auto leading-relaxed">
+                  <p className="text-sm text-paper-dim max-w-md mx-auto leading-relaxed">
                     Telemetry successfully sent to <strong>ahmad.khan8747763@gmail.com</strong>. Our operations center will review the payload and react within the next 24 hours.
                   </p>
                 </div>
@@ -193,13 +193,13 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => setSubmissionStatus("idle")}
-                    className="px-6 py-2.5 border border-[#FF2E88] hover:bg-[#FF2E88]/10 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono"
+                    className="px-6 py-2.5 border border-magenta hover:bg-magenta/10 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono"
                   >
                     Send Another Payload
                   </button>
                   <a
                     href="/news"
-                    className="px-6 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_15px_rgba(255,46,136,0.3)]"
+                    className="px-6 py-2.5 bg-magenta hover:bg-magenta/90 text-white font-bold uppercase tracking-wider text-xs rounded transition-all duration-300 font-mono shadow-[0_4px_15px_rgba(255,46,136,0.3)]"
                   >
                     Return to News
                   </a>
@@ -225,8 +225,8 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Name field */}
                   <div className="space-y-2">
-                    <label htmlFor="name" className="block text-xs font-bold font-mono text-[#9C8FAE] uppercase tracking-wider">
-                      Visitor Name <span className="text-[#FF2E88]">*</span>
+                    <label htmlFor="name" className="block text-xs font-bold font-mono text-paper-dim uppercase tracking-wider">
+                      Visitor Name <span className="text-magenta">*</span>
                     </label>
                     <input
                       id="name"
@@ -234,7 +234,7 @@ export default function ContactPage() {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-[#F5F0FA] focus:ring-2 focus:ring-[#00E5FF] focus:border-[#00E5FF] focus:outline-none transition-all duration-200"
+                      className="w-full bg-ink border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-paper focus:ring-2 focus:ring-orange focus:border-orange focus:outline-none transition-all duration-200"
                       placeholder="e.g. Jason V."
                       required
                     />
@@ -242,8 +242,8 @@ export default function ContactPage() {
 
                   {/* Email field */}
                   <div className="space-y-2">
-                    <label htmlFor="email" className="block text-xs font-bold font-mono text-[#9C8FAE] uppercase tracking-wider">
-                      Visitor Email <span className="text-[#FF2E88]">*</span>
+                    <label htmlFor="email" className="block text-xs font-bold font-mono text-paper-dim uppercase tracking-wider">
+                      Visitor Email <span className="text-magenta">*</span>
                     </label>
                     <input
                       id="email"
@@ -251,7 +251,7 @@ export default function ContactPage() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-[#F5F0FA] focus:ring-2 focus:ring-[#00E5FF] focus:border-[#00E5FF] focus:outline-none transition-all duration-200"
+                      className="w-full bg-ink border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-paper focus:ring-2 focus:ring-orange focus:border-orange focus:outline-none transition-all duration-200"
                       placeholder="e.g. vice_racer@example.com"
                       required
                     />
@@ -260,8 +260,8 @@ export default function ContactPage() {
 
                 {/* Subject dropdown selection */}
                 <div className="space-y-2">
-                  <label htmlFor="subject" className="block text-xs font-bold font-mono text-[#9C8FAE] uppercase tracking-wider">
-                    Inquiry Classification <span className="text-[#FF2E88]">*</span>
+                  <label htmlFor="subject" className="block text-xs font-bold font-mono text-paper-dim uppercase tracking-wider">
+                    Inquiry Classification <span className="text-magenta">*</span>
                   </label>
                   <div className="relative">
                     <select
@@ -269,16 +269,16 @@ export default function ContactPage() {
                       name="subject"
                       value={formData.subject}
                       onChange={handleInputChange}
-                      className="w-full bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-[#F5F0FA] focus:ring-2 focus:ring-[#00E5FF] focus:border-[#00E5FF] focus:outline-none transition-all duration-200 appearance-none font-mono"
+                      className="w-full bg-ink border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-paper focus:ring-2 focus:ring-orange focus:border-orange focus:outline-none transition-all duration-200 appearance-none font-mono"
                     >
                       {subjectOptions.map((opt) => (
-                        <option key={opt} value={opt} className="bg-[#150C1F] text-[#F5F0FA]">
+                        <option key={opt} value={opt} className="bg-ink-2 text-paper">
                           {opt}
                         </option>
                       ))}
                     </select>
                     {/* Small custom indicator caret */}
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#9C8FAE]">
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-paper-dim">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                       </svg>
@@ -288,8 +288,8 @@ export default function ContactPage() {
 
                 {/* Message field */}
                 <div className="space-y-2">
-                  <label htmlFor="message" className="block text-xs font-bold font-mono text-[#9C8FAE] uppercase tracking-wider">
-                    Message Payload <span className="text-[#FF2E88]">*</span>
+                  <label htmlFor="message" className="block text-xs font-bold font-mono text-paper-dim uppercase tracking-wider">
+                    Message Payload <span className="text-magenta">*</span>
                   </label>
                   <textarea
                     id="message"
@@ -297,7 +297,7 @@ export default function ContactPage() {
                     rows={5}
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-[#F5F0FA] focus:ring-2 focus:ring-[#00E5FF] focus:border-[#00E5FF] focus:outline-none transition-all duration-200 resize-none leading-relaxed"
+                    className="w-full bg-ink border border-[rgba(245,240,250,0.14)] rounded px-4 py-3 text-sm text-paper focus:ring-2 focus:ring-orange focus:border-orange focus:outline-none transition-all duration-200 resize-none leading-relaxed"
                     placeholder="Enter your inquiry data here (minimum 10 characters)..."
                     required
                   />
@@ -312,7 +312,7 @@ export default function ContactPage() {
                       <p className="leading-relaxed">{errorMessage}</p>
                       <p className="pt-2 text-[10px] text-white">
                         Fallback Option: Please send your email manually to:{" "}
-                        <a href="mailto:ahmad.khan8747763@gmail.com" className="underline font-bold text-[#00E5FF]">
+                        <a href="mailto:ahmad.khan8747763@gmail.com" className="underline font-bold text-orange">
                           ahmad.khan8747763@gmail.com
                         </a>
                       </p>
@@ -328,7 +328,7 @@ export default function ContactPage() {
                       <span>Cooldown telemetry: wait {cooldownTimeLeft}s</span>
                     </div>
                   ) : (
-                    <span className="text-[10px] font-mono text-[#9C8FAE]/50 uppercase tracking-wider">
+                    <span className="text-[10px] font-mono text-paper-dim/50 uppercase tracking-wider">
                       * Required security data fields
                     </span>
                   )}
@@ -340,8 +340,8 @@ export default function ContactPage() {
                       cooldownTimeLeft > 0
                         ? "bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed"
                         : isSubmitting
-                        ? "bg-[#FF2E88]/75 cursor-wait"
-                        : "bg-[#FF2E88] hover:bg-[#FF2E88]/90 shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
+                        ? "bg-magenta/75 cursor-wait"
+                        : "bg-magenta hover:bg-magenta/90 shadow-[0_4px_20px_rgba(255,46,136,0.3)] hover:shadow-[0_4px_30px_rgba(255,46,136,0.5)] active:scale-95 duration-100"
                     }`}
                   >
                     {isSubmitting ? "TRANSMITTING..." : "DISPATCH PAYLOAD"}
@@ -357,43 +357,43 @@ export default function ContactPage() {
           <div className="lg:col-span-5 space-y-8">
 
             {/* Vetted Response-Time Card */}
-            <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6 shadow-xl relative">
+            <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6 shadow-xl relative">
               <div className="space-y-2 border-b border-[rgba(245,240,250,0.08)] pb-4">
-                <span className="text-[10px] font-bold font-mono text-[#00E5FF] uppercase tracking-widest flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#00E5FF]" /> EXPECTED RESPONSE TELEMETRY
+                <span className="text-[10px] font-bold font-mono text-orange uppercase tracking-widest flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-orange" /> EXPECTED RESPONSE TELEMETRY
                 </span>
-                <h3 className="text-xl font-anton uppercase text-[#F5F0FA]">
+                <h3 className="text-xl font-anton uppercase text-paper">
                   OPERATION UPTIME
                 </h3>
               </div>
 
-              <div className="space-y-4 text-sm text-[#9C8FAE] leading-relaxed">
+              <div className="space-y-4 text-sm text-paper-dim leading-relaxed">
                 <p>
                   Our editorial staff and development core monitor incoming traffic streams 24 hours a day, 7 days a week.
                 </p>
-                <div className="p-4 bg-[#0B0710] rounded border border-[rgba(245,240,250,0.06)] flex items-start space-x-3.5">
-                  <Clock className="w-5 h-5 text-[#FF2E88] shrink-0 mt-0.5" />
+                <div className="p-4 bg-ink rounded border border-[rgba(245,240,250,0.06)] flex items-start space-x-3.5">
+                  <Clock className="w-5 h-5 text-magenta shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <p className="font-bold text-xs text-[#F5F0FA] uppercase font-mono">LATENCY METRIC</p>
-                    <p className="text-xs text-[#9C8FAE]/85">We typically react and reply to verified requests within <strong>12 to 24 hours</strong> of arrival.</p>
+                    <p className="font-bold text-xs text-paper uppercase font-mono">LATENCY METRIC</p>
+                    <p className="text-xs text-paper-dim/85">We typically react and reply to verified requests within <strong>12 to 24 hours</strong> of arrival.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Social / Developer Links Card */}
-            <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6 shadow-xl relative">
+            <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-8 space-y-6 shadow-xl relative">
               <div className="space-y-2 border-b border-[rgba(245,240,250,0.08)] pb-4">
-                <span className="text-[10px] font-bold font-mono text-[#FF2E88] uppercase tracking-widest flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-[#FF2E88]" /> DIRECT SYSTEM CONNECTIVITY
+                <span className="text-[10px] font-bold font-mono text-magenta uppercase tracking-widest flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-magenta" /> DIRECT SYSTEM CONNECTIVITY
                 </span>
-                <h3 className="text-xl font-anton uppercase text-[#F5F0FA]">
+                <h3 className="text-xl font-anton uppercase text-paper">
                   DEVELOPER DIRECTORY
                 </h3>
               </div>
 
               <div className="space-y-4">
-                <p className="text-sm text-[#9C8FAE]">
+                <p className="text-sm text-paper-dim">
                   Seeking to integrate custom map components, coordinate API heists, or report raw leaks? Access our code repositories directly:
                 </p>
 
@@ -403,22 +403,22 @@ export default function ContactPage() {
                     href="https://github.com/ahmad-461"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative flex items-center space-x-2.5 text-[#9C8FAE] hover:text-white transition-colors py-1 group w-fit"
+                    className="relative flex items-center space-x-2.5 text-paper-dim hover:text-white transition-colors py-1 group w-fit"
                   >
-                    <Github className="w-4 h-4 text-[#00E5FF]" />
+                    <Github className="w-4 h-4 text-orange" />
                     <span>GitHub / ahmad-461</span>
-                    <span className="absolute bottom-0 left-0 h-[1.5px] bg-[#FF2E88] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                    <span className="absolute bottom-0 left-0 h-[1.5px] bg-magenta w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                   </a>
 
                   <a
                     href="https://www.linkedin.com/in/ahmad-khan-77441833a"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative flex items-center space-x-2.5 text-[#9C8FAE] hover:text-white transition-colors py-1 group w-fit"
+                    className="relative flex items-center space-x-2.5 text-paper-dim hover:text-white transition-colors py-1 group w-fit"
                   >
-                    <Linkedin className="w-4 h-4 text-[#00E5FF]" />
+                    <Linkedin className="w-4 h-4 text-orange" />
                     <span>LinkedIn / Ahmad Khan</span>
-                    <span className="absolute bottom-0 left-0 h-[1.5px] bg-[#FF2E88] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                    <span className="absolute bottom-0 left-0 h-[1.5px] bg-magenta w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                   </a>
                 </div>
               </div>

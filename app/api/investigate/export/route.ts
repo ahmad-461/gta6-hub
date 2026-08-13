@@ -55,13 +55,13 @@ export async function POST(request: Request) {
     const courierFont = await pdfDoc.embedFont(StandardFonts.Courier)
 
     // Colors mapping to Hex / rgb standard
-    // Ink-2 #150C1F => RGB(0.08, 0.05, 0.12)
-    // Magenta #FF2E88 => RGB(1.0, 0.18, 0.53)
-    // Cyan #00E5FF => RGB(0.0, 0.9, 1.0)
-    // Paper-dim #9C8FAE => RGB(0.61, 0.56, 0.68)
+    // Ink-2 #16161B => RGB(0.08, 0.05, 0.12)
+    // Magenta #FF2D8D => RGB(1.0, 0.18, 0.53)
+    // Orange #FF8A3D => RGB(0.0, 0.9, 1.0)
+    // Paper-dim #9E9EA8 => RGB(0.61, 0.56, 0.68)
     const ink2Color = rgb(0.08, 0.05, 0.12)
-    const magentaColor = rgb(1.0, 0.18, 0.53)
-    const cyanColor = rgb(0.0, 0.9, 1.0)
+    const magentaColor = rgb(1.0, 0.176, 0.553)
+    const orangeColor = rgb(1.0, 0.54, 0.24)
     const paperDimColor = rgb(0.61, 0.56, 0.68)
 
     let page = pdfDoc.addPage([612, 792]) // Standard US Letter size
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         y: 40,
         width: 1,
         height: height - 80,
-        color: cyanColor,
+        color: orangeColor,
         opacity: 0.5,
       })
 

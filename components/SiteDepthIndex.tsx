@@ -24,46 +24,46 @@ export default function SiteDepthIndex({
     {
       title: "News & Briefings",
       label: "Latest Intel",
-      icon: <Newspaper className="w-5 h-5 text-[#FF2E88]" />,
+      icon: <Newspaper className="w-5 h-5 text-magenta" />,
       count: formatCount(newsCount),
       suffix: "Articles Published",
       description: "Breaking leaks, updates, and chronological analysis of Rockstar's development cycle.",
       link: "/news",
-      colorClass: "hover:border-[#FF2E88]",
-      accentColor: "#FF2E88",
+      colorClass: "hover:border-magenta",
+      accentColor: "#FF2D8D",
     },
     {
       title: "Strategy Guides",
       label: "Expert Walkthroughs",
-      icon: <BookOpen className="w-5 h-5 text-[#00E5FF]" />,
+      icon: <BookOpen className="w-5 h-5 text-orange" />,
       count: formatCount(guidesCount),
       suffix: "Guides Available",
       description: "Tactical breakdown of missions, mechanics, and open world secrets in Leonida.",
       link: "/guides",
-      colorClass: "hover:border-[#00E5FF]",
-      accentColor: "#00E5FF",
+      colorClass: "hover:border-orange",
+      accentColor: "#FF8A3D",
     },
     {
       title: "Interactive Tools",
       label: "Mission Telemetry",
-      icon: <Cpu className="w-5 h-5 text-[#6C1FB5]" />,
+      icon: <Cpu className="w-5 h-5 text-violet" />,
       count: toolsCount.toString(),
       suffix: "Tools Operational",
       description: "Compare vehicle stats, track 100% completion checklist, and run personality matchers.",
       link: "/tools",
-      colorClass: "hover:border-[#6C1FB5]",
-      accentColor: "#6C1FB5",
+      colorClass: "hover:border-violet",
+      accentColor: "#832258",
     },
     {
       title: "Lore Connections",
       label: "Knowledge Graph",
-      icon: <Compass className="w-5 h-5 text-[#FF2E88]" />,
+      icon: <Compass className="w-5 h-5 text-magenta" />,
       count: formatCount(loreCount),
       suffix: "Mapped Nodes",
       description: "Fully interactive relationship graph mapping co-occurrences of key characters and locations.",
       link: "/lore-map",
-      colorClass: "hover:border-[#FF2E88]",
-      accentColor: "#FF2E88",
+      colorClass: "hover:border-magenta",
+      accentColor: "#FF2D8D",
     },
   ]
 
@@ -71,14 +71,14 @@ export default function SiteDepthIndex({
     <section className="space-y-10 py-12 relative">
       <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4 gap-4">
         <div className="space-y-1">
-          <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
+          <span className="text-xs font-bold font-mono text-orange uppercase tracking-widest">
             Ecosystem Directory
           </span>
-          <h3 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
+          <h3 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-paper">
             Site Depth Index
           </h3>
         </div>
-        <p className="text-sm text-[#9C8FAE] max-w-md font-mono leading-relaxed">
+        <p className="text-sm text-paper-dim max-w-md font-mono leading-relaxed">
           A real-time, data-backed telemetry of GTA 6 Hub&apos;s current scope and operational modules.
         </p>
       </div>
@@ -87,7 +87,7 @@ export default function SiteDepthIndex({
         {panels.map((panel, idx) => (
           <div
             key={idx}
-            className={`group relative flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-6 transition-all duration-300 ${panel.colorClass} hover:-translate-y-1 shadow-lg`}
+            className={`group relative flex flex-col justify-between bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded p-6 transition-all duration-300 ${panel.colorClass} hover:-translate-y-1 shadow-lg`}
           >
             {/* Soft inner glow on hover */}
             <div
@@ -100,7 +100,7 @@ export default function SiteDepthIndex({
             <div className="space-y-4 relative z-10">
               {/* Header row */}
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold font-mono text-[#9C8FAE] uppercase tracking-widest">
+                <span className="text-[10px] font-bold font-mono text-paper-dim uppercase tracking-widest">
                   {panel.label}
                 </span>
                 {panel.icon}
@@ -108,20 +108,20 @@ export default function SiteDepthIndex({
 
               {/* Counts & Suffix */}
               <div className="space-y-1">
-                <div className="font-anton text-4xl sm:text-5xl text-[#F5F0FA] tracking-tight">
+                <div className="font-anton text-4xl sm:text-5xl text-paper tracking-tight">
                   {panel.count}
                 </div>
-                <div className="text-[10px] font-bold font-mono text-[#9C8FAE]/60 uppercase tracking-wider">
+                <div className="text-[10px] font-bold font-mono text-paper-dim/60 uppercase tracking-wider">
                   {panel.suffix}
                 </div>
               </div>
 
               {/* Title & Description */}
               <div className="space-y-2">
-                <h4 className="text-sm font-bold text-[#F5F0FA] group-hover:text-[#00E5FF] transition-colors">
+                <h4 className="text-sm font-bold text-paper group-hover:text-orange transition-colors">
                   {panel.title}
                 </h4>
-                <p className="text-xs text-[#9C8FAE] leading-relaxed">
+                <p className="text-xs text-paper-dim leading-relaxed">
                   {panel.description}
                 </p>
               </div>
@@ -131,7 +131,7 @@ export default function SiteDepthIndex({
             <div className="pt-6 mt-4 border-t border-[rgba(245,240,250,0.06)] relative z-10">
               <Link
                 href={panel.link}
-                className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-[#FF2E88] group-hover:text-[#00E5FF] transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-magenta group-hover:text-orange transition-colors"
               >
                 ACCESS MODULE <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
               </Link>

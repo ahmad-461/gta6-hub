@@ -161,7 +161,7 @@ export default function Header() {
 
   const headerClass = `sticky top-0 z-50 transition-all duration-300 motion-reduce:transition-none font-mono ${
     isScrolled
-      ? "bg-[#150C1F]/95 backdrop-blur-md border-b border-[rgba(245,240,250,0.14)]"
+      ? "bg-ink-2/95 backdrop-blur-md border-b border-[rgba(245,240,250,0.14)]"
       : "bg-transparent border-b border-transparent"
   }`
 
@@ -181,11 +181,11 @@ export default function Header() {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center space-x-2 group">
                 <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange"></span>
                 </span>
-                <span className="text-xl font-normal tracking-wider text-[#F5F0FA] font-anton uppercase">
-                  GTA6<span className="text-[#FF2E88]">HUB</span>
+                <span className="text-xl font-normal tracking-wider text-paper font-anton uppercase">
+                  GTA6<span className="text-magenta">HUB</span>
                 </span>
               </Link>
             </div>
@@ -200,13 +200,13 @@ export default function Header() {
                     key={item.name}
                     href={item.href}
                     className={`relative flex items-center space-x-1.5 px-3 py-2 text-xs font-bold transition-colors duration-200 uppercase group
-                      ${isActive ? "text-white" : "text-[#9C8FAE] hover:text-white"}`}
+                      ${isActive ? "text-white" : "text-paper-dim hover:text-white"}`}
                   >
-                    <Icon className="w-4 h-4 text-[#00E5FF]" />
+                    <Icon className="w-4 h-4 text-orange" />
                     <span className="relative py-1">
                       {item.name}
                       <span
-                        className={`absolute bottom-0 left-0 h-[2px] bg-[#FF2E88] w-full origin-left transition-transform duration-300 motion-reduce:transition-none
+                        className={`absolute bottom-0 left-0 h-[2px] bg-magenta w-full origin-left transition-transform duration-300 motion-reduce:transition-none
                           ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
                       />
                     </span>
@@ -217,7 +217,7 @@ export default function Header() {
               {/* Desktop Global Search Icon */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 ml-2 rounded-md text-[#9C8FAE] hover:text-[#00E5FF] transition-all duration-200"
+                className="p-2 ml-2 rounded-md text-paper-dim hover:text-orange transition-all duration-200"
                 title="Search Database (Cmd+K)"
               >
                 <Search className="w-4 h-4" />
@@ -226,7 +226,7 @@ export default function Header() {
               {/* More Trigger (Opens full takeover menu) */}
               <button
                 onClick={() => setIsOpen(true)}
-                className="p-2 rounded-md text-[#9C8FAE] hover:text-[#FF2E88] transition-all duration-200 flex items-center space-x-1"
+                className="p-2 rounded-md text-paper-dim hover:text-magenta transition-all duration-200 flex items-center space-x-1"
                 title="System Menu"
               >
                 <MoreHorizontal className="w-4 h-4" />
@@ -237,14 +237,14 @@ export default function Header() {
             <div className="flex items-center space-x-3 md:hidden">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 rounded-md text-[#00E5FF]"
+                className="p-2 rounded-md text-orange"
                 title="Search"
               >
                 <Search className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setIsOpen(true)}
-                className="p-2 rounded-md text-[#00E5FF]"
+                className="p-2 rounded-md text-orange"
                 title="Menu"
               >
                 <Menu className="h-6 w-6" />
@@ -256,7 +256,7 @@ export default function Header() {
       </header>
 
       {/* MOBILE STICKY BOTTOM NAVIGATION BAR */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#150C1F]/95 backdrop-blur-md border-t border-[rgba(245,240,250,0.14)] md:hidden flex items-center justify-around h-16 px-2 pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-ink-2/95 backdrop-blur-md border-t border-[rgba(245,240,250,0.14)] md:hidden flex items-center justify-around h-16 px-2 pb-safe">
         {primaryNavItems.slice(0, 5).map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
@@ -265,9 +265,9 @@ export default function Header() {
               key={item.name}
               href={item.href}
               className={`flex flex-col items-center justify-center flex-1 py-1 text-[9px] font-bold uppercase font-mono transition-colors duration-200
-                ${isActive ? "text-[#00E5FF]" : "text-[#9C8FAE] hover:text-white"}`}
+                ${isActive ? "text-orange" : "text-paper-dim hover:text-white"}`}
             >
-              <Icon className={`w-5 h-5 mb-1 ${isActive ? "text-[#FF2E88] filter drop-shadow-[0_0_5px_rgba(255,46,136,0.5)]" : "text-[#00E5FF]"}`} />
+              <Icon className={`w-5 h-5 mb-1 ${isActive ? "text-magenta filter drop-shadow-[0_0_5px_rgba(255,46,136,0.5)]" : "text-orange"}`} />
               <span>{item.name}</span>
             </Link>
           )
@@ -276,18 +276,18 @@ export default function Header() {
 
       {/* GLOBAL COMMAND PALETTE SEARCH OVERLAY */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-[#0B0710]/95 backdrop-blur-md flex flex-col pt-20 px-4 sm:px-6 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-ink/95 backdrop-blur-md flex flex-col pt-20 px-4 sm:px-6 overflow-y-auto">
           <div className="film-grain opacity-5 pointer-events-none" />
 
           {/* Top Control Bar */}
           <div className="max-w-3xl w-full mx-auto flex items-center justify-between border-b border-[rgba(245,240,250,0.1)] pb-4 mb-6">
-            <div className="flex items-center space-x-2 text-[9px] font-black tracking-widest text-[#00E5FF] font-mono">
+            <div className="flex items-center space-x-2 text-[9px] font-black tracking-widest text-orange font-mono">
               <Cpu className="w-4 h-4 animate-pulse" />
               <span>INTEL DIRECTORY RADAR SYSTEM</span>
             </div>
             <button
               onClick={() => setIsSearchOpen(false)}
-              className="p-1.5 rounded-full bg-[#150C1F] border border-[rgba(245,240,250,0.08)] text-[#FF2E88] hover:scale-105 transition"
+              className="p-1.5 rounded-full bg-ink-2 border border-[rgba(245,240,250,0.08)] text-magenta hover:scale-105 transition"
             >
               <X className="w-5 h-5" />
             </button>
@@ -296,17 +296,17 @@ export default function Header() {
           {/* Centered Command Bar */}
           <div className="max-w-3xl w-full mx-auto space-y-6">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00E5FF]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-orange" />
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles, guides, character bios, or map locations..."
-                className="w-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] focus:border-[#FF2E88] focus:ring-1 focus:ring-[#FF2E88] rounded-xl pl-12 pr-12 py-4 text-base text-white placeholder-foreground/30 font-mono outline-none shadow-2xl"
+                className="w-full bg-ink-2 border border-[rgba(245,240,250,0.14)] focus:border-magenta focus:ring-1 focus:ring-magenta rounded-xl pl-12 pr-12 py-4 text-base text-white placeholder-foreground/30 font-mono outline-none shadow-2xl"
               />
               {isSearchLoading && (
-                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FF2E88] animate-spin" />
+                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-magenta animate-spin" />
               )}
             </div>
 
@@ -319,8 +319,8 @@ export default function Header() {
                     {/* Articles Category */}
                     {searchResults.articles.length > 0 && (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-2">
-                          <FileText className="w-4 h-4 text-[#FF2E88]" />
+                        <div className="flex items-center gap-2 text-paper-dim border-b border-[rgba(245,240,250,0.1)] pb-2">
+                          <FileText className="w-4 h-4 text-magenta" />
                           <h3 className="font-bold uppercase text-[10px] tracking-widest font-mono">
                             Articles ({searchResults.articles.length})
                           </h3>
@@ -331,12 +331,12 @@ export default function Header() {
                               key={art.id}
                               href={`/news/${art.slug}`}
                               onClick={() => setIsSearchOpen(false)}
-                              className="block p-3 rounded bg-[#150C1F]/60 border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
+                              className="block p-3 rounded bg-ink-2/60 border border-[rgba(245,240,250,0.06)] hover:border-magenta/40 transition group"
                             >
-                              <h4 className="font-bold text-sm text-white group-hover:text-[#FF2E88] truncate">
+                              <h4 className="font-bold text-sm text-white group-hover:text-magenta truncate">
                                 {art.title}
                               </h4>
-                              <p className="text-[10px] text-[#9C8FAE]/70 line-clamp-1 mt-1 font-sans">
+                              <p className="text-[10px] text-paper-dim/70 line-clamp-1 mt-1 font-sans">
                                 {art.excerpt}
                               </p>
                             </Link>
@@ -348,8 +348,8 @@ export default function Header() {
                     {/* Guides Category */}
                     {searchResults.guides.length > 0 && (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-2">
-                          <Award className="w-4 h-4 text-[#00E5FF]" />
+                        <div className="flex items-center gap-2 text-paper-dim border-b border-[rgba(245,240,250,0.1)] pb-2">
+                          <Award className="w-4 h-4 text-orange" />
                           <h3 className="font-bold uppercase text-[10px] tracking-widest font-mono">
                             Guides ({searchResults.guides.length})
                           </h3>
@@ -362,12 +362,12 @@ export default function Header() {
                                 key={g.id}
                                 href={`/guides/${catSlug}/${g.slug}`}
                                 onClick={() => setIsSearchOpen(false)}
-                                className="block p-3 rounded bg-[#150C1F]/60 border border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/40 transition group"
+                                className="block p-3 rounded bg-ink-2/60 border border-[rgba(245,240,250,0.06)] hover:border-orange/40 transition group"
                               >
-                                <h4 className="font-bold text-sm text-white group-hover:text-[#00E5FF] truncate">
+                                <h4 className="font-bold text-sm text-white group-hover:text-orange truncate">
                                   {g.title}
                                 </h4>
-                                <span className="text-[9px] font-black tracking-widest uppercase text-[#FF2E88] font-mono block mt-1">
+                                <span className="text-[9px] font-black tracking-widest uppercase text-magenta font-mono block mt-1">
                                   {g.guide_category || "GETTING STARTED"}
                                 </span>
                               </Link>
@@ -380,8 +380,8 @@ export default function Header() {
                     {/* Characters Category */}
                     {searchResults.characters.length > 0 && (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-2">
-                          <Swords className="w-4 h-4 text-[#6C1FB5]" />
+                        <div className="flex items-center gap-2 text-paper-dim border-b border-[rgba(245,240,250,0.1)] pb-2">
+                          <Swords className="w-4 h-4 text-violet" />
                           <h3 className="font-bold uppercase text-[10px] tracking-widest font-mono">
                             Characters ({searchResults.characters.length})
                           </h3>
@@ -392,12 +392,12 @@ export default function Header() {
                               key={char.id}
                               href={`/characters/${char.slug}`}
                               onClick={() => setIsSearchOpen(false)}
-                              className="block p-3 rounded bg-[#150C1F]/60 border border-[rgba(245,240,250,0.06)] hover:border-[#6C1FB5]/40 transition group"
+                              className="block p-3 rounded bg-ink-2/60 border border-[rgba(245,240,250,0.06)] hover:border-violet/40 transition group"
                             >
-                              <h4 className="font-bold text-sm text-white group-hover:text-[#6C1FB5] truncate">
+                              <h4 className="font-bold text-sm text-white group-hover:text-violet truncate">
                                 {char.name}
                               </h4>
-                              <p className="text-[10px] text-[#9C8FAE]/70 line-clamp-1 mt-1 font-sans">
+                              <p className="text-[10px] text-paper-dim/70 line-clamp-1 mt-1 font-sans">
                                 {char.biography.replace(/<[^>]*>/g, "")}
                               </p>
                             </Link>
@@ -409,7 +409,7 @@ export default function Header() {
                     {/* Locations Category */}
                     {searchResults.locations.length > 0 && (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-2">
+                        <div className="flex items-center gap-2 text-paper-dim border-b border-[rgba(245,240,250,0.1)] pb-2">
                           <MapPin className="w-4 h-4 text-amber-400" />
                           <h3 className="font-bold uppercase text-[10px] tracking-widest font-mono">
                             Locations ({searchResults.locations.length})
@@ -421,12 +421,12 @@ export default function Header() {
                               key={loc.id}
                               href={`/map`}
                               onClick={() => setIsSearchOpen(false)}
-                              className="block p-3 rounded bg-[#150C1F]/60 border border-[rgba(245,240,250,0.06)] hover:border-amber-400/40 transition group"
+                              className="block p-3 rounded bg-ink-2/60 border border-[rgba(245,240,250,0.06)] hover:border-amber-400/40 transition group"
                             >
                               <h4 className="font-bold text-sm text-white group-hover:text-amber-400 truncate">
                                 {loc.name}
                               </h4>
-                              <p className="text-[10px] text-[#9C8FAE]/70 line-clamp-1 mt-1 font-sans">
+                              <p className="text-[10px] text-paper-dim/70 line-clamp-1 mt-1 font-sans">
                                 {loc.description || "Sector coordinate mapped."}
                               </p>
                             </Link>
@@ -437,13 +437,13 @@ export default function Header() {
 
                   </div>
                 ) : (
-                  <div className="text-center py-12 border border-dashed border-[rgba(245,240,250,0.1)] rounded-xl bg-[#150C1F]/30 text-[#9C8FAE] text-xs font-mono">
+                  <div className="text-center py-12 border border-dashed border-[rgba(245,240,250,0.1)] rounded-xl bg-ink-2/30 text-paper-dim text-xs font-mono">
                     No directory files matching &ldquo;<span className="text-white font-bold">{searchQuery}</span>&rdquo; found.
                   </div>
                 )}
               </div>
             ) : (
-              <div className="text-center py-16 border border-dashed border-[rgba(245,240,250,0.08)] rounded-xl bg-[#150C1F]/20 max-w-xl mx-auto text-[#9C8FAE] text-xs font-mono leading-relaxed space-y-2">
+              <div className="text-center py-16 border border-dashed border-[rgba(245,240,250,0.08)] rounded-xl bg-ink-2/20 max-w-xl mx-auto text-paper-dim text-xs font-mono leading-relaxed space-y-2">
                 <p>AWAITING OPERATOR INPUT (AT LEAST 2 CHARACTERS)...</p>
                 <p className="text-[10px] opacity-45">TIP: Use ESC key to abort or click search icon again.</p>
               </div>
@@ -455,25 +455,25 @@ export default function Header() {
 
       {/* FULL SYSTEM TAKEOVER DRAWER (Mobile + Desktop secondary menu) */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-[#0B0710] flex flex-col justify-between overflow-hidden animate-fade-in duration-300">
+        <div className="fixed inset-0 z-50 bg-ink flex flex-col justify-between overflow-hidden animate-fade-in duration-300">
           <div className="film-grain opacity-10 pointer-events-none" />
 
           {/* Drawer Header */}
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-b border-[rgba(245,240,250,0.08)]">
             <div className="flex items-center space-x-2">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5FF] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00E5FF]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange"></span>
               </span>
-              <span className="text-xl font-normal tracking-wider text-[#F5F0FA] font-anton uppercase">
-                GTA6<span className="text-[#FF2E88]">SYSTEM</span>
+              <span className="text-xl font-normal tracking-wider text-paper font-anton uppercase">
+                GTA6<span className="text-magenta">SYSTEM</span>
               </span>
             </div>
 
             <button
               onClick={() => setIsOpen(false)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-[#FF2E88] hover:scale-105 transition focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-magenta hover:scale-105 transition focus:outline-none"
             >
               <X className="block h-6 w-6" aria-hidden="true" />
             </button>
@@ -481,15 +481,15 @@ export default function Header() {
 
           {/* Centered navigation panel with HUD targeting brackets */}
           <div className="flex-grow flex items-center justify-center p-4">
-            <div className="relative p-10 max-w-md w-full bg-[#150C1F]/90 border border-[rgba(245,240,250,0.14)] rounded shadow-2xl space-y-6">
+            <div className="relative p-10 max-w-md w-full bg-ink-2/90 border border-[rgba(245,240,250,0.14)] rounded shadow-2xl space-y-6">
 
               {/* HUD corner brackets */}
-              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
+              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-orange" />
+              <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-orange" />
+              <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-orange" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-orange" />
 
-              <div className="flex items-center justify-center space-x-2 text-[9px] tracking-widest text-[#00E5FF] font-mono font-bold border-b border-[rgba(245,240,250,0.08)] pb-3">
+              <div className="flex items-center justify-center space-x-2 text-[9px] tracking-widest text-orange font-mono font-bold border-b border-[rgba(245,240,250,0.08)] pb-3">
                 <Cpu className="w-3.5 h-3.5 animate-pulse" />
                 <span>ALL TELEMETRY PATHS</span>
               </div>
@@ -499,7 +499,7 @@ export default function Header() {
 
                 {/* Primary items left column */}
                 <div className="space-y-3">
-                  <span className="block text-[8px] font-black tracking-widest font-mono text-[#9C8FAE]/50 uppercase mb-1">
+                  <span className="block text-[8px] font-black tracking-widest font-mono text-paper-dim/50 uppercase mb-1">
                     PRIMARY STATIONS
                   </span>
                   {primaryNavItems.map((item) => (
@@ -507,9 +507,9 @@ export default function Header() {
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center space-x-2 py-1 px-2 rounded hover:bg-[#FF2E88]/10 text-sm font-anton uppercase tracking-wider text-white hover:text-[#FF2E88] transition duration-200`}
+                      className={`flex items-center space-x-2 py-1 px-2 rounded hover:bg-magenta/10 text-sm font-anton uppercase tracking-wider text-white hover:text-magenta transition duration-200`}
                     >
-                      <item.icon className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                      <item.icon className="w-3.5 h-3.5 text-orange shrink-0" />
                       <span className="truncate">{item.name}</span>
                     </Link>
                   ))}
@@ -517,7 +517,7 @@ export default function Header() {
 
                 {/* Secondary items right column */}
                 <div className="space-y-3">
-                  <span className="block text-[8px] font-black tracking-widest font-mono text-[#9C8FAE]/50 uppercase mb-1">
+                  <span className="block text-[8px] font-black tracking-widest font-mono text-paper-dim/50 uppercase mb-1">
                     SECONDARY SECTORS
                   </span>
                   {secondaryNavItems.map((item) => (
@@ -525,9 +525,9 @@ export default function Header() {
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center space-x-2 py-1 px-2 rounded hover:bg-[#00E5FF]/10 text-sm font-anton uppercase tracking-wider text-white hover:text-[#00E5FF] transition duration-200`}
+                      className={`flex items-center space-x-2 py-1 px-2 rounded hover:bg-orange/10 text-sm font-anton uppercase tracking-wider text-white hover:text-orange transition duration-200`}
                     >
-                      <item.icon className="w-3.5 h-3.5 text-[#FF2E88] shrink-0" />
+                      <item.icon className="w-3.5 h-3.5 text-magenta shrink-0" />
                       <span className="truncate">{item.name}</span>
                     </Link>
                   ))}
@@ -538,7 +538,7 @@ export default function Header() {
           </div>
 
           {/* Footer row inside menu to anchor it */}
-          <div className="py-6 text-center text-[10px] font-mono text-[#9C8FAE] tracking-widest uppercase border-t border-[rgba(245,240,250,0.06)]">
+          <div className="py-6 text-center text-[10px] font-mono text-paper-dim tracking-widest uppercase border-t border-[rgba(245,240,250,0.06)]">
             SECURE SYSTEM OVERRIDE ONLINE // VICE CITY HUB v1.0
           </div>
         </div>

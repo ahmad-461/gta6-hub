@@ -6,62 +6,265 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1901ms
+ ✓ Ready in 1743ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1093ms (127 modules)
+ ✓ Compiled /middleware in 1189ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.5s (872 modules)
- HEAD / 200 in 8027ms
+ ✓ Compiled / in 8.7s (876 modules)
+ GET / 200 in 9974ms
+ ○ Compiling /_not-found ...
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ○ Compiling /tools/wishlist ...
- ✓ Compiled /tools/wishlist in 2.4s (765 modules)
- GET /tools/wishlist 200 in 3097ms
- ○ Compiling /api/wishlist ...
- ✓ Compiled /api/wishlist in 660ms (456 modules)
-Failed to increment vote for slug: assault-rifle {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
-}
- POST /api/wishlist 200 in 3569ms
- GET /api/wishlist 200 in 7702ms
-Could not load wishlist votes from DB, using empty fallback {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
-}
-Failed to increment vote for slug: sports-car {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
-}
-Failed to increment vote for slug: heist-planner {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
-}
+ ✓ Compiled /_not-found in 9.2s (861 modules)
+ GET /og-image.jpg 404 in 9448ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 404 in 8746ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /?_rsc=r3yhw 200 in 98ms
+ ✓ Compiled in 1641ms (859 modules)
+ GET / 200 in 224ms
+ ✓ Compiled /_not-found in 436ms (470 modules)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at JSON.parse (<anonymous>)
+digest: "449181989"
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at JSON.parse (<anonymous>)
+digest: "3786280366"
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at require (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19918)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+    at runNextTicks (node:internal/process/task_queues:64:5)
+    at listOnTimeout (node:internal/timers:547:9)
+    at process.processTimers (node:internal/timers:521:7)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at require (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19918)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+    at runNextTicks (node:internal/process/task_queues:64:5)
+    at listOnTimeout (node:internal/timers:547:9)
+    at process.processTimers (node:internal/timers:521:7)
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at require (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19918)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/app/.next/server/webpack-runtime.js:33:42)
+    at require (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19918)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ○ Compiling /guides ...
+ ✓ Compiled /_error in 7.3s (1127 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/cookie.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/cookie' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/cookie.js', but to 'Error: Can't resolve './vendor-chunks/cookie' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/cookie (expected /app/.next/server/vendor-chunks/cookie.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/intelligence/page.js
+<w>  at file /app/.next/server/app/intelligence/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/tslib' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/tslib.js', but to 'Error: Can't resolve './vendor-chunks/tslib' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/tslib (expected /app/.next/server/vendor-chunks/tslib.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/intelligence/page.js
+<w>  at file /app/.next/server/app/intelligence/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+ ○ Compiling /news ...
+ ✓ Compiled /news in 5.6s (2298 modules)
+ GET /og-image.jpg 500 in 14263ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /og-image.jpg 500 in 13885ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/cookie.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/cookie' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/cookie.js', but to 'Error: Can't resolve './vendor-chunks/cookie' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/cookie (expected /app/.next/server/vendor-chunks/cookie.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/news/page.js
+<w>  at file /app/.next/server/app/news/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/tslib' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/tslib.js', but to 'Error: Can't resolve './vendor-chunks/tslib' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/tslib (expected /app/.next/server/vendor-chunks/tslib.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/news/page.js
+<w>  at file /app/.next/server/app/news/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/iceberg-js' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/iceberg-js.js', but to 'Error: Can't resolve './vendor-chunks/iceberg-js' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/iceberg-js (expected /app/.next/server/vendor-chunks/iceberg-js.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/news/page.js
+<w>  at file /app/.next/server/app/news/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/sonner' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/sonner.js', but to 'Error: Can't resolve './vendor-chunks/sonner' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/sonner (expected /app/.next/server/vendor-chunks/sonner.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/news/page.js
+<w>  at file /app/.next/server/app/news/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@supabase' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/@supabase.js', but to 'Error: Can't resolve './vendor-chunks/@supabase' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@supabase (expected /app/.next/server/vendor-chunks/@supabase.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/news/page.js
+<w>  at file /app/.next/server/app/news/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+ ○ Compiling /about ...
+ ✓ Compiled /about in 1708ms (2351 modules)
+ ○ Compiling /contact ...
+ ✓ Compiled /contact in 711ms (2361 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/cookie.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/cookie' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/cookie.js', but to 'Error: Can't resolve './vendor-chunks/cookie' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/cookie (expected /app/.next/server/vendor-chunks/cookie.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/contact/page.js
+<w>  at file /app/.next/server/app/contact/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 2.1s (1701 modules)

@@ -304,7 +304,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 font-mono">
-        <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
+        <Loader2 className="animate-spin text-orange h-8 w-8" />
       </div>
     )
   }
@@ -317,7 +317,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           <button
             type="button"
             onClick={() => router.push("/admin/guides")}
-            className="p-2 bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded hover:bg-[#0B0710] transition text-[#9C8FAE] hover:text-white"
+            className="p-2 bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded hover:bg-ink transition text-paper-dim hover:text-white"
           >
             <ArrowLeft size={18} />
           </button>
@@ -325,7 +325,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
             <h1 className="text-2xl font-normal text-white sm:text-3xl font-anton uppercase tracking-wider">
               {isEditing ? "Edit Strategy Guide" : "New Strategy Guide"}
             </h1>
-            <p className="text-xs text-[#9C8FAE] mt-0.5">
+            <p className="text-xs text-paper-dim mt-0.5">
               {isEditing ? `Guide ID: ${guideId}` : "Drafting a new game walkthrough"}
             </p>
           </div>
@@ -334,7 +334,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         <button
           type="submit"
           disabled={isSaving}
-          className="inline-flex items-center justify-center px-5 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150 disabled:opacity-50"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-magenta hover:bg-magenta/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150 disabled:opacity-50"
         >
           {isSaving ? (
             <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
@@ -351,14 +351,14 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
             <AlertTriangle size={20} className="mt-0.5 shrink-0" />
             <div>
               <h4 className="font-extrabold text-white text-xs uppercase">Semantic Duplicate Detected (Similarity Check)</h4>
-              <p className="text-xs text-[#9C8FAE] mt-1">
+              <p className="text-xs text-paper-dim mt-1">
                 This draft looks extremely similar to the existing {duplicateWarning.contentType}: <strong>{duplicateWarning.title}</strong>. Review to ensure uniqueness.
               </p>
               <a
                 href={duplicateWarning.contentType === "article" ? `/news/${duplicateWarning.slug}` : `/guides/${duplicateWarning.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-xs text-[#FF2E88] font-bold hover:underline mt-2"
+                className="inline-flex items-center text-xs text-magenta font-bold hover:underline mt-2"
               >
                 Open and compare original walkthrough &rarr;
               </a>
@@ -367,7 +367,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           <button
             type="button"
             onClick={() => setDuplicateWarning(null)}
-            className="text-[#9C8FAE] hover:text-white"
+            className="text-paper-dim hover:text-white"
           >
             <X size={16} />
           </button>
@@ -378,28 +378,28 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         {/* Left main content column */}
         <div className="lg:col-span-2 space-y-6">
           {/* AI Draft Assistant Panel */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <button
               type="button"
               onClick={() => setIsAiDraftOpen(!isAiDraftOpen)}
               className="w-full flex items-center justify-between font-bold text-white text-xs uppercase tracking-wider"
             >
-              <span className="flex items-center text-[#FF2E88]">
+              <span className="flex items-center text-magenta">
                 <Sparkles size={16} className="mr-2" /> AI Draft Assistant
               </span>
-              <span className="text-[10px] text-[#9C8FAE]">{isAiDraftOpen ? "Collapse [-]" : "Expand [+]"}</span>
+              <span className="text-[10px] text-paper-dim">{isAiDraftOpen ? "Collapse [-]" : "Expand [+]"}</span>
             </button>
 
             {isAiDraftOpen && (
               <div className="space-y-4 pt-4 border-t border-[rgba(245,240,250,0.08)]">
-                <p className="text-xs text-[#9C8FAE]">
+                <p className="text-xs text-paper-dim">
                   Paste your raw walkthrough notes, leaked codes, or map coordinates. The assistant will format a high-quality rich-text strategy guide draft.
                 </p>
                 <textarea
                   placeholder="Paste your raw notes, leak transcripts, or strategy guide details here..."
                   value={aiNotes}
                   onChange={(e) => setAiNotes(e.target.value)}
-                  className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/30 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs min-h-[100px]"
+                  className="block w-full px-3.5 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/30 focus:outline-none focus:ring-1 focus:ring-orange text-xs min-h-[100px]"
                 />
                 <button
                   type="button"
@@ -419,7 +419,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                       toast.error(res.error || "Failed to generate draft.")
                     }
                   }}
-                  className="w-full py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white text-xs font-bold rounded uppercase tracking-wider transition disabled:opacity-40 flex items-center justify-center space-x-1.5"
+                  className="w-full py-2.5 bg-magenta hover:bg-magenta/90 text-white text-xs font-bold rounded uppercase tracking-wider transition disabled:opacity-40 flex items-center justify-center space-x-1.5"
                 >
                   {isGeneratingDraft ? (
                     <>
@@ -438,23 +438,23 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           </div>
 
           {/* Title & Slug */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#9C8FAE] uppercase tracking-wider mb-1.5">Guide Title</label>
+              <label className="block text-xs font-semibold text-paper-dim uppercase tracking-wider mb-1.5">Guide Title</label>
               <input
                 type="text"
                 required
                 placeholder="Enter guide walkthrough title..."
                 value={title}
                 onChange={handleTitleChange}
-                className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs"
+                className="block w-full px-3.5 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange transition text-xs"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#9C8FAE] uppercase tracking-wider mb-1.5">Slug URL</label>
+              <label className="block text-xs font-semibold text-paper-dim uppercase tracking-wider mb-1.5">Slug URL</label>
               <div className="flex rounded shadow-sm">
-                <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-[rgba(245,240,250,0.14)] bg-[#0B0710] text-[#9C8FAE]/45 text-xs font-mono">
+                <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-[rgba(245,240,250,0.14)] bg-ink text-paper-dim/45 text-xs font-mono">
                   /guides/
                 </span>
                 <input
@@ -463,18 +463,18 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                   placeholder="walkthrough-slug-url"
                   value={slug}
                   onChange={(e) => setSlug(slugify(e.target.value))}
-                  className="block w-full px-3.5 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded-r text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] transition text-xs font-mono"
+                  className="block w-full px-3.5 py-2 bg-ink border border-[rgba(245,240,250,0.14)] rounded-r text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange transition text-xs font-mono"
                 />
               </div>
             </div>
           </div>
 
           {/* Tiptap Rich Text Editor */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
             <label className="block text-xs font-semibold text-white uppercase tracking-wider">Walkthrough Content</label>
             <TiptapEditor content={content} onChange={setContent} />
             {/* Editor Footer: Word count & read estimator */}
-            <div className="flex items-center justify-between text-[10px] text-[#9C8FAE]/45 pt-2 border-t border-[rgba(245,240,250,0.14)] px-1 font-mono">
+            <div className="flex items-center justify-between text-[10px] text-paper-dim/45 pt-2 border-t border-[rgba(245,240,250,0.14)] px-1 font-mono">
               <span className="flex items-center">
                 <FileText size={14} className="mr-1" /> {wordCount} Words
               </span>
@@ -485,77 +485,77 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           </div>
 
           {/* Live Table of Contents Preview */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-3">
             <div className="flex items-center space-x-2 border-b border-[rgba(245,240,250,0.14)] pb-3 mb-2">
-              <List size={18} className="text-[#00E5FF]" />
+              <List size={18} className="text-orange" />
               <h2 className="text-xs font-bold text-white uppercase tracking-wider">Table of Contents Preview</h2>
             </div>
             {toc.length > 0 ? (
-              <ul className="space-y-2 text-xs text-[#9C8FAE] list-inside">
+              <ul className="space-y-2 text-xs text-paper-dim list-inside">
                 {toc.map((heading, index) => (
-                  <li key={index} className="flex items-center space-x-2 bg-[#0B0710] py-2 px-3 rounded border border-[rgba(245,240,250,0.08)]">
-                    <ChevronRight size={14} className="text-[#FF2E88]" />
+                  <li key={index} className="flex items-center space-x-2 bg-ink py-2 px-3 rounded border border-[rgba(245,240,250,0.08)]">
+                    <ChevronRight size={14} className="text-magenta" />
                     <span className="font-semibold text-white">{heading.text}</span>
-                    <span className="text-[10px] text-[#9C8FAE]/40 font-mono bg-[rgba(245,240,250,0.14)] px-1.5 py-0.5 rounded ml-auto">
+                    <span className="text-[10px] text-paper-dim/40 font-mono bg-[rgba(245,240,250,0.14)] px-1.5 py-0.5 rounded ml-auto">
                       #{heading.id}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-[#9C8FAE] italic">
+              <p className="text-xs text-paper-dim italic">
                 Add standard H2 headings inside the content editor to auto-populate the table of contents.
               </p>
             )}
           </div>
 
           {/* SEO Metadata Options */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <div className="border-b border-[rgba(245,240,250,0.14)] pb-3 flex items-center space-x-2">
-              <FileText className="text-[#FF2E88]" size={18} />
+              <FileText className="text-magenta" size={18} />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">SEO Meta Override</h2>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5">Custom Meta Title</label>
+              <label className="block text-xs font-semibold text-paper-dim mb-1.5">Custom Meta Title</label>
               <input
                 type="text"
                 placeholder="Override default title for SEO tag..."
                 value={seoTitle}
                 onChange={(e) => setSeoTitle(e.target.value)}
-                className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs"
+                className="block w-full px-3.5 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange text-xs"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5">Custom Meta Description</label>
+              <label className="block text-xs font-semibold text-paper-dim mb-1.5">Custom Meta Description</label>
               <textarea
                 rows={3}
                 placeholder="Override default description for search engines..."
                 value={seoDescription}
                 onChange={(e) => setSeoDescription(e.target.value)}
-                className="block w-full px-3.5 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs resize-none"
+                className="block w-full px-3.5 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange text-xs resize-none"
               />
             </div>
           </div>
 
           {/* FAQ Builder */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <div className="border-b border-[rgba(245,240,250,0.14)] pb-3 flex items-center space-x-2">
-              <CheckCircle className="text-[#00E5FF]" size={18} />
+              <CheckCircle className="text-orange" size={18} />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">Interactive FAQ Builder</h2>
             </div>
 
             {faq.length > 0 ? (
               <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                 {faq.map((item, idx) => (
-                  <div key={idx} className="bg-[#0B0710] p-3 rounded border border-[rgba(245,240,250,0.08)] flex justify-between items-start text-xs">
+                  <div key={idx} className="bg-ink p-3 rounded border border-[rgba(245,240,250,0.08)] flex justify-between items-start text-xs">
                     <div className="space-y-1">
                       <p className="font-bold text-white">Q: {item.question}</p>
-                      <p className="text-[#9C8FAE]">A: {item.answer}</p>
+                      <p className="text-paper-dim">A: {item.answer}</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setFaq(faq.filter((_, i) => i !== idx))}
-                      className="text-[#FF2E88] hover:text-[#FF2E88]/80 p-1 rounded hover:bg-[#FF2E88]/10 transition"
+                      className="text-magenta hover:text-magenta/80 p-1 rounded hover:bg-magenta/10 transition"
                     >
                       <Trash size={14} />
                     </button>
@@ -563,7 +563,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-[#9C8FAE] italic">No FAQ items added yet. Added FAQs will generate beautiful JSON-LD Schema on this page!</p>
+              <p className="text-xs text-paper-dim italic">No FAQ items added yet. Added FAQs will generate beautiful JSON-LD Schema on this page!</p>
             )}
 
             <div className="border-t border-[rgba(245,240,250,0.14)] pt-3 space-y-3">
@@ -573,14 +573,14 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                   placeholder="Enter Question..."
                   value={faqQuestion}
                   onChange={(e) => setFaqQuestion(e.target.value)}
-                  className="block w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs"
+                  className="block w-full px-3 py-2 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange text-xs"
                 />
                 <textarea
                   rows={2}
                   placeholder="Enter Answer..."
                   value={faqAnswer}
                   onChange={(e) => setFaqAnswer(e.target.value)}
-                  className="block w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9C8FAE]/40 focus:outline-none focus:ring-1 focus:ring-[#00E5FF] text-xs resize-none"
+                  className="block w-full px-3 py-2 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white placeholder-[#9E9EA8]/40 focus:outline-none focus:ring-1 focus:ring-orange text-xs resize-none"
                 />
               </div>
               <button
@@ -595,7 +595,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                   setFaqAnswer("")
                   toast.success("FAQ item added!")
                 }}
-                className="w-full py-1.5 bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 text-[#00E5FF] text-xs font-bold rounded uppercase tracking-wider transition"
+                className="w-full py-1.5 bg-orange/10 hover:bg-orange/20 text-orange text-xs font-bold rounded uppercase tracking-wider transition"
               >
                 Add FAQ Item
               </button>
@@ -606,15 +606,15 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         {/* Right sidebar metadata column */}
         <div className="space-y-6">
           {/* Status */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Publishing Status</h2>
 
             <div>
-              <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5 uppercase tracking-wider">Visibility Status</label>
+              <label className="block text-xs font-semibold text-paper-dim mb-1.5 uppercase tracking-wider">Visibility Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer font-semibold"
+                className="w-full px-3 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-orange cursor-pointer font-semibold"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published / Scheduled</option>
@@ -624,29 +624,29 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
 
             {status === "published" && (
               <div>
-                <label className="block text-xs font-semibold text-[#9C8FAE] mb-1.5 flex items-center uppercase tracking-wider">
-                  <Calendar size={14} className="mr-1 text-[#00E5FF]" />
+                <label className="block text-xs font-semibold text-paper-dim mb-1.5 flex items-center uppercase tracking-wider">
+                  <Calendar size={14} className="mr-1 text-orange" />
                   Publish Date & Time
                 </label>
                 <input
                   type="datetime-local"
                   value={publishedAt}
                   onChange={(e) => setPublishedAt(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF]"
+                  className="w-full px-3 py-2 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-orange"
                 />
               </div>
             )}
           </div>
 
           {/* Difficulty */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Difficulty</h2>
             <div>
               <select
                 required
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as any)}
-                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer"
+                className="w-full px-3 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-orange cursor-pointer"
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
@@ -656,14 +656,14 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           </div>
 
           {/* Category */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Guide Category</h2>
             <div>
               <select
                 required
                 value={guideCategory}
                 onChange={(e) => setGuideCategory(e.target.value as any)}
-                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer"
+                className="w-full px-3 py-2.5 bg-ink border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-orange cursor-pointer"
               >
                 <option value="Getting Started">Getting Started</option>
                 <option value="Story">Story</option>
@@ -675,7 +675,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           </div>
 
           {/* Featured Image */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Featured Image</h2>
 
             {featuredImage ? (
@@ -685,12 +685,12 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                   <button
                     type="button"
                     onClick={() => setFeaturedImage("")}
-                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-[#FF2E88] font-bold text-xs"
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-magenta font-bold text-xs"
                   >
                     <Trash size={16} className="mr-1" /> Remove Image
                   </button>
                 </div>
-                <p className="text-[10px] text-[#9C8FAE]/45 truncate bg-[#0B0710] p-1.5 rounded border border-[rgba(245,240,250,0.08)] font-mono">
+                <p className="text-[10px] text-paper-dim/45 truncate bg-ink p-1.5 rounded border border-[rgba(245,240,250,0.08)] font-mono">
                   {featuredImage}
                 </p>
               </div>
@@ -701,9 +701,9 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                   setIsMediaModalOpen(true)
                   fetchMedia()
                 }}
-                className="w-full aspect-video border border-dashed border-[rgba(245,240,250,0.14)] rounded flex flex-col items-center justify-center text-[#9C8FAE]/50 hover:border-[#9C8FAE]/20 hover:text-white transition group bg-[#0B0710]/40"
+                className="w-full aspect-video border border-dashed border-[rgba(245,240,250,0.14)] rounded flex flex-col items-center justify-center text-paper-dim/50 hover:border-paper-dim/20 hover:text-white transition group bg-ink/40"
               >
-                <ImageIcon size={24} className="mb-2 text-[#9C8FAE]/30 group-hover:text-[#FF2E88] transition" />
+                <ImageIcon size={24} className="mb-2 text-paper-dim/30 group-hover:text-magenta transition" />
                 <span className="text-[10px] font-bold tracking-widest uppercase">Select Featured Image</span>
               </button>
             )}
@@ -714,22 +714,22 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       {/* Featured Image Picker Modal */}
       {isMediaModalOpen && (
         <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded w-full max-w-4xl max-h-[85vh] flex flex-col justify-between shadow-2xl overflow-hidden">
+          <div className="bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded w-full max-w-4xl max-h-[85vh] flex flex-col justify-between shadow-2xl overflow-hidden">
             <div className="p-4 border-b border-[rgba(245,240,250,0.14)] flex items-center justify-between">
               <h3 className="text-lg font-bold text-white font-anton uppercase tracking-wider">Choose Featured Image</h3>
               <button
                 type="button"
                 onClick={() => setIsMediaModalOpen(false)}
-                className="text-[#9C8FAE] hover:text-white"
+                className="text-paper-dim hover:text-white"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 bg-[#0B0710]/50">
+            <div className="flex-1 overflow-y-auto p-4 bg-ink/50">
               {isLoadingMedia ? (
                 <div className="flex justify-center items-center py-20">
-                  <Loader2 className="animate-spin text-[#00E5FF] h-8 w-8" />
+                  <Loader2 className="animate-spin text-orange h-8 w-8" />
                 </div>
               ) : mediaList.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -737,7 +737,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                     <div
                       key={item.id}
                       onClick={() => handleSelectFeaturedImage(item.url)}
-                      className="group border border-[rgba(245,240,250,0.14)] hover:border-[#00E5FF] bg-[#150C1F] rounded overflow-hidden cursor-pointer transition-all duration-150"
+                      className="group border border-[rgba(245,240,250,0.14)] hover:border-orange bg-ink-2 rounded overflow-hidden cursor-pointer transition-all duration-150"
                     >
                       <div className="aspect-video bg-black flex items-center justify-center relative border-b border-[rgba(245,240,250,0.14)]">
                         <img
@@ -756,7 +756,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
                 </div>
               ) : (
                 <div className="text-center py-12 border border-dashed border-[rgba(245,240,250,0.14)] rounded">
-                  <p className="text-xs text-[#9C8FAE]">No media found. Upload media in the Media Library first!</p>
+                  <p className="text-xs text-paper-dim">No media found. Upload media in the Media Library first!</p>
                 </div>
               )}
             </div>

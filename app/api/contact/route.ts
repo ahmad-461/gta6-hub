@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     const emailHtmlBody = `
       <div style="font-family: sans-serif; background-color: #fafafa; padding: 20px; color: #333;">
         <div style="max-width: 600px; margin: 0 auto; background-color: #fff; border: 1px solid #e1e1e1; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-          <div style="background-color: #150C1F; color: #F5F0FA; padding: 25px; border-bottom: 3px solid #FF2E88;">
+          <div style="background-color: #16161B; color: #F5F5F7; padding: 25px; border-bottom: 3px solid #FF2D8D;">
             <h1 style="margin: 0; font-size: 20px; letter-spacing: 1px;">GTA 6 HUB — CONTACT INCOMING</h1>
           </div>
           <div style="padding: 25px; line-height: 1.6;">
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; border-bottom: 1px solid #eee;">Email:</td>
-                <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #FF2E88; text-decoration: none;">${email}</a></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #FF2D8D; text-decoration: none;">${email}</a></td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; border-bottom: 1px solid #eee;">Subject:</td>
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
               </tr>
             </table>
             <p style="font-weight: bold; margin-bottom: 5px;">Message Details:</p>
-            <div style="background-color: #F5F0FA; border-left: 4px solid #00E5FF; padding: 15px; border-radius: 4px; font-style: italic; white-space: pre-wrap; font-size: 14px;">${message}</div>
+            <div style="background-color: #F5F5F7; border-left: 4px solid #FF8A3D; padding: 15px; border-radius: 4px; font-style: italic; white-space: pre-wrap; font-size: 14px;">${message}</div>
           </div>
           <div style="background-color: #eee; text-align: center; padding: 15px; font-size: 11px; color: #888;">
             Sent automatically via GTA 6 Hub System Platform.

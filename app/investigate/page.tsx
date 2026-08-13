@@ -217,7 +217,7 @@ export default function InvestigatePage() {
     } else if (score >= 0.5) {
       return {
         label: "Likely Matches",
-        class: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
+        class: "bg-amber-500/10 text-amber-400 border-amber-500/30",
         icon: <Sparkles className="w-3.5 h-3.5" />
       }
     } else {
@@ -244,7 +244,7 @@ export default function InvestigatePage() {
         <a
           key={match.index}
           href={match[2]}
-          className="text-[#FF2E88] hover:underline font-bold border-b border-dashed border-[#FF2E88]/30"
+          className="text-magenta hover:underline font-bold border-b border-dashed border-magenta/30"
         >
           {match[1]}
         </a>
@@ -264,18 +264,18 @@ export default function InvestigatePage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow flex flex-col space-y-8 text-[#F5F0FA]">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow flex flex-col space-y-8 text-paper">
 
       {/* Page header banner */}
-      <div className="relative border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/60 backdrop-blur-md p-8 rounded-xl shadow-2xl overflow-hidden">
-        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00E5FF]" />
-        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00E5FF]" />
-        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00E5FF]" />
-        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00E5FF]" />
+      <div className="relative border border-[rgba(245,240,250,0.14)] bg-ink-2/60 backdrop-blur-md p-8 rounded-xl shadow-2xl overflow-hidden">
+        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-orange" />
+        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-orange" />
+        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-orange" />
+        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-orange" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="flex items-center space-x-2 text-[#00E5FF]">
+            <div className="flex items-center space-x-2 text-orange">
               <ShieldCheck className="w-5 h-5 animate-pulse" />
               <span className="text-xs font-bold tracking-widest uppercase font-mono">
                 VICE CITY INTEL ASSISTANT // CODENAME: INVESTIGATOR
@@ -284,16 +284,16 @@ export default function InvestigatePage() {
             <h1 className="text-3xl sm:text-5xl font-anton uppercase tracking-tight text-white leading-none">
               AI INVESTIGATOR TERMINAL
             </h1>
-            <p className="text-sm text-[#9C8FAE] max-w-xl">
+            <p className="text-sm text-paper-dim max-w-xl">
               Submit query keywords, leaked files, or story nodes to crawl through verified walkthrough guides and articles database records.
             </p>
           </div>
 
           {/* Rate Limit Indicator Badge */}
-          <div className="bg-[#0B0710]/80 border border-[rgba(245,240,250,0.1)] p-4 rounded-lg font-mono text-xs flex items-center gap-3 shrink-0">
-            <Clock className="w-4 h-4 text-[#FF2E88]" />
+          <div className="bg-ink/80 border border-[rgba(245,240,250,0.1)] p-4 rounded-lg font-mono text-xs flex items-center gap-3 shrink-0">
+            <Clock className="w-4 h-4 text-magenta" />
             <div>
-              <span className="block text-[10px] text-[#9C8FAE] font-bold">TERMINAL THROTTLE:</span>
+              <span className="block text-[10px] text-paper-dim font-bold">TERMINAL THROTTLE:</span>
               <span className="font-extrabold text-white">
                 {sessionCount} / 10 OPERATIONS USED
               </span>
@@ -303,14 +303,14 @@ export default function InvestigatePage() {
       </div>
 
       {/* Main Terminal Feed */}
-      <div className="flex-grow flex flex-col min-h-[400px] border border-[rgba(245,240,250,0.14)] bg-[#150C1F]/40 backdrop-blur rounded-xl overflow-hidden relative">
+      <div className="flex-grow flex flex-col min-h-[400px] border border-[rgba(245,240,250,0.14)] bg-ink-2/40 backdrop-blur rounded-xl overflow-hidden relative">
         <div className="flex-grow p-6 overflow-y-auto space-y-6">
 
           {reports.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center py-16 space-y-4">
               <div className="relative flex items-center justify-center">
-                <span className="animate-ping absolute inline-flex h-12 w-12 rounded-full bg-[#00E5FF]/20" />
-                <div className="p-4 bg-[#150C1F] border border-[rgba(245,240,250,0.12)] rounded-full text-[#00E5FF]">
+                <span className="animate-ping absolute inline-flex h-12 w-12 rounded-full bg-orange/20" />
+                <div className="p-4 bg-ink-2 border border-[rgba(245,240,250,0.12)] rounded-full text-orange">
                   <Sparkles size={28} />
                 </div>
               </div>
@@ -318,7 +318,7 @@ export default function InvestigatePage() {
                 <h3 className="text-lg font-bold text-white uppercase font-mono tracking-wider">
                   Terminal Online. Awaiting Queries...
                 </h3>
-                <p className="text-xs text-[#9C8FAE] leading-relaxed">
+                <p className="text-xs text-paper-dim leading-relaxed">
                   Enter your inquiry below to trigger a similarity lookup over our vector database index and compile an official Intelligence Report.
                 </p>
               </div>
@@ -333,12 +333,12 @@ export default function InvestigatePage() {
                 return (
                   <div
                     key={report.id}
-                    className="border border-[rgba(245,240,250,0.14)] rounded-xl bg-[#0B0710]/95 p-6 space-y-6 shadow-2xl relative"
+                    className="border border-[rgba(245,240,250,0.14)] rounded-xl bg-ink/95 p-6 space-y-6 shadow-2xl relative"
                   >
                     {/* Header Row */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[rgba(245,240,250,0.1)] pb-4 gap-4">
                       <div className="space-y-1.5">
-                        <span className="text-[10px] font-black tracking-widest text-[#9C8FAE] uppercase font-mono">
+                        <span className="text-[10px] font-black tracking-widest text-paper-dim uppercase font-mono">
                           QUERY TELEMETRY INPUT
                         </span>
                         <p className="text-sm font-extrabold text-white leading-snug">
@@ -357,7 +357,7 @@ export default function InvestigatePage() {
                             type="button"
                             onClick={() => handleExportPDF(report)}
                             disabled={isExportingMap[report.id]}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border border-[#00E5FF]/30 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF]/25 hover:border-[#00E5FF] disabled:opacity-50 transition-all duration-200"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-black font-mono uppercase tracking-widest border border-orange/30 bg-orange/10 text-orange hover:bg-orange/25 hover:border-orange disabled:opacity-50 transition-all duration-200"
                             title="Download PDF Case File"
                           >
                             {isExportingMap[report.id] ? (
@@ -373,18 +373,18 @@ export default function InvestigatePage() {
 
                     {/* Report Answer Segment */}
                     <div className="space-y-3">
-                      <span className="text-[10px] font-black tracking-widest text-[#00E5FF] uppercase font-mono block">
+                      <span className="text-[10px] font-black tracking-widest text-orange uppercase font-mono block">
                         INTELLIGENCE DOSSIER REPORT:
                       </span>
                       {isPending && report.answer === "" ? (
                         <div className="flex items-center space-x-2 py-2">
-                          <Loader2 className="w-5 h-5 text-[#FF2E88] animate-spin" />
-                          <span className="text-xs font-mono text-[#9C8FAE] tracking-wider uppercase animate-pulse">
+                          <Loader2 className="w-5 h-5 text-magenta animate-spin" />
+                          <span className="text-xs font-mono text-paper-dim tracking-wider uppercase animate-pulse">
                             Searching database clusters...
                           </span>
                         </div>
                       ) : (
-                        <div className="text-sm leading-relaxed text-[#F5F0FA]/90 bg-[#150C1F]/50 p-4 rounded border border-[rgba(245,240,250,0.06)]">
+                        <div className="text-sm leading-relaxed text-paper/90 bg-ink-2/50 p-4 rounded border border-[rgba(245,240,250,0.06)]">
                           {renderTextWithLinks(report.answer)}
                         </div>
                       )}
@@ -393,7 +393,7 @@ export default function InvestigatePage() {
                     {/* Evidence & Sources Section */}
                     {!isPending && !isError && report.sources.length > 0 && (
                       <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 space-y-3">
-                        <span className="text-[10px] font-black tracking-widest text-[#FF2E88] uppercase font-mono block">
+                        <span className="text-[10px] font-black tracking-widest text-magenta uppercase font-mono block">
                           VERIFIED EVIDENCE / SOURCES:
                         </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -401,15 +401,15 @@ export default function InvestigatePage() {
                             <Link
                               key={sIdx}
                               href={src.url}
-                              className="flex items-center justify-between p-3 rounded bg-[#150C1F]/30 border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
+                              className="flex items-center justify-between p-3 rounded bg-ink-2/30 border border-[rgba(245,240,250,0.06)] hover:border-magenta/40 transition group"
                             >
                               <div className="flex items-center space-x-2.5 truncate pr-2">
-                                <FileText className="w-4 h-4 text-[#9C8FAE] group-hover:text-[#FF2E88] shrink-0" />
-                                <span className="text-xs font-bold text-[#F5F0FA] group-hover:text-white truncate">
+                                <FileText className="w-4 h-4 text-paper-dim group-hover:text-magenta shrink-0" />
+                                <span className="text-xs font-bold text-paper group-hover:text-white truncate">
                                   {src.title}
                                 </span>
                               </div>
-                              <ExternalLink size={12} className="text-[#9C8FAE]/40 group-hover:text-[#FF2E88] shrink-0" />
+                              <ExternalLink size={12} className="text-paper-dim/40 group-hover:text-magenta shrink-0" />
                             </Link>
                           ))}
                         </div>
@@ -424,7 +424,7 @@ export default function InvestigatePage() {
         </div>
 
         {/* Input Form Footer */}
-        <div className="p-4 border-t border-[rgba(245,240,250,0.12)] bg-[#150C1F]/70 relative">
+        <div className="p-4 border-t border-[rgba(245,240,250,0.12)] bg-ink-2/70 relative">
           <form onSubmit={handleInvestigate} className="flex gap-3 max-w-4xl mx-auto">
             <input
               type="text"
@@ -432,12 +432,12 @@ export default function InvestigatePage() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask the Investigator (e.g. Jason, walkthrough secrets, heist locations)..."
               disabled={isTyping}
-              className="flex-grow bg-[#0B0710] border border-[rgba(245,240,250,0.14)] focus:border-[#FF2E88] focus:ring-1 focus:ring-[#FF2E88] outline-none rounded-lg px-4 py-3 text-sm text-white placeholder-foreground/30 transition-all font-mono"
+              className="flex-grow bg-ink border border-[rgba(245,240,250,0.14)] focus:border-magenta focus:ring-1 focus:ring-magenta outline-none rounded-lg px-4 py-3 text-sm text-white placeholder-foreground/30 transition-all font-mono"
             />
             <button
               type="submit"
               disabled={isTyping || !input.trim() || sessionCount >= 10}
-              className="px-6 py-3 bg-[#FF2E88] hover:bg-[#FF2E88]/90 disabled:opacity-40 text-white font-mono text-xs font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,46,136,0.3)] hover:shadow-[0_0_25px_rgba(255,46,136,0.5)]"
+              className="px-6 py-3 bg-magenta hover:bg-magenta/90 disabled:opacity-40 text-white font-mono text-xs font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,46,136,0.3)] hover:shadow-[0_0_25px_rgba(255,46,136,0.5)]"
             >
               {isTyping ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

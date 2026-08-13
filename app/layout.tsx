@@ -65,7 +65,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${anton.variable} ${spaceMono.variable}`}>
-      <body className="flex flex-col min-h-screen bg-[#0B0710] text-[#F5F0FA] antialiased selection:bg-[#FF2E88] selection:text-white font-sans">
+      <body className="flex flex-col min-h-screen bg-ink text-paper antialiased selection:bg-magenta selection:text-white font-sans">
         {!isAdminRoute && <Header />}
         <main className="flex-grow flex flex-col">
           {children}
@@ -80,10 +80,10 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             classNames: {
-              toast: "bg-[#150C1F] border border-[rgba(245,240,250,0.14)] text-[#F5F0FA] font-mono",
-              success: "text-[#00E5FF]",
+              toast: "bg-ink-2 border border-[rgba(245,240,250,0.14)] text-paper font-mono",
+              success: "text-orange",
               error: "text-red-500",
-              info: "text-[#FF2E88]",
+              info: "text-magenta",
               warning: "text-amber-500",
             }
           }}

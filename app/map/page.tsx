@@ -115,12 +115,12 @@ export default function LeonidaMapPage() {
   const relatedContentList = selectedLocation ? getRelatedContent(selectedLocation) : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-8 text-[#F5F0FA]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-8 text-paper">
 
       {/* Title & Description Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[rgba(245,240,250,0.14)] pb-6">
         <div>
-          <div className="flex items-center space-x-2 mb-2 text-[#FF2E88]">
+          <div className="flex items-center space-x-2 mb-2 text-magenta">
             <Compass className="w-5 h-5 animate-spin-slow" />
             <span className="text-xs font-black tracking-widest uppercase font-mono">
               LEONIDA COMPREHENSIVE VECTOR telemetry
@@ -129,7 +129,7 @@ export default function LeonidaMapPage() {
           <h1 className="text-4xl sm:text-6xl font-anton uppercase tracking-tight text-white leading-none">
             LEONIDA INTEL MAP
           </h1>
-          <p className="text-sm text-[#9C8FAE] max-w-2xl mt-2 leading-relaxed">
+          <p className="text-sm text-paper-dim max-w-2xl mt-2 leading-relaxed">
             Scan districts, coordinates, verified structures, and dynamic rumor coordinates. Target pins on the grid to extract connected walkthrough files.
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function LeonidaMapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch">
 
         {/* Left/Main Map Canvas (3 cols) */}
-        <div className="lg:col-span-3 bg-[#150C1F]/40 border border-[rgba(245,240,250,0.14)] rounded-xl p-2 relative overflow-hidden flex flex-col items-center justify-center min-h-[500px]">
+        <div className="lg:col-span-3 bg-ink-2/40 border border-[rgba(245,240,250,0.14)] rounded-xl p-2 relative overflow-hidden flex flex-col items-center justify-center min-h-[500px]">
 
           {/* Responsive aspect-ratio-locked relative map container */}
           <div className="relative w-full aspect-[16/10] bg-[#0c0a10] rounded-lg overflow-hidden border border-[rgba(245,240,250,0.08)]">
@@ -236,8 +236,8 @@ export default function LeonidaMapPage() {
             </div>
 
             {/* FLOATING CONSOLE: Category Selector (Overlaid in bottom-right) */}
-            <div className="absolute bottom-6 right-6 z-20 bg-[#150C1F]/95 backdrop-blur-md border border-[rgba(245,240,250,0.14)] p-4 rounded shadow-2xl flex flex-col gap-2.5 font-mono max-w-[240px]">
-              <div className="flex items-center gap-1.5 text-[9px] font-black tracking-widest text-[#00E5FF]">
+            <div className="absolute bottom-6 right-6 z-20 bg-ink-2/95 backdrop-blur-md border border-[rgba(245,240,250,0.14)] p-4 rounded shadow-2xl flex flex-col gap-2.5 font-mono max-w-[240px]">
+              <div className="flex items-center gap-1.5 text-[9px] font-black tracking-widest text-orange">
                 <Sliders className="w-3.5 h-3.5 animate-pulse" />
                 <span>HOTSPOT TELEMETRY CONSOLE</span>
               </div>
@@ -257,8 +257,8 @@ export default function LeonidaMapPage() {
                     }}
                     className={`px-2.5 py-1.5 text-[10px] text-left font-black tracking-wider border rounded uppercase transition-all duration-300 ${
                       activeCategory === cat.id
-                        ? "bg-[#0B0710] text-[#00E5FF] border-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.25)]"
-                        : "bg-transparent text-[#9C8FAE] border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/40 hover:text-white"
+                        ? "bg-ink text-orange border-orange shadow-[0_0_10px_rgba(0,229,255,0.25)]"
+                        : "bg-transparent text-paper-dim border-[rgba(245,240,250,0.06)] hover:border-orange/40 hover:text-white"
                     }`}
                   >
                     {cat.name}
@@ -270,21 +270,21 @@ export default function LeonidaMapPage() {
             {/* Hotspot markers rendered using percentages */}
             {isLoading ? (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-20">
-                <Loader2 className="animate-spin text-[#FF2E88] w-8 h-8" />
+                <Loader2 className="animate-spin text-magenta w-8 h-8" />
               </div>
             ) : filteredLocations.length > 0 ? (
               filteredLocations.map((loc) => {
                 const isSelected = selectedLocation?.id === loc.id
 
-                let pinColor = "text-[#FF2E88]"
-                let rgbColor = "255, 46, 136" // Default magenta
+                let pinColor = "text-magenta"
+                let rgbColor = "255, 45, 141" // Default magenta
 
                 if (loc.category === "city") {
-                  pinColor = "text-[#00E5FF]"
-                  rgbColor = "0, 229, 255"
+                  pinColor = "text-orange"
+                  rgbColor = "255, 138, 61"
                 } else if (loc.category === "landmark") {
-                  pinColor = "text-[#6C1FB5]"
-                  rgbColor = "108, 31, 181"
+                  pinColor = "text-violet"
+                  rgbColor = "131, 34, 88"
                 } else if (loc.category === "easter-egg") {
                   pinColor = "text-amber-400"
                   rgbColor = "251, 191, 36"
@@ -329,7 +329,7 @@ export default function LeonidaMapPage() {
                     </div>
 
                     {/* Popover label on hover */}
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-7 bg-[#0B0710]/95 border border-[rgba(245,240,250,0.14)] px-2.5 py-1 rounded text-[9px] font-black font-mono text-white uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition duration-150 pointer-events-none select-none">
+                    <div className="absolute left-1/2 -translate-x-1/2 bottom-7 bg-ink/95 border border-[rgba(245,240,250,0.14)] px-2.5 py-1 rounded text-[9px] font-black font-mono text-white uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition duration-150 pointer-events-none select-none">
                       {loc.name}
                     </div>
                   </button>
@@ -337,7 +337,7 @@ export default function LeonidaMapPage() {
               })
             ) : (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <p className="text-xs text-[#9C8FAE] uppercase tracking-widest font-mono">
+                <p className="text-xs text-paper-dim uppercase tracking-widest font-mono">
                   No telemetry pins registered in sector.
                 </p>
               </div>
@@ -346,16 +346,16 @@ export default function LeonidaMapPage() {
         </div>
 
         {/* Right Info Overlay Side Panel (1 col) */}
-        <div className="lg:col-span-1 flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[400px] shadow-2xl relative">
+        <div className="lg:col-span-1 flex flex-col justify-between bg-ink-2 border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[400px] shadow-2xl relative">
           {selectedLocation ? (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-black tracking-widest text-[#00E5FF] uppercase font-mono">
+                <span className="text-[10px] font-black tracking-widest text-orange uppercase font-mono">
                   COORDINATES DOSSIER
                 </span>
                 <button
                   onClick={() => setSelectedLocation(null)}
-                  className="p-1 hover:bg-white/5 rounded text-[#9C8FAE] hover:text-white transition"
+                  className="p-1 hover:bg-white/5 rounded text-paper-dim hover:text-white transition"
                 >
                   <X size={16} />
                 </button>
@@ -363,7 +363,7 @@ export default function LeonidaMapPage() {
 
               {/* Image thumbnail if exists */}
               {selectedLocation.image && (
-                <div className="aspect-video relative rounded-lg overflow-hidden border border-[rgba(245,240,250,0.12)] bg-[#0B0710]">
+                <div className="aspect-video relative rounded-lg overflow-hidden border border-[rgba(245,240,250,0.12)] bg-ink">
                   <NextImage
                     src={selectedLocation.image}
                     alt={selectedLocation.name}
@@ -379,7 +379,7 @@ export default function LeonidaMapPage() {
                   {selectedLocation.name}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  <span className="text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded bg-[#0B0710] text-[#9C8FAE] border border-[rgba(245,240,250,0.06)] font-mono">
+                  <span className="text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded bg-ink text-paper-dim border border-[rgba(245,240,250,0.06)] font-mono">
                     {selectedLocation.category === "poi" ? "POI" : selectedLocation.category.replace("-", " ")}
                   </span>
                   <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded border flex items-center gap-1 font-mono ${
@@ -393,13 +393,13 @@ export default function LeonidaMapPage() {
                 </div>
               </div>
 
-              <p className="text-xs text-[#9C8FAE] leading-relaxed bg-[#0B0710]/50 border border-[rgba(245,240,250,0.06)] p-3.5 rounded-lg">
+              <p className="text-xs text-paper-dim leading-relaxed bg-ink/50 border border-[rgba(245,240,250,0.06)] p-3.5 rounded-lg">
                 {selectedLocation.description || "No sector classification files available."}
               </p>
 
               {/* Related content / Evidence Section */}
               <div className="space-y-3 pt-3 border-t border-[rgba(245,240,250,0.1)]">
-                <h4 className="text-[10px] font-black uppercase text-[#FF2E88] tracking-widest font-mono">
+                <h4 className="text-[10px] font-black uppercase text-magenta tracking-widest font-mono">
                   VERIFIED EVIDENCE ({relatedContentList.length})
                 </h4>
                 {relatedContentList.length > 0 ? (
@@ -408,17 +408,17 @@ export default function LeonidaMapPage() {
                       <Link
                         key={item.id}
                         href={item.href}
-                        className="flex items-center justify-between p-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
+                        className="flex items-center justify-between p-2.5 rounded bg-ink border border-[rgba(245,240,250,0.06)] hover:border-magenta/40 transition group"
                       >
-                        <span className="text-xs font-semibold text-[#9C8FAE] group-hover:text-white truncate pr-2">
+                        <span className="text-xs font-semibold text-paper-dim group-hover:text-white truncate pr-2">
                           {item.title}
                         </span>
-                        <ExternalLink size={12} className="text-[#9C8FAE]/40 group-hover:text-[#FF2E88] shrink-0" />
+                        <ExternalLink size={12} className="text-paper-dim/40 group-hover:text-magenta shrink-0" />
                       </Link>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[10px] text-[#9C8FAE]/40 font-mono font-bold italic">
+                  <p className="text-[10px] text-paper-dim/40 font-mono font-bold italic">
                     No related articles or coordinate walkthrough files linked.
                   </p>
                 )}
@@ -426,12 +426,12 @@ export default function LeonidaMapPage() {
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-12">
-              <Layers className="w-10 h-10 text-[#9C8FAE]/20 animate-pulse" />
+              <Layers className="w-10 h-10 text-paper-dim/20 animate-pulse" />
               <div className="space-y-1.5">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                   GRID SECTOR UNSECURED
                 </h3>
-                <p className="text-xs text-[#9C8FAE]/50 max-w-[180px] leading-relaxed">
+                <p className="text-xs text-paper-dim/50 max-w-[180px] leading-relaxed">
                   Click on any telemetry hotspot on the canvas grid to decode site files and coordinates.
                 </p>
               </div>
@@ -439,7 +439,7 @@ export default function LeonidaMapPage() {
           )}
 
           {/* Footer Coordinates monitor */}
-          <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 mt-6 text-[9px] font-mono text-[#9C8FAE]/45 flex justify-between items-center bg-[#0B0710]/40 p-2.5 rounded">
+          <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 mt-6 text-[9px] font-mono text-paper-dim/45 flex justify-between items-center bg-ink/40 p-2.5 rounded">
             <span>MAP CODES:</span>
             <span className="text-white font-bold">1600 X 1000px FLUID</span>
           </div>
