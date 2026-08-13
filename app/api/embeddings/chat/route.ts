@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     const guideIds = matches.filter((m: any) => m.content_type === "guide").map((m: any) => m.content_id)
 
     const articlesMap = new Map<string, { title: string; slug: string }>()
-    const guidesMap = new Map<string, { title: string; slug: string }>()
+    const guidesMap = new Map<string, { title: string; slug: string; guide_category?: string }>()
 
     if (articleIds.length > 0) {
       const { data: articles } = await supabaseAdmin
@@ -118,18 +118,20 @@ export async function POST(request: Request) {
     if (guideIds.length > 0) {
       const { data: guides } = await supabaseAdmin
         .from("guides")
-        .select("id, title, slug")
+        .select("id, title, slug, guide_category")
         .in("id", guideIds)
 
       guides?.forEach((g: any) => {
-        guidesMap.set(g.id, { title: g.title, slug: g.slug })
+        guidesMap.set(g.id, { title: g.title, slug: g.slug, guide_category: g.guide_category })
       })
     }
 
     // 5. Construct Gemini system/user prompt
     const contextSegments = matches.map((m: any) => {
       const source = m.content_type === "article" ? articlesMap.get(m.content_id) : guidesMap.get(m.content_id)
-      const path = m.content_type === "article" ? `/news/${source?.slug || ""}` : `/guides/${source?.slug || ""}`
+      const path = m.content_type === "article"
+        ? `/news/${source?.slug || ""}`
+        : `/guides/${(source as any)?.guide_category?.toLowerCase()?.replace(/\s+/g, "-") || "getting-started"}/${source?.slug || ""}`
       return `Source: ${source?.title || "GTA 6 Hub Content"}\nURL: ${path}\nText: ${m.chunk_text}`
     }).join("\n\n---\n\n")
 
@@ -140,6 +142,22 @@ export async function POST(request: Request) {
 - Write in a knowledgeable, friendly tone. Use bold text for emphasis where appropriate, but keep the response concise.`
 
     const userPrompt = `Context:\n${contextSegments}\n\nQuestion: ${question}`
+
+    // Compile max similarity score and unique sources metadata
+    const maxScore = matches && matches.length > 0 ? Math.max(...matches.map((m: any) => m.similarity || 0)) : 0
+    const sourceDocuments = matches.map((m: any) => {
+      const source = m.content_type === "article" ? articlesMap.get(m.content_id) : guidesMap.get(m.content_id)
+      const path = m.content_type === "article"
+        ? `/news/${source?.slug || ""}`
+        : `/guides/${(source as any)?.guide_category?.toLowerCase()?.replace(/\s+/g, "-") || "getting-started"}/${source?.slug || ""}`
+      return {
+        title: source?.title || "Classified Intel",
+        url: path,
+        type: m.content_type
+      }
+    }).filter((doc: any, index: number, self: any[]) => self.findIndex(d => d.url === doc.url) === index)
+
+    const serializedSources = encodeURIComponent(JSON.stringify(sourceDocuments))
 
     // 6. Generate streamed answer from Gemini
     const chatModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
@@ -167,6 +185,9 @@ export async function POST(request: Request) {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
+        "Access-Control-Expose-Headers": "X-Similarity-Score, X-Source-Documents",
+        "X-Similarity-Score": maxScore.toString(),
+        "X-Source-Documents": serializedSources,
         "Set-Cookie": `gta6_chat_session=${sessionId}; Path=/; Max-Age=${60 * 60 * 24}`
       }
     })

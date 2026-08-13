@@ -70,7 +70,6 @@ export default function RootLayout({
           {children}
         </main>
         {!isAdminRoute && <Footer />}
-        {!isAdminRoute && <ChatWidget />}
         <Toaster
           theme="dark"
           richColors

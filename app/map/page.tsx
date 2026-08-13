@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import NextImage from "next/image"
 import { supabase } from "@/lib/supabase"
-import { MapPin, X, Compass, Layers, CheckCircle2, AlertTriangle, ExternalLink, Loader2 } from "lucide-react"
+import { MapPin, X, Compass, Layers, CheckCircle2, AlertTriangle, ExternalLink, Loader2, Sliders } from "lucide-react"
 
 export default function LeonidaMapPage() {
   const [locations, setLocations] = useState<any[]>([])
@@ -27,7 +27,7 @@ export default function LeonidaMapPage() {
     try {
       const { data: locationsData } = await supabase.from("map_locations").select("*")
       const { data: articlesData } = await supabase.from("articles").select("id, title, slug, excerpt, status")
-      const { data: guidesData } = await supabase.from("guides").select("id, title, slug, status")
+      const { data: guidesData } = await supabase.from("guides").select("id, title, slug, status, guide_category")
 
       setLocations(locationsData || [])
       setArticles(articlesData || [])
@@ -57,7 +57,8 @@ export default function LeonidaMapPage() {
       }
       const gd = guides.find((g) => g.id === id)
       if (gd && gd.status === "published") {
-        results.push({ ...gd, type: "guide", href: `/guides/Getting Started/${gd.slug}` }) // Using Getting Started fallback category, standard dynamic resolution
+        const catSlug = gd.guide_category ? gd.guide_category.toLowerCase().replace(/\s+/g, "-") : "getting-started"
+        results.push({ ...gd, type: "guide", href: `/guides/${catSlug}/${gd.slug}` })
       }
     })
 
@@ -67,57 +68,37 @@ export default function LeonidaMapPage() {
   const relatedContentList = selectedLocation ? getRelatedContent(selectedLocation) : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-6">
-      {/* Title & Description */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-card-border pb-6">
-        <div>
-          <div className="flex items-center space-x-2 mb-1.5 text-neon-pink">
-            <Compass className="w-5 h-5 animate-spin-slow" />
-            <span className="text-xs font-black tracking-widest uppercase">Leonida Intelligence Division</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white font-mono">
-            Interactive Leonida Map
-          </h1>
-          <p className="text-sm text-foreground/60 max-w-2xl mt-2">
-            Explore vice districts, speculation hotspots, verified landmarks, and hidden easter eggs of Vice City and wider state of Leonida.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow flex flex-col space-y-8 text-[#F5F0FA]">
 
-        {/* Categories filters */}
-        <div className="flex flex-wrap gap-2">
-          {[
-            { id: "all", name: "All Locations" },
-            { id: "city", name: "Cities" },
-            { id: "landmark", name: "Landmarks" },
-            { id: "poi", name: "Points of Interest" },
-            { id: "easter-egg", name: "Easter Eggs" },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => {
-                setActiveCategory(cat.id)
-                setSelectedLocation(null)
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border transition-all duration-200 ${
-                activeCategory === cat.id
-                  ? "bg-neon-pink text-white border-neon-pink shadow-[0_0_15px_rgba(255,0,127,0.3)]"
-                  : "bg-card-bg text-foreground/75 border-card-border hover:border-neon-pink/50 hover:text-white"
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
+      {/* Title & Description Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[rgba(245,240,250,0.14)] pb-6">
+        <div>
+          <div className="flex items-center space-x-2 mb-2 text-[#FF2E88]">
+            <Compass className="w-5 h-5 animate-spin-slow" />
+            <span className="text-xs font-black tracking-widest uppercase font-mono">
+              LEONIDA COMPREHENSIVE VECTOR telemetry
+            </span>
+          </div>
+          <h1 className="text-4xl sm:text-6xl font-anton uppercase tracking-tight text-white leading-none">
+            LEONIDA INTEL MAP
+          </h1>
+          <p className="text-sm text-[#9C8FAE] max-w-2xl mt-2 leading-relaxed">
+            Scan districts, coordinates, verified structures, and dynamic rumor coordinates. Target pins on the grid to extract connected walkthrough files.
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left/Main Map Canvas */}
-        <div className="lg:col-span-3 bg-card-bg/40 border border-card-border rounded-xl p-2 relative overflow-hidden flex flex-col items-center justify-center min-h-[500px]">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch">
+
+        {/* Left/Main Map Canvas (3 cols) */}
+        <div className="lg:col-span-3 bg-[#150C1F]/40 border border-[rgba(245,240,250,0.14)] rounded-xl p-2 relative overflow-hidden flex flex-col items-center justify-center min-h-[500px]">
+
           {/* Responsive aspect-ratio-locked relative map container */}
-          <div className="relative w-full aspect-[16/10] bg-[#0c0a10] rounded-lg overflow-hidden border border-card-border/60">
+          <div className="relative w-full aspect-[16/10] bg-[#0c0a10] rounded-lg overflow-hidden border border-[rgba(245,240,250,0.08)]">
+
             {/* Dark Neon stylized region map SVG/Canvas background */}
             <svg
-              className="absolute inset-0 w-full h-full opacity-60 pointer-events-none"
+              className="absolute inset-0 w-full h-full opacity-65 pointer-events-none"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 1600 1000"
             >
@@ -202,43 +183,71 @@ export default function LeonidaMapPage() {
             </svg>
 
             {/* Title watermark floating */}
-            <div className="absolute top-6 left-6 text-[10px] font-black text-white/20 uppercase tracking-widest font-mono pointer-events-none select-none">
-              LEONIDA COMPREHENSIVE INTELLIGENCE FEED v0.98<br />
-              COORDINATES TRACKED VIA INTEL RETRIEVAL SATELLITE
+            <div className="absolute top-6 left-6 text-[9px] font-bold text-white/25 uppercase tracking-widest font-mono pointer-events-none select-none leading-relaxed">
+              LEONIDA COMPREHENSIVE INTELLIGENCE SYSTEM v1.0<br />
+              COORDINATES MONITORED VIA COGNITIVE RADAR LOOKUP
+            </div>
+
+            {/* FLOATING CONSOLE: Category Selector (Overlaid in bottom-right) */}
+            <div className="absolute bottom-6 right-6 z-20 bg-[#150C1F]/95 backdrop-blur-md border border-[rgba(245,240,250,0.14)] p-4 rounded shadow-2xl flex flex-col gap-2.5 font-mono max-w-[240px]">
+              <div className="flex items-center gap-1.5 text-[9px] font-black tracking-widest text-[#00E5FF]">
+                <Sliders className="w-3.5 h-3.5 animate-pulse" />
+                <span>HOTSPOT TELEMETRY CONSOLE</span>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  { id: "all", name: "All Locations" },
+                  { id: "city", name: "Cities" },
+                  { id: "landmark", name: "Landmarks" },
+                  { id: "poi", name: "Points of Interest" },
+                  { id: "easter-egg", name: "Easter Eggs" },
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setActiveCategory(cat.id)
+                      setSelectedLocation(null)
+                    }}
+                    className={`px-2.5 py-1.5 text-[10px] text-left font-black tracking-wider border rounded uppercase transition-all duration-300 ${
+                      activeCategory === cat.id
+                        ? "bg-[#0B0710] text-[#00E5FF] border-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.25)]"
+                        : "bg-transparent text-[#9C8FAE] border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/40 hover:text-white"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Hotspot markers rendered using percentages */}
             {isLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-20">
-                <Loader2 className="animate-spin text-neon-pink w-8 h-8" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-20">
+                <Loader2 className="animate-spin text-[#FF2E88] w-8 h-8" />
               </div>
             ) : filteredLocations.length > 0 ? (
               filteredLocations.map((loc) => {
                 const isSelected = selectedLocation?.id === loc.id
-                // Color categories mapping
-                let pinColor = "text-neon-pink"
-                let bgColor = "bg-neon-pink"
-                let shadowColor = "shadow-neon-pink/50"
+
+                let pinColor = "text-[#FF2E88]"
+                let bgColor = "bg-[#FF2E88]"
 
                 if (loc.category === "city") {
-                  pinColor = "text-neon-blue"
-                  bgColor = "bg-neon-blue"
-                  shadowColor = "shadow-neon-blue/50"
+                  pinColor = "text-[#00E5FF]"
+                  bgColor = "bg-[#00E5FF]"
                 } else if (loc.category === "landmark") {
-                  pinColor = "text-neon-purple"
-                  bgColor = "bg-neon-purple"
-                  shadowColor = "shadow-neon-purple/50"
+                  pinColor = "text-[#6C1FB5]"
+                  bgColor = "bg-[#6C1FB5]"
                 } else if (loc.category === "easter-egg") {
-                  pinColor = "text-neon-yellow"
-                  bgColor = "bg-neon-yellow"
-                  shadowColor = "shadow-neon-yellow/50"
+                  pinColor = "text-amber-400"
+                  bgColor = "bg-amber-400"
                 }
 
                 return (
                   <button
                     key={loc.id}
                     onClick={() => setSelectedLocation(loc)}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300 hover:scale-125 focus:outline-none group"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300 hover:scale-135 focus:outline-none group"
                     style={{
                       left: `${loc.x_coord}%`,
                       top: `${loc.y_coord}%`,
@@ -249,12 +258,11 @@ export default function LeonidaMapPage() {
 
                     <div className="relative flex items-center justify-center">
                       <MapPin className={`w-5 h-5 ${pinColor} filter drop-shadow-[0_0_8px_currentColor]`} />
-                      {/* Inner core */}
-                      <span className={`absolute w-1.5 h-1.5 rounded-full bg-white`} />
+                      <span className="absolute w-1.5 h-1.5 rounded-full bg-white" />
                     </div>
 
                     {/* Popover label on hover */}
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-6 bg-black/90 border border-card-border px-2 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition duration-150 pointer-events-none select-none">
+                    <div className="absolute left-1/2 -translate-x-1/2 bottom-7 bg-[#0B0710]/95 border border-[rgba(245,240,250,0.14)] px-2.5 py-1 rounded text-[9px] font-black font-mono text-white uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition duration-150 pointer-events-none select-none">
                       {loc.name}
                     </div>
                   </button>
@@ -262,25 +270,25 @@ export default function LeonidaMapPage() {
               })
             ) : (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <p className="text-xs text-foreground/40 uppercase tracking-widest font-mono">
-                  No hotspots loaded for this category
+                <p className="text-xs text-[#9C8FAE] uppercase tracking-widest font-mono">
+                  No telemetry pins registered in sector.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right Info Overlay Side Panel / Modal details */}
-        <div className="lg:col-span-1 flex flex-col justify-between bg-card-bg border border-card-border rounded-xl p-6 min-h-[400px] shadow-xl relative">
+        {/* Right Info Overlay Side Panel (1 col) */}
+        <div className="lg:col-span-1 flex flex-col justify-between bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded-xl p-6 min-h-[400px] shadow-2xl relative">
           {selectedLocation ? (
-            <div className="space-y-5 animate-in fade-in duration-200">
+            <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-black tracking-widest text-neon-blue uppercase">
-                  Location Dossier
+                <span className="text-[10px] font-black tracking-widest text-[#00E5FF] uppercase font-mono">
+                  COORDINATES DOSSIER
                 </span>
                 <button
                   onClick={() => setSelectedLocation(null)}
-                  className="p-1 hover:bg-white/5 rounded text-foreground/60 hover:text-white transition"
+                  className="p-1 hover:bg-white/5 rounded text-[#9C8FAE] hover:text-white transition"
                 >
                   <X size={16} />
                 </button>
@@ -288,29 +296,29 @@ export default function LeonidaMapPage() {
 
               {/* Image thumbnail if exists */}
               {selectedLocation.image && (
-                <div className="aspect-video relative rounded-lg overflow-hidden border border-card-border">
+                <div className="aspect-video relative rounded-lg overflow-hidden border border-[rgba(245,240,250,0.12)] bg-[#0B0710]">
                   <NextImage
                     src={selectedLocation.image}
                     alt={selectedLocation.name}
                     fill
                     className="object-cover"
-                    sizes="200px"
+                    sizes="250px"
                   />
                 </div>
               )}
 
-              <div className="space-y-1.5">
-                <h3 className="text-xl font-extrabold text-white leading-tight">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-white leading-tight">
                   {selectedLocation.name}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-white/5 text-foreground/50 border border-white/5">
-                    {selectedLocation.category === "poi" ? "Point of Interest" : selectedLocation.category.replace("-", " ")}
+                  <span className="text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded bg-[#0B0710] text-[#9C8FAE] border border-[rgba(245,240,250,0.06)] font-mono">
+                    {selectedLocation.category === "poi" ? "POI" : selectedLocation.category.replace("-", " ")}
                   </span>
-                  <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border flex items-center gap-1 ${
+                  <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded border flex items-center gap-1 font-mono ${
                     selectedLocation.status === "confirmed"
-                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                      : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25"
+                      : "bg-amber-500/10 text-amber-400 border-amber-500/25"
                   }`}>
                     {selectedLocation.status === "confirmed" ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
                     {selectedLocation.status}
@@ -318,14 +326,14 @@ export default function LeonidaMapPage() {
                 </div>
               </div>
 
-              <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed bg-[#100e16]/60 border border-card-border/50 p-3.5 rounded-lg">
-                {selectedLocation.description || "No classification dossiers or leaks available for this sector."}
+              <p className="text-xs text-[#9C8FAE] leading-relaxed bg-[#0B0710]/50 border border-[rgba(245,240,250,0.06)] p-3.5 rounded-lg">
+                {selectedLocation.description || "No sector classification files available."}
               </p>
 
-              {/* Related content links list */}
-              <div className="space-y-2.5 pt-2 border-t border-card-border/40">
-                <h4 className="text-xs font-black uppercase text-foreground/40 tracking-widest">
-                  Intelligence Documents ({relatedContentList.length})
+              {/* Related content / Evidence Section */}
+              <div className="space-y-3 pt-3 border-t border-[rgba(245,240,250,0.1)]">
+                <h4 className="text-[10px] font-black uppercase text-[#FF2E88] tracking-widest font-mono">
+                  VERIFIED EVIDENCE ({relatedContentList.length})
                 </h4>
                 {relatedContentList.length > 0 ? (
                   <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -333,39 +341,39 @@ export default function LeonidaMapPage() {
                       <Link
                         key={item.id}
                         href={item.href}
-                        className="flex items-center justify-between p-2 rounded bg-background border border-card-border hover:border-neon-pink/50 transition group"
+                        className="flex items-center justify-between p-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.06)] hover:border-[#FF2E88]/40 transition group"
                       >
-                        <span className="text-xs font-semibold text-foreground/80 group-hover:text-white truncate pr-2">
+                        <span className="text-xs font-semibold text-[#9C8FAE] group-hover:text-white truncate pr-2">
                           {item.title}
                         </span>
-                        <ExternalLink size={12} className="text-foreground/40 group-hover:text-neon-pink shrink-0" />
+                        <ExternalLink size={12} className="text-[#9C8FAE]/40 group-hover:text-[#FF2E88] shrink-0" />
                       </Link>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-foreground/30 font-semibold font-mono">
-                    No related articles or walkthrough coordinates linked.
+                  <p className="text-[10px] text-[#9C8FAE]/40 font-mono font-bold italic">
+                    No related articles or coordinate walkthrough files linked.
                   </p>
                 )}
               </div>
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-12">
-              <Layers className="w-10 h-10 text-foreground/20 animate-pulse" />
-              <div className="space-y-1">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                  Target Not Selected
+              <Layers className="w-10 h-10 text-[#9C8FAE]/20 animate-pulse" />
+              <div className="space-y-1.5">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+                  GRID SECTOR UNSECURED
                 </h3>
-                <p className="text-xs text-foreground/45 max-w-[200px]">
-                  Click on any interactive hotspot icon across the map canvas grid to pull up site files and leaks.
+                <p className="text-xs text-[#9C8FAE]/50 max-w-[180px] leading-relaxed">
+                  Click on any telemetry hotspot on the canvas grid to decode site files and coordinates.
                 </p>
               </div>
             </div>
           )}
 
           {/* Footer Coordinates monitor */}
-          <div className="border-t border-card-border/40 pt-4 mt-6 text-[10px] font-mono text-foreground/40 flex justify-between items-center bg-[#100e16]/30 p-2.5 rounded">
-            <span>MAP RESOLUTION:</span>
+          <div className="border-t border-[rgba(245,240,250,0.1)] pt-4 mt-6 text-[9px] font-mono text-[#9C8FAE]/45 flex justify-between items-center bg-[#0B0710]/40 p-2.5 rounded">
+            <span>MAP CODES:</span>
             <span className="text-white font-bold">1600 X 1000px FLUID</span>
           </div>
         </div>
