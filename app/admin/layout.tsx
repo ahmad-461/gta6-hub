@@ -1,7 +1,7 @@
 import React from "react"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import AdminSidebar from "@/components/AdminSidebar"
 import { headers } from "next/headers"
+import AdminClientLayout from "@/components/AdminClientLayout"
 
 export const metadata = {
   title: "GTA 6 Hub - Admin Panel",
@@ -26,6 +26,7 @@ function getBreadcrumbs(pathname: string) {
     users: "User Manager",
     new: "Create New",
     insights: "Insights",
+    activity: "Audit Trail",
   }
 
   return parts.map((part) => dictionary[part] || part)
@@ -78,36 +79,8 @@ export default async function AdminLayout({
   const breadcrumbs = getBreadcrumbs(pathname)
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#0B0710] text-[#F5F0FA]">
-      <AdminSidebar user={adminUser} />
-
-      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
-        {/* Dynamic Breadcrumbs and Status Header Bar */}
-        <header className="bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-4 px-6 lg:px-8 flex items-center justify-between font-mono shrink-0">
-          <div className="flex items-center space-x-2 text-xs font-bold text-[#9C8FAE]">
-            {breadcrumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <span className="text-[#FF2E88]">/</span>}
-                <span className={idx === breadcrumbs.length - 1 ? "text-[#F5F0FA]" : ""}>{crumb}</span>
-              </React.Fragment>
-            ))}
-          </div>
-
-          <div className="flex items-center space-x-4">
-            {/* Status / Role Badge */}
-            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#FF2E88]/10 text-[#FF2E88] border border-[#FF2E88]/15">
-              {adminUser.role}
-            </span>
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" title="System Online" />
-          </div>
-        </header>
-
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          <div className="max-w-7xl mx-auto w-full">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
+    <AdminClientLayout adminUser={adminUser} breadcrumbs={breadcrumbs}>
+      {children}
+    </AdminClientLayout>
   )
 }

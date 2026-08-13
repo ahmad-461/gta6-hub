@@ -2,32 +2,41 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import EmptyState from "@/components/ui/EmptyState"
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import { toast } from "sonner"
+import Papa from "papaparse"
+import { logAdminActivity } from "@/lib/activity"
 import {
   Plus,
   Search,
   Copy,
   Edit2,
-  Loader2,
   BookOpen,
   CheckSquare,
-  Square
+  Square,
+  Download,
+  ArrowUpDown
 } from "lucide-react"
 
 export default function GuideManagerPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [guides, setGuides] = useState<any[]>([])
   const [authors, setAuthors] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // Filters & Search
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedGuideCategory, setSelectedGuideCategory] = useState("")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("")
-  const [selectedAuthor, setSelectedAuthor] = useState("")
+  // Filters & Search from URL query params or fallback
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "")
+  const [selectedGuideCategory, setSelectedGuideCategory] = useState(searchParams.get("category") || "")
+  const [selectedDifficulty, setSelectedDifficulty] = useState(searchParams.get("difficulty") || "")
+  const [selectedStatus, setSelectedStatus] = useState(searchParams.get("status") || "")
+  const [selectedAuthor, setSelectedAuthor] = useState(searchParams.get("author") || "")
+  const [sortField, setSortField] = useState(searchParams.get("sortField") || "created_at")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">((searchParams.get("sortOrder") as "asc" | "desc") || "desc")
 
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -35,6 +44,20 @@ export default function GuideManagerPage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  // Sync state to URL params
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set("query", searchQuery)
+    if (selectedGuideCategory) params.set("category", selectedGuideCategory)
+    if (selectedDifficulty) params.set("difficulty", selectedDifficulty)
+    if (selectedStatus) params.set("status", selectedStatus)
+    if (selectedAuthor) params.set("author", selectedAuthor)
+    if (sortField) params.set("sortField", sortField)
+    if (sortOrder) params.set("sortOrder", sortOrder)
+
+    router.replace(`/admin/guides?${params.toString()}`)
+  }, [searchQuery, selectedGuideCategory, selectedDifficulty, selectedStatus, selectedAuthor, sortField, sortOrder, router])
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -55,7 +78,6 @@ export default function GuideManagerPage() {
           updated_at,
           author_id
         `)
-        .order("created_at", { ascending: false })
 
       if (guidesErr) throw guidesErr
 
@@ -80,6 +102,17 @@ export default function GuideManagerPage() {
         .in("id", selectedIds)
 
       if (error) throw error
+
+      for (const id of selectedIds) {
+        const item = guides.find((g) => g.id === id)
+        await logAdminActivity({
+          action: "published",
+          entityType: "guide",
+          entityId: id,
+          entityTitle: item?.title || "Guide Bulk Published"
+        })
+      }
+
       toast.success(`Successfully published ${selectedIds.length} guides!`)
       setSelectedIds([])
       fetchData()
@@ -90,8 +123,18 @@ export default function GuideManagerPage() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected guides?`)) return
+    if (!confirm(`Are you sure you want to permanently delete ${selectedIds.length} selected guides?`)) return
     try {
+      for (const id of selectedIds) {
+        const item = guides.find((g) => g.id === id)
+        await logAdminActivity({
+          action: "deleted",
+          entityType: "guide",
+          entityId: id,
+          entityTitle: item?.title || "Guide Bulk Deleted"
+        })
+      }
+
       const { error } = await supabase
         .from("guides")
         .delete()
@@ -115,6 +158,17 @@ export default function GuideManagerPage() {
         .in("id", selectedIds)
 
       if (error) throw error
+
+      for (const id of selectedIds) {
+        const item = guides.find((g) => g.id === id)
+        await logAdminActivity({
+          action: "updated",
+          entityType: "guide",
+          entityId: id,
+          entityTitle: `${item?.title || "Guide"} moved guide category`
+        })
+      }
+
       toast.success("Successfully updated category for selected guides.")
       setSelectedIds([])
       fetchData()
@@ -151,11 +205,21 @@ export default function GuideManagerPage() {
         duplicatedGuide.toc = fullOriginal.toc
       }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("guides")
         .insert(duplicatedGuide)
+        .select()
+        .single()
 
       if (error) throw error
+
+      await logAdminActivity({
+        action: "created",
+        entityType: "guide",
+        entityId: data.id,
+        entityTitle: duplicatedGuide.title
+      })
+
       toast.success("Guide duplicated successfully as draft!")
       fetchData()
     } catch (err: any) {
@@ -179,23 +243,72 @@ export default function GuideManagerPage() {
     }
   }
 
-  // Filtering
-  const filteredGuides = guides.filter((guide) => {
-    const matchesSearch = guide.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedGuideCategory ? guide.guide_category === selectedGuideCategory : true
-    const matchesDifficulty = selectedDifficulty ? guide.difficulty === selectedDifficulty : true
-
-    // Status check
-    let guideStatus = guide.status
-    if (guide.status === "published" && guide.published_at && new Date(guide.published_at) > new Date()) {
-      guideStatus = "scheduled"
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortOrder("desc")
     }
-    const matchesStatus = selectedStatus ? guideStatus === selectedStatus : true
+  }
 
-    const matchesAuthor = selectedAuthor ? guide.author_id === selectedAuthor : true
+  // Filter & Sort Logic
+  const filteredGuides = guides
+    .filter((guide) => {
+      const matchesSearch = guide.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = selectedGuideCategory ? guide.guide_category === selectedGuideCategory : true
+      const matchesDifficulty = selectedDifficulty ? guide.difficulty === selectedDifficulty : true
 
-    return matchesSearch && matchesCategory && matchesDifficulty && matchesStatus && matchesAuthor
-  })
+      let guideStatus = guide.status
+      if (guide.status === "published" && guide.published_at && new Date(guide.published_at) > new Date()) {
+        guideStatus = "scheduled"
+      }
+      const matchesStatus = selectedStatus ? guideStatus === selectedStatus : true
+
+      const matchesAuthor = selectedAuthor ? guide.author_id === selectedAuthor : true
+
+      return matchesSearch && matchesCategory && matchesDifficulty && matchesStatus && matchesAuthor
+    })
+    .sort((a, b) => {
+      let valA = a[sortField]
+      let valB = b[sortField]
+
+      if (typeof valA === "string") {
+        return sortOrder === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA)
+      } else {
+        return sortOrder === "asc" ? (valA > valB ? 1 : -1) : (valB > valA ? 1 : -1)
+      }
+    })
+
+  // Export Filtered list to CSV using PapaParse
+  const handleExportCSV = () => {
+    if (filteredGuides.length === 0) {
+      toast.error("No guides available in the current filtered state to export.")
+      return
+    }
+
+    const csvData = filteredGuides.map((guide) => ({
+      ID: guide.id,
+      Title: guide.title,
+      Slug: guide.slug,
+      Guide_Category: guide.guide_category,
+      Difficulty: guide.difficulty,
+      Status: guide.status,
+      Author: authors.find((a) => a.id === guide.author_id)?.name || "System",
+      Created_At: guide.created_at,
+      Updated_At: guide.updated_at,
+    }))
+
+    const csv = Papa.unparse(csvData)
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.setAttribute("download", `guides_export_${Date.now()}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    toast.success(`Successfully exported ${filteredGuides.length} guides to CSV!`)
+  }
 
   return (
     <div className="space-y-8 font-mono">
@@ -209,14 +322,25 @@ export default function GuideManagerPage() {
             Publish missions walkthroughs, dynamic cheat books, or collectibles guides.
           </p>
         </div>
-        <Link
-          href="/admin/guides/new"
-          prefetch={false}
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150"
-        >
-          <Plus size={18} className="mr-2" />
-          New Guide
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          {/* CSV Export */}
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#150C1F] border border-[rgba(245,240,250,0.14)] hover:border-[#00E5FF]/40 text-white font-bold text-xs uppercase tracking-wider rounded transition"
+          >
+            <Download size={14} className="mr-2 text-[#00E5FF]" />
+            Export Filtered CSV
+          </button>
+
+          <Link
+            href="/admin/guides/new"
+            prefetch={false}
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150"
+          >
+            <Plus size={18} className="mr-2" />
+            New Guide
+          </Link>
+        </div>
       </div>
 
       {/* Filters & Search Row */}
@@ -329,10 +453,25 @@ export default function GuideManagerPage() {
                       )}
                     </button>
                   </th>
-                  <th className="py-4 px-6">Title</th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("title")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Title</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
                   <th className="py-4 px-6">Guide Category</th>
-                  <th className="py-4 px-6">Difficulty</th>
-                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("difficulty")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Difficulty</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("status")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Status</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
                   <th className="py-4 px-6">Author</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>

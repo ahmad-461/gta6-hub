@@ -2,35 +2,42 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import EmptyState from "@/components/ui/EmptyState"
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 import { toast } from "sonner"
+import Papa from "papaparse"
+import { logAdminActivity } from "@/lib/activity"
 import {
   Plus,
   Search,
   Copy,
   Edit2,
-  Loader2,
   FolderOpen,
   CheckSquare,
-  Square
+  Square,
+  Download,
+  Trash,
+  ArrowUpDown
 } from "lucide-react"
 
 export default function ArticleManagerPage() {
-  console.log(`[AUTH REDIRECT SOURCE] destination-page (articles page rendering client-side)`)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [articles, setArticles] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [authors, setAuthors] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // Filters & Search
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("")
-  const [selectedAuthor, setSelectedAuthor] = useState("")
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
+  // Filters & Search from URL query params or fallback
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "")
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "")
+  const [selectedStatus, setSelectedStatus] = useState(searchParams.get("status") || "")
+  const [selectedAuthor, setSelectedAuthor] = useState(searchParams.get("author") || "")
+  const [sortField, setSortField] = useState(searchParams.get("sortField") || "created_at")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">((searchParams.get("sortOrder") as "asc" | "desc") || "desc")
 
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -38,6 +45,19 @@ export default function ArticleManagerPage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  // Sync state to URL params
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set("query", searchQuery)
+    if (selectedCategory) params.set("category", selectedCategory)
+    if (selectedStatus) params.set("status", selectedStatus)
+    if (selectedAuthor) params.set("author", selectedAuthor)
+    if (sortField) params.set("sortField", sortField)
+    if (sortOrder) params.set("sortOrder", sortOrder)
+
+    router.replace(`/admin/articles?${params.toString()}`)
+  }, [searchQuery, selectedCategory, selectedStatus, selectedAuthor, sortField, sortOrder, router])
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -58,7 +78,6 @@ export default function ArticleManagerPage() {
           updated_at,
           author_id
         `)
-        .order("created_at", { ascending: false })
 
       if (articlesErr) throw articlesErr
 
@@ -87,6 +106,17 @@ export default function ArticleManagerPage() {
         .in("id", selectedIds)
 
       if (error) throw error
+
+      for (const id of selectedIds) {
+        const item = articles.find((a) => a.id === id)
+        await logAdminActivity({
+          action: "published",
+          entityType: "article",
+          entityId: id,
+          entityTitle: item?.title || "Article Bulk Published"
+        })
+      }
+
       toast.success(`Successfully published ${selectedIds.length} articles!`)
       setSelectedIds([])
       fetchData()
@@ -97,8 +127,18 @@ export default function ArticleManagerPage() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected articles?`)) return
+    if (!confirm(`Are you sure you want to permanently delete ${selectedIds.length} selected articles?`)) return
     try {
+      for (const id of selectedIds) {
+        const item = articles.find((a) => a.id === id)
+        await logAdminActivity({
+          action: "deleted",
+          entityType: "article",
+          entityId: id,
+          entityTitle: item?.title || "Article Bulk Deleted"
+        })
+      }
+
       const { error } = await supabase
         .from("articles")
         .delete()
@@ -122,6 +162,17 @@ export default function ArticleManagerPage() {
         .in("id", selectedIds)
 
       if (error) throw error
+
+      for (const id of selectedIds) {
+        const item = articles.find((a) => a.id === id)
+        await logAdminActivity({
+          action: "updated",
+          entityType: "article",
+          entityId: id,
+          entityTitle: `${item?.title || "Article"} moved category`
+        })
+      }
+
       toast.success("Successfully updated category for selected articles.")
       setSelectedIds([])
       fetchData()
@@ -137,7 +188,7 @@ export default function ArticleManagerPage() {
       const duplicatedArticle = {
         title: `${article.title} (Copy)`,
         slug: `${article.slug}-copy-${uniqueSuffix}`,
-        content: article.excerpt || "Duplicated content...", // Let's fetch full content if available or use a copy placeholder
+        content: article.excerpt || "Duplicated content...",
         excerpt: article.excerpt,
         category: article.category,
         status: "draft",
@@ -145,7 +196,6 @@ export default function ArticleManagerPage() {
         author_id: article.author_id,
       }
 
-      // Fetch the original full content to duplicate perfectly
       const { data: fullOriginal } = await supabase
         .from("articles")
         .select("content, seo_title, seo_description")
@@ -163,6 +213,14 @@ export default function ArticleManagerPage() {
         .single()
 
       if (error) throw error
+
+      await logAdminActivity({
+        action: "created",
+        entityType: "article",
+        entityId: data.id,
+        entityTitle: duplicatedArticle.title
+      })
+
       toast.success("Article duplicated successfully as draft!")
       fetchData()
     } catch (err: any) {
@@ -186,32 +244,71 @@ export default function ArticleManagerPage() {
     }
   }
 
-  // Filter logic
-  const filteredArticles = articles.filter((article) => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory ? article.category === selectedCategory : true
-
-    // Status check
-    let articleStatus = article.status
-    if (article.status === "published" && article.published_at && new Date(article.published_at) > new Date()) {
-      articleStatus = "scheduled"
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortOrder("desc")
     }
-    const matchesStatus = selectedStatus ? articleStatus === selectedStatus : true
+  }
 
-    const matchesAuthor = selectedAuthor ? article.author_id === selectedAuthor : true
+  // Filter & Sort Logic
+  const filteredArticles = articles
+    .filter((article) => {
+      const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = selectedCategory ? article.category === selectedCategory : true
 
-    // Date check
-    let matchesDate = true
-    const articleDate = new Date(article.created_at)
-    if (startDate) {
-      matchesDate = matchesDate && articleDate >= new Date(startDate)
+      let articleStatus = article.status
+      if (article.status === "published" && article.published_at && new Date(article.published_at) > new Date()) {
+        articleStatus = "scheduled"
+      }
+      const matchesStatus = selectedStatus ? articleStatus === selectedStatus : true
+
+      const matchesAuthor = selectedAuthor ? article.author_id === selectedAuthor : true
+
+      return matchesSearch && matchesCategory && matchesStatus && matchesAuthor
+    })
+    .sort((a, b) => {
+      let valA = a[sortField]
+      let valB = b[sortField]
+
+      if (typeof valA === "string") {
+        return sortOrder === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA)
+      } else {
+        return sortOrder === "asc" ? (valA > valB ? 1 : -1) : (valB > valA ? 1 : -1)
+      }
+    })
+
+  // Export Filtered list to CSV using PapaParse
+  const handleExportCSV = () => {
+    if (filteredArticles.length === 0) {
+      toast.error("No articles available in the current filtered state to export.")
+      return
     }
-    if (endDate) {
-      matchesDate = matchesDate && articleDate <= new Date(endDate + "T23:59:59")
-    }
 
-    return matchesSearch && matchesCategory && matchesStatus && matchesAuthor && matchesDate
-  })
+    const csvData = filteredArticles.map((art) => ({
+      ID: art.id,
+      Title: art.title,
+      Slug: art.slug,
+      Excerpt: art.excerpt || "",
+      Status: art.status,
+      Category: categories.find((c) => c.id === art.category)?.name || "Uncategorized",
+      Author: authors.find((a) => a.id === art.author_id)?.name || "System",
+      Created_At: art.created_at,
+      Updated_At: art.updated_at,
+    }))
+
+    const csv = Papa.unparse(csvData)
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.setAttribute("download", `articles_export_${Date.now()}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    toast.success(`Successfully exported ${filteredArticles.length} articles to CSV!`)
+  }
 
   return (
     <div className="space-y-8 font-mono">
@@ -225,14 +322,25 @@ export default function ArticleManagerPage() {
             Manage your news, announcements, and analytical content pieces.
           </p>
         </div>
-        <Link
-          href="/admin/articles/new"
-          prefetch={false}
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150"
-        >
-          <Plus size={18} className="mr-2" />
-          New Article
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          {/* CSV Export */}
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#150C1F] border border-[rgba(245,240,250,0.14)] hover:border-[#00E5FF]/40 text-white font-bold text-xs uppercase tracking-wider rounded transition"
+          >
+            <Download size={14} className="mr-2 text-[#00E5FF]" />
+            Export Filtered CSV
+          </button>
+
+          <Link
+            href="/admin/articles/new"
+            prefetch={false}
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#FF2E88] hover:bg-[#FF2E88]/90 text-white font-bold text-xs uppercase tracking-wider rounded transition duration-150"
+          >
+            <Plus size={18} className="mr-2" />
+            New Article
+          </Link>
+        </div>
       </div>
 
       {/* Filters & Search Row */}
@@ -289,43 +397,6 @@ export default function ArticleManagerPage() {
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Date Filters Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-4 border-t border-[rgba(245,240,250,0.08)]">
-          <div className="flex items-center space-x-2">
-            <span className="text-[10px] text-[#9C8FAE] uppercase tracking-wider font-bold">From:</span>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="px-3 py-1.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-xs text-white focus:outline-none"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-[10px] text-[#9C8FAE] uppercase tracking-wider font-bold">To:</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="px-3 py-1.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-xs text-white focus:outline-none"
-            />
-          </div>
-          {(startDate || endDate || selectedCategory || selectedStatus || selectedAuthor || searchQuery) && (
-            <button
-              onClick={() => {
-                setSearchQuery("")
-                setSelectedCategory("")
-                setSelectedStatus("")
-                setSelectedAuthor("")
-                setStartDate("")
-                setEndDate("")
-              }}
-              className="text-xs font-bold text-[#FF2E88] hover:underline"
-            >
-              Clear Filters
-            </button>
-          )}
         </div>
       </div>
 
@@ -384,11 +455,26 @@ export default function ArticleManagerPage() {
                       )}
                     </button>
                   </th>
-                  <th className="py-4 px-6">Title</th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("title")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Title</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
                   <th className="py-4 px-6">Category</th>
-                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("status")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Status</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
                   <th className="py-4 px-6">Author</th>
-                  <th className="py-4 px-6">Created Date</th>
+                  <th className="py-4 px-6 cursor-pointer hover:bg-[#0B0710]/80 select-none" onClick={() => handleSort("created_at")}>
+                    <span className="flex items-center space-x-1">
+                      <span>Created Date</span>
+                      <ArrowUpDown size={12} className="text-[#9C8FAE]/40" />
+                    </span>
+                  </th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>

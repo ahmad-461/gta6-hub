@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { logAdminActivity } from "@/lib/activity"
 import NextImage from "next/image"
 import { z } from "zod"
 import { toast } from "sonner"
@@ -135,16 +136,21 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
     toast.success("Character avatar selected!")
   }
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // Ref to prevent keyboard shortcut stale closure issues
+  const handleSaveRef = useRef<any>(null)
+
+  const handleSave = async (e?: React.FormEvent, statusOverride?: "draft" | "published" | "archived") => {
+    if (e) e.preventDefault()
     setIsSaving(true)
+
+    const targetStatus = statusOverride || status
 
     const formData = {
       name,
       slug,
       biography,
       role,
-      status,
+      status: targetStatus,
       affiliation,
       voiceActor,
       firstAppearance,
@@ -172,11 +178,13 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
         name,
         slug,
         biography,
-        status,
+        status: targetStatus,
         featured_image: featuredImage || null,
         stats_json: statsJson,
         updated_at: new Date().toISOString(),
       }
+
+      let savedCharacterId = characterId
 
       if (isEditing) {
         const { error } = await supabase
@@ -186,14 +194,27 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
 
         if (error) throw error
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("characters")
           .insert({
             ...savePayload,
             created_at: new Date().toISOString(),
           })
+          .select("id")
+          .single()
 
         if (error) throw error
+        savedCharacterId = data?.id
+      }
+
+      // Log audit trail action
+      if (savedCharacterId) {
+        await logAdminActivity({
+          action: isEditing ? "updated" : "created",
+          entityType: "character",
+          entityId: savedCharacterId,
+          entityTitle: name
+        })
       }
 
       toast.success(isEditing ? "Character updated successfully!" : "Character profile created successfully!")
@@ -204,6 +225,31 @@ export default function CharacterEditorForm({ characterId }: CharacterEditorForm
       setIsSaving(false)
     }
   }
+
+  // Update handleSaveRef
+  handleSaveRef.current = handleSave
+
+  // Keyboard shortcut listeners
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+S or Ctrl+S -> Save Draft
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault()
+        toast.info("Saving draft via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "draft")
+      }
+
+      // Cmd+Enter or Ctrl+Enter -> Publish
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault()
+        toast.info("Publishing via keyboard shortcut...")
+        handleSaveRef.current?.(undefined, "published")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   if (isLoading) {
     return (
