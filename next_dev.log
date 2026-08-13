@@ -6,36 +6,21 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1843ms
+ ✓ Ready in 1770ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1223ms (127 modules)
+ ✓ Compiled /middleware in 1025ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 8.6s (837 modules)
- GET / 200 in 9980ms
- ○ Compiling /_not-found ...
+ ✓ Compiled / in 6.8s (850 modules)
+ HEAD / 200 in 7362ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ✓ Compiled /_not-found in 11.1s (822 modules)
- GET /og-image.jpg 404 in 11337ms
+ GET / 200 in 107ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1849ms (835 modules)
+ GET /og-image.jpg 404 in 2115ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 10722ms
+ GET /og-image.jpg 404 in 279ms
  ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /?_rsc=r3yhw 200 in 80ms
- ✓ Compiled /about in 359ms (814 modules)
- GET /about 200 in 528ms
- ○ Compiling /privacy ...
- ✓ Compiled /privacy in 505ms (834 modules)
- GET /privacy 200 in 623ms
- ✓ Compiled /contact in 423ms (846 modules)
- GET /contact 200 in 525ms
- ○ Compiling /api/contact ...
- ✓ Compiled /api/contact in 555ms (518 modules)
-RESEND_API_KEY is not defined. Falling back to local developer sandbox logging.
-[MOCK EMAIL DISPATCH] to ahmad.khan8747763@gmail.com
-        From: onboarding@resend.dev
-        Reply-To: tommy.v@malibu.club
-        Name: Tommy Vercetti
-        Subject: Intel Leak Submission
-        Message: I found the coordinates to the custom shipping yard. The delivery is scheduled for tomorrow at neon avenue.
-
- POST /api/contact 200 in 687ms
+ ○ Compiling /map ...
+ ✓ Compiled /map in 547ms (841 modules)
+ GET /map 200 in 824ms

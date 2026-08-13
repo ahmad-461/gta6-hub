@@ -6,20 +6,28 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1901ms
+ ✓ Ready in 1698ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1093ms (127 modules)
+ ✓ Compiled /middleware in 1702ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.5s (872 modules)
- HEAD / 200 in 8027ms
+ ✓ Compiled / in 7.4s (887 modules)
+ HEAD / 200 in 7960ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ○ Compiling /tools/wishlist ...
- ✓ Compiled /tools/wishlist in 2.4s (765 modules)
- GET /tools/wishlist 200 in 3097ms
- ○ Compiling /api/wishlist ...
- ✓ Compiled /api/wishlist in 660ms (456 modules)
-Failed to increment vote for slug: assault-rifle {
+ ○ Compiling /map ...
+ ✓ Compiled /map in 1652ms (787 modules)
+ GET /map 200 in 2128ms
+ ✓ Compiled in 939ms (787 modules)
+ ✓ Compiled in 892ms (787 modules)
+ ✓ Compiled in 913ms (787 modules)
+ ✓ Compiled in 831ms (787 modules)
+ GET /map 200 in 195ms
+ ○ Compiling /guides ...
+ ✓ Compiled /guides in 774ms (485 modules)
+ ✓ Compiled in 1502ms (408 modules)
+ ✓ Compiled /guides/[category]/[slug] in 450ms (547 modules)
+ ✓ Compiled in 628ms (426 modules)
+RPC increment failed for location dec0de-1, attempting direct increment fallback {
   message: 'TypeError: fetch failed',
   details: 'TypeError: fetch failed\n' +
     '\n' +
@@ -30,38 +38,243 @@ Failed to increment vote for slug: assault-rifle {
   hint: '',
   code: ''
 }
- POST /api/wishlist 200 in 3569ms
- GET /api/wishlist 200 in 7702ms
-Could not load wishlist votes from DB, using empty fallback {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
+ ⨯ Error: Cannot find module './vendor-chunks/sonner.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/news/[slug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/news/[slug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/news/tommy-vercetti-rumors-and-evidence'
 }
-Failed to increment vote for slug: sports-car {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
+ ⨯ Error: Cannot find module './vendor-chunks/sonner.js'
+Require stack:
+- /app/.next/server/webpack-runtime.js
+- /app/.next/server/app/guides/[category]/[slug]/page.js
+- /app/node_modules/next/dist/server/require.js
+- /app/node_modules/next/dist/server/load-components.js
+- /app/node_modules/next/dist/build/utils.js
+- /app/node_modules/next/dist/server/dev/static-paths-worker.js
+- /app/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/.next/server/webpack-runtime.js',
+    '/app/.next/server/app/guides/[category]/[slug]/page.js',
+    '/app/node_modules/next/dist/server/require.js',
+    '/app/node_modules/next/dist/server/load-components.js',
+    '/app/node_modules/next/dist/build/utils.js',
+    '/app/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/app/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/guides/story/vice-city-port-smuggling-mission'
 }
-Failed to increment vote for slug: heist-planner {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy-supabase-url.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)\n' +
-    '    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
-  hint: '',
-  code: ''
-}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.1s (1245 modules)
+ GET /investigate 200 in 239ms
+ POST /api/map/view 200 in 5145ms
+ ✓ Compiled /_not-found in 371ms (1248 modules)
+ GET /_next/static/css/app/layout.css?v=1786601462140 404 in 614ms
+ GET /_next/static/chunks/main-app.js?v=1786601462140 404 in 620ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 610ms
+ GET /_next/static/chunks/app/layout.js 404 in 601ms
+ GET /_next/static/chunks/app/not-found.js 404 in 601ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/sonner.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/sonner' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/sonner.js', but to 'Error: Can't resolve './vendor-chunks/sonner' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/sonner (expected /app/.next/server/vendor-chunks/sonner.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET /map 200 in 84ms
+ GET /_next/static/css/app/layout.css?v=1786601686242 404 in 112ms
+ GET /_next/static/chunks/main-app.js?v=1786601686242 404 in 150ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 147ms
+ GET /_next/static/chunks/app/map/page.js 404 in 146ms
+ GET /_next/static/chunks/app/layout.js 404 in 149ms
+ GET /_next/static/chunks/app/not-found.js 404 in 148ms
+ GET /investigate 200 in 57ms
+ GET /_next/static/css/app/layout.css?v=1786601693821 404 in 94ms
+ GET /_next/static/chunks/main-app.js?v=1786601693821 404 in 121ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 121ms
+ GET /_next/static/chunks/app/layout.js 404 in 115ms
+ GET /_next/static/chunks/app/not-found.js 404 in 117ms
+ GET /map 200 in 63ms
+ GET /_next/static/css/app/layout.css?v=1786601797222 404 in 78ms
+ GET /_next/static/chunks/main-app.js?v=1786601797222 404 in 133ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 132ms
+ GET /_next/static/chunks/app/map/page.js 404 in 132ms
+ GET /_next/static/chunks/app/layout.js 404 in 135ms
+ GET /_next/static/chunks/app/not-found.js 404 in 131ms
+ GET /investigate 200 in 46ms
+ GET /_next/static/css/app/layout.css?v=1786601804794 404 in 70ms
+ GET /_next/static/chunks/main-app.js?v=1786601804794 404 in 110ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 110ms
+ GET /_next/static/chunks/app/layout.js 404 in 110ms
+ GET /_next/static/chunks/app/not-found.js 404 in 108ms
+ GET /map 200 in 57ms
+ GET /_next/static/css/app/layout.css?v=1786601876716 404 in 84ms
+ GET /_next/static/chunks/main-app.js?v=1786601876716 404 in 124ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 121ms
+ GET /_next/static/chunks/app/map/page.js 404 in 118ms
+ GET /_next/static/chunks/app/layout.js 404 in 119ms
+ GET /_next/static/chunks/app/not-found.js 404 in 118ms
+ GET /investigate 200 in 46ms
+ GET /_next/static/css/app/layout.css?v=1786601884249 404 in 94ms
+ GET /_next/static/chunks/main-app.js?v=1786601884249 404 in 123ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 121ms
+ GET /_next/static/chunks/app/layout.js 404 in 116ms
+ GET /_next/static/chunks/app/not-found.js 404 in 115ms
+ GET /map 200 in 48ms
+ GET /_next/static/css/app/layout.css?v=1786601993473 404 in 107ms
+ GET /_next/static/chunks/main-app.js?v=1786601993473 404 in 116ms
+ GET /_next/static/chunks/app/map/page.js 404 in 110ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 114ms
+ GET /_next/static/chunks/app/layout.js 404 in 110ms
+ GET /_next/static/chunks/app/not-found.js 404 in 110ms
+ GET /investigate 200 in 43ms
+ GET /_next/static/css/app/layout.css?v=1786602001018 404 in 99ms
+ GET /_next/static/chunks/main-app.js?v=1786602001018 404 in 120ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 115ms
+ GET /_next/static/chunks/app/layout.js 404 in 115ms
+ GET /_next/static/chunks/app/not-found.js 404 in 113ms
+ GET /map 200 in 55ms
+ GET /_next/static/css/app/layout.css?v=1786602143860 404 in 108ms
+ GET /_next/static/chunks/main-app.js?v=1786602143860 404 in 135ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 131ms
+ GET /_next/static/chunks/app/map/page.js 404 in 128ms
+ GET /_next/static/chunks/app/layout.js 404 in 129ms
+ GET /_next/static/chunks/app/not-found.js 404 in 131ms
+ GET /map 200 in 71ms
+ GET /_next/static/css/app/layout.css?v=1786602221114 404 in 111ms
+ GET /_next/static/chunks/main-app.js?v=1786602221114 404 in 129ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 121ms
+ GET /_next/static/chunks/app/map/page.js 404 in 120ms
+ GET /_next/static/chunks/app/layout.js 404 in 120ms
+ GET /_next/static/chunks/app/not-found.js 404 in 117ms
+ GET /investigate 200 in 46ms
+ GET /_next/static/css/app/layout.css?v=1786602236326 404 in 83ms
+ GET /_next/static/chunks/main-app.js?v=1786602236326 404 in 109ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 107ms
+ GET /_next/static/chunks/app/layout.js 404 in 101ms
+ GET /_next/static/chunks/app/not-found.js 404 in 102ms
+ GET /investigate 200 in 50ms
+ GET /_next/static/css/app/layout.css?v=1786602303994 404 in 85ms
+ GET /_next/static/chunks/main-app.js?v=1786602303994 404 in 105ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 102ms
+ GET /_next/static/chunks/app/layout.js 404 in 101ms
+ GET /_next/static/chunks/app/not-found.js 404 in 101ms
+ GET /investigate 200 in 50ms
+ GET /_next/static/css/app/layout.css?v=1786602336691 404 in 96ms
+ GET /_next/static/chunks/main-app.js?v=1786602336691 404 in 111ms
+ GET /_next/static/chunks/app/layout.js 404 in 110ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 112ms
+ GET /_next/static/chunks/app/not-found.js 404 in 106ms
+ GET /investigate 200 in 60ms
+ GET /_next/static/css/app/layout.css?v=1786602366942 404 in 92ms
+ GET /_next/static/chunks/main-app.js?v=1786602366942 404 in 108ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 107ms
+ GET /_next/static/chunks/app/layout.js 404 in 106ms
+ GET /_next/static/chunks/app/not-found.js 404 in 103ms
+ GET /investigate 200 in 43ms
+ GET /_next/static/css/app/layout.css?v=1786602404999 404 in 69ms
+ GET /_next/static/chunks/main-app.js?v=1786602404999 404 in 98ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 97ms
+ GET /_next/static/chunks/app/layout.js 404 in 97ms
+ GET /_next/static/chunks/app/not-found.js 404 in 95ms
+ HEAD / 200 in 172ms
+ GET /investigate 200 in 50ms
+ GET /_next/static/css/app/layout.css?v=1786602544364 404 in 91ms
+ GET /_next/static/chunks/main-app.js?v=1786602544364 404 in 113ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 113ms
+ GET /_next/static/chunks/app/layout.js 404 in 111ms
+ GET /_next/static/chunks/app/not-found.js 404 in 110ms
+ GET /investigate 200 in 50ms
+ GET /_next/static/css/app/layout.css?v=1786602576957 404 in 83ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 101ms
+ GET /_next/static/chunks/main-app.js?v=1786602576957 404 in 104ms
+ GET /_next/static/chunks/app/layout.js 404 in 101ms
+ GET /_next/static/chunks/app/not-found.js 404 in 101ms
+ GET /investigate 200 in 50ms
+ GET /_next/static/css/app/layout.css?v=1786602615702 404 in 95ms
+ GET /_next/static/chunks/app/layout.js 404 in 108ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 109ms
+ GET /_next/static/chunks/main-app.js?v=1786602615702 404 in 112ms
+ GET /_next/static/chunks/app/not-found.js 404 in 102ms
+ GET / 200 in 1768ms
+ GET /_next/static/css/app/layout.css?v=1786604751284 404 in 358ms
+ GET /og-image.jpg 404 in 438ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /_next/static/chunks/main-app.js?v=1786604751284 404 in 710ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 713ms
+ GET /_next/static/chunks/app/layout.js 404 in 690ms
+ GET /_next/static/chunks/app/page.js 404 in 470ms
+ GET /_next/static/chunks/app/not-found.js 404 in 464ms
+ GET /og-image.jpg 404 in 237ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ ○ Compiling /admin/login ...
+ ✓ Compiled /admin/login in 9.1s (1333 modules)
+ GET /admin/login 200 in 10094ms
+ GET /_next/static/css/app/layout.css?v=1786604767264 404 in 149ms
+ GET /_next/static/chunks/main-app.js?v=1786604767264 404 in 211ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 211ms
+ GET /_next/static/chunks/app/not-found.js 404 in 210ms
+ GET /_next/static/chunks/app/layout.js 404 in 208ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/sonner.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/sonner' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/sonner.js', but to 'Error: Can't resolve './vendor-chunks/sonner' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/sonner (expected /app/.next/server/vendor-chunks/sonner.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
