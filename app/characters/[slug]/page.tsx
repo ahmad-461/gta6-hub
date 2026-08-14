@@ -5,6 +5,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ArrowLeft, User, ShieldAlert, Users, Mic, Landmark } from "lucide-react"
+import DossierShareButton from "@/components/DossierShareButton"
 
 export const revalidate = 3600
 
@@ -28,9 +29,29 @@ export async function generateMetadata({ params }: CharacterPageProps): Promise<
     }
   }
 
+  const domain = "https://gta6-hub-liard.vercel.app"
+
   return {
     title: `${char.name} - Profile & Biography | GTA VI Hub`,
     description: `Full lore, biography, statistics, and voice actor information for ${char.name} on GTA VI Hub.`,
+    openGraph: {
+      title: `${char.name} - Profile & Biography | GTA VI Hub`,
+      description: `Full lore, biography, statistics, and voice actor information for ${char.name} on GTA VI Hub.`,
+      images: [
+        {
+          url: `${domain}/api/og/character/${params.slug}`,
+          width: 1200,
+          height: 630,
+          alt: `${char.name} Intel Dossier`,
+        }
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${char.name} - Profile & Biography | GTA VI Hub`,
+      description: `Full lore, biography, statistics, and voice actor information for ${char.name} on GTA VI Hub.`,
+      images: [`${domain}/api/og/character/${params.slug}`],
+    }
   }
 }
 
@@ -117,13 +138,20 @@ export default async function CharacterProfilePage({ params }: CharacterPageProp
 
         {/* Right Column: Character Details / Biography */}
         <div className="md:col-span-7 space-y-6 bg-card-bg/40 border border-card-border rounded-2xl p-6 sm:p-8 shadow-xl">
-          <div className="space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-neon-purple">
-              GTA VI Core Cast
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              {char.name}
-            </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-neon-purple block">
+                GTA VI Core Cast
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                {char.name}
+              </h1>
+            </div>
+
+            {/* Share Dossier Interactive Button */}
+            <div className="shrink-0">
+              <DossierShareButton slug={char.slug} characterName={char.name} />
+            </div>
           </div>
 
           <div className="w-full h-[1px] bg-gradient-to-r from-card-border via-transparent to-transparent" />

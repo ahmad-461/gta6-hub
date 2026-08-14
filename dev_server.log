@@ -6,33 +6,17 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1800ms
+ ✓ Ready in 1803ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1143ms (127 modules)
- ○ Compiling / ...
- ✓ Compiled / in 7.5s (890 modules)
- GET / 200 in 8734ms
- ○ Compiling /_not-found ...
+ ✓ Compiled /middleware in 1165ms (127 modules)
+ ○ Compiling /timeline ...
+ ✓ Compiled /timeline in 7.8s (836 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ✓ Compiled /_not-found in 10.1s (875 modules)
- GET /og-image.jpg 404 in 10392ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 9593ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /?_rsc=r3yhw 200 in 92ms
- ✓ Compiled /news in 343ms (870 modules)
- GET /news 200 in 14486ms
- GET / 200 in 160ms
- GET /og-image.jpg 404 in 68ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 85ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /news 200 in 15308ms
- GET /og-image.jpg 404 in 32ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 27ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- ○ Compiling /guides ...
- ✓ Compiled /guides in 726ms (878 modules)
- GET /guides 200 in 8020ms
+ GET /timeline 200 in 15805ms
+ ○ Compiling /tools/comparison ...
+ ✓ Compiled /tools/comparison in 1172ms (835 modules)
+ GET /timeline?_rsc=ivfw5 200 in 6930ms
+ GET /tools/comparison 200 in 8374ms
+ ✓ Compiled /trailers/compare in 491ms (842 modules)
+ GET /trailers/compare 200 in 7617ms
