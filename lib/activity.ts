@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 
 export type ActivityLogAction = "created" | "updated" | "deleted" | "published" | "archived" | "approved" | "rejected" | "spam"
-export type ActivityLogEntityType = "article" | "guide" | "character" | "cheat_code" | "comment" | "map_location" | "lore_topic" | "trailer_breakdown"
+export type ActivityLogEntityType = "article" | "guide" | "character" | "cheat_code" | "comment" | "map_location" | "lore_topic" | "trailer_breakdown" | "category"
 
 interface LogActivityParams {
   action: ActivityLogAction

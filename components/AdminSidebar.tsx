@@ -23,7 +23,8 @@ import {
   Compass,
   MapPin,
   Video,
-  Clock
+  Clock,
+  Folder
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -72,6 +73,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
   const menuItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard, roles: ["admin", "editor"] },
     { name: "Articles", href: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
+    { name: "Categories", href: "/admin/categories", icon: Folder, roles: ["admin", "editor"] },
     { name: "Guides", href: "/admin/guides", icon: BookOpen, roles: ["admin", "editor"] },
     { name: "Characters", href: "/admin/characters", icon: Users, roles: ["admin", "editor"] },
     { name: "Map Locations", href: "/admin/map-locations", icon: MapPin, roles: ["admin", "editor"] },

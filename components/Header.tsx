@@ -152,11 +152,20 @@ export default function Header() {
 
   const primaryNavItems = [
     { name: "Home", href: "/", icon: Flame },
+    { name: "News", href: "/news", icon: FileText },
     { name: "Intelligence", href: "/intelligence", icon: Cpu },
     { name: "Map", href: "/map", icon: Compass },
     { name: "Investigate", href: "/investigate", icon: Sparkles },
     { name: "Guides", href: "/guides", icon: Award },
     { name: "Community", href: "/community", icon: MessageSquare },
+  ]
+
+  const mobileBottomNavItems = [
+    { name: "Home", href: "/", icon: Flame },
+    { name: "Intelligence", href: "/intelligence", icon: Cpu },
+    { name: "Map", href: "/map", icon: Compass },
+    { name: "Investigate", href: "/investigate", icon: Sparkles },
+    { name: "Guides", href: "/guides", icon: Award },
   ]
 
   const secondaryNavItems = [
@@ -284,7 +293,7 @@ export default function Header() {
 
       {/* MOBILE STICKY BOTTOM NAVIGATION BAR */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#150C1F]/95 backdrop-blur-md border-t border-[rgba(245,240,250,0.14)] md:hidden flex items-center justify-around h-16 px-2 pb-safe">
-        {primaryNavItems.slice(0, 5).map((item) => {
+        {mobileBottomNavItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
           return (

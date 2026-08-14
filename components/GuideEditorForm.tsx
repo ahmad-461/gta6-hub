@@ -39,6 +39,7 @@ const guideSchema = z.object({
   featuredImage: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
+  category: z.string().optional().nullable(),
 })
 
 interface GuideEditorFormProps {
@@ -62,6 +63,8 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
   const [content, setContent] = useState("")
+  const [categories, setCategories] = useState<any[]>([])
+  const [category, setCategory] = useState("")
   const [guideCategory, setGuideCategory] = useState<"Getting Started" | "Story" | "Online" | "Cheats" | "Secrets">("Getting Started")
   const [difficulty, setDifficulty] = useState<"Beginner" | "Intermediate" | "Advanced">("Beginner")
   const [status, setStatus] = useState<"draft" | "published" | "archived">("draft")
@@ -84,10 +87,20 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
   const [isLoadingMedia, setIsLoadingMedia] = useState(false)
 
   useEffect(() => {
+    fetchCategories()
     if (isEditing) {
       fetchGuideData()
     }
   }, [guideId])
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase.from("categories").select("id, name")
+      if (!error) setCategories(data || [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   // Generate Table of Contents from H2 headings in content
   useEffect(() => {
@@ -148,6 +161,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       setTitle(guide.title)
       setSlug(guide.slug)
       setContent(guide.content)
+      setCategory(guide.category || "")
       setGuideCategory(guide.guide_category || "Getting Started")
       setDifficulty(guide.difficulty || "Beginner")
       setStatus(guide.status || "draft")
@@ -232,6 +246,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
       featuredImage: featuredImage || undefined,
       seoTitle: seoTitle || undefined,
       seoDescription: seoDescription || undefined,
+      category: category || undefined,
     }
 
     const validation = guideSchema.safeParse(formData)
@@ -251,6 +266,7 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         title,
         slug,
         content,
+        category: category || null,
         guide_category: guideCategory,
         difficulty,
         status: targetStatus,
@@ -696,7 +712,26 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
             </div>
           </div>
 
-          {/* Category */}
+          {/* Shared Category Dropdown */}
+          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
+            <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Category Assignment (Shared)</h2>
+            <div>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-3 py-2.5 bg-[#0B0710] border border-[rgba(245,240,250,0.14)] rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00E5FF] cursor-pointer"
+              >
+                <option value="">-- Choose Category --</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Guide Category */}
           <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] p-6 rounded space-y-4">
             <h2 className="text-sm font-bold text-white border-b border-[rgba(245,240,250,0.14)] pb-3 uppercase tracking-wider">Guide Category</h2>
             <div>
