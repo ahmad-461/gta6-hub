@@ -5,6 +5,7 @@ import Footer from "@/components/Footer"
 import ChatWidget from "@/components/ChatWidget"
 import RadioWidget from "@/components/RadioWidget"
 import PageBanner from "@/components/PageBanner"
+import ConsoleModeManager from "@/components/ConsoleModeManager"
 import "@/app/globals.css"
 import { Toaster } from "sonner"
 import { Anton, Space_Mono } from "next/font/google"
@@ -75,6 +76,7 @@ export default function RootLayout({
         {!isAdminRoute && <Footer />}
         {!isAdminRoute && <ChatWidget />}
         {!isAdminRoute && <RadioWidget />}
+        {!isAdminRoute && <ConsoleModeManager />}
         <Toaster
           theme="dark"
           richColors

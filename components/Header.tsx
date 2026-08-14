@@ -23,7 +23,8 @@ import {
   MessageSquare,
   MoreHorizontal,
   MapPin,
-  ChevronRight
+  ChevronRight,
+  Terminal
 } from "lucide-react"
 
 export default function Header() {
@@ -56,6 +57,15 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [isHome])
+
+  // Listen to open search event
+  useEffect(() => {
+    const handleOpenSearch = () => {
+      setIsSearchOpen(true)
+    }
+    window.addEventListener("open-global-search", handleOpenSearch)
+    return () => window.removeEventListener("open-global-search", handleOpenSearch)
+  }, [])
 
   // Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {
@@ -223,6 +233,15 @@ export default function Header() {
                 <Search className="w-4 h-4" />
               </button>
 
+              {/* Console Mode Toggle Button */}
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("toggle-console-mode"))}
+                className="p-2 ml-1 rounded-md text-[#9C8FAE] hover:text-[#FF8A3D] transition-all duration-200"
+                title="Toggle Console Mode (Backtick `)"
+              >
+                <Terminal className="w-4 h-4" />
+              </button>
+
               {/* More Trigger (Opens full takeover menu) */}
               <button
                 onClick={() => setIsOpen(true)}
@@ -235,6 +254,14 @@ export default function Header() {
 
             {/* Mobile Header Icons */}
             <div className="flex items-center space-x-3 md:hidden">
+              {/* Console Mode Toggle Button */}
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("toggle-console-mode"))}
+                className="p-2 rounded-md text-[#9C8FAE] hover:text-[#FF8A3D] transition-all"
+                title="Toggle Console Mode"
+              >
+                <Terminal className="h-5 w-5" />
+              </button>
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 rounded-md text-[#00E5FF]"

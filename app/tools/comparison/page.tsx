@@ -2,6 +2,7 @@ import React from "react"
 import Link from "next/link"
 import { ArrowLeft, GitCompare, Info } from "lucide-react"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
+import ImageComparisonSlider from "@/components/ImageComparisonSlider"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -117,6 +118,11 @@ export default async function ComparisonPage() {
             This data is managed dynamically in our admin settings panel and updates in real-time as new leaks and official press releases emerge.
           </p>
         </div>
+      </div>
+
+      {/* Interactive Visual Comparison Slider */}
+      <div className="mb-12">
+        <ImageComparisonSlider />
       </div>
 
       {/* Comparison Grid/Table */}
