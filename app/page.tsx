@@ -120,7 +120,7 @@ export default async function HomePage() {
           excerpt,
           featured_image,
           published_at,
-          category:categories(name, slug)
+          category:categories!left(name, slug)
         `)
         .eq("status", "published")
         .eq("featured", true)
@@ -136,7 +136,7 @@ export default async function HomePage() {
             excerpt,
             featured_image,
             published_at,
-            category:categories(name, slug)
+            category:categories!left(name, slug)
           `)
           .eq("status", "published")
           .order("published_at", { ascending: false })
@@ -157,7 +157,7 @@ export default async function HomePage() {
           excerpt,
           featured_image,
           published_at,
-          category:categories(name, slug)
+          category:categories!left(name, slug)
         `)
         .eq("status", "published")
         .order("published_at", { ascending: false })

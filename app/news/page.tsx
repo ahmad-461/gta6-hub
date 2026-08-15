@@ -91,7 +91,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       content,
       featured_image,
       published_at,
-      category:categories(id, name, slug)
+      category:categories!left(id, name, slug)
     `, { count: "exact" })
     .eq("status", "published")
 
