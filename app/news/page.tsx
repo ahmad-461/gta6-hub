@@ -47,36 +47,51 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
   const supabase = createSupabaseServerClient()
 
   // 1. Fetch categories
-  const { data: categories } = await supabase
+  const { data: categories, error: categoriesError } = await supabase
     .from("categories")
     .select("id, name, slug")
     .order("name")
 
+  if (categoriesError) {
+    console.error("[NewsPage Categories Fetch Error]:", categoriesError)
+  }
+
   // 1.5. Fetch active categories (only categories with at least one published article)
-  const { data: publishedArticles } = await supabase
+  const { data: publishedArticles, error: pubArticlesError } = await supabase
     .from("articles")
     .select("category")
     .eq("status", "published")
+
+  if (pubArticlesError) {
+    console.error("[NewsPage Active Categories Query Error]:", pubArticlesError)
+  }
 
   const activeCategoryIds = Array.from(
     new Set(publishedArticles?.map((a) => a.category).filter(Boolean) || [])
   )
 
   const activeCategories =
-    categories?.filter((cat) => activeCategoryIds.includes(cat.id)) || []
+    categories?.filter((cat) => activeCategoryIds.includes(cat.id) || activeCategoryIds.includes(cat.slug)) || []
 
   // 2. Fetch specific category ID if filtering
   let categoryId = null
   let selectedCategoryName = ""
   if (categorySlug) {
-    const { data: cat } = await supabase
+    const { data: cat, error: catError } = await supabase
       .from("categories")
       .select("id, name")
       .eq("slug", categorySlug)
       .maybeSingle()
+
+    if (catError) {
+      console.error("[NewsPage Selected Category Fetch Error]:", catError)
+    }
+
     if (cat) {
       categoryId = cat.id
       selectedCategoryName = cat.name
+    } else {
+      selectedCategoryName = categorySlug
     }
   }
 
@@ -91,17 +106,38 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       content,
       featured_image,
       published_at,
-      category:categories!left(id, name, slug)
+      category
     `, { count: "exact" })
     .eq("status", "published")
 
-  if (categorySlug && categoryId) {
-    query = query.eq("category", categoryId)
+  if (categorySlug) {
+    if (categoryId) {
+      query = query.or(`category.eq.${categoryId},category.eq.${categorySlug}`)
+    } else {
+      query = query.eq("category", categorySlug)
+    }
   }
 
-  const { data: articles, count } = await query
+  const { data: articles, count, error: articlesError } = await query
     .order("published_at", { ascending: false })
     .range(from, to)
+
+  if (articlesError) {
+    console.error("[NewsPage Articles Query Error]:", articlesError)
+  }
+
+  // Map category object for rendering
+  const articlesWithCategories = (articles || []).map((art) => {
+    let catObj = null
+    if (art.category) {
+      const match = (categories || []).find((c) => c.id === art.category || c.slug === art.category)
+      catObj = match || { id: art.category, name: art.category, slug: art.category.toLowerCase().replace(/\s+/g, "-") }
+    }
+    return {
+      ...art,
+      categoryData: catObj,
+    }
+  })
 
   const totalItems = count || 0
   const totalPages = Math.ceil(totalItems / limit) || 1
@@ -154,9 +190,9 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       )}
 
       {/* Articles Feed */}
-      {articles && articles.length > 0 ? (
+      {articlesWithCategories && articlesWithCategories.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles.map((art) => {
+      {articlesWithCategories.map((art) => {
         const wordCount = art.content ? art.content.split(/\s+/).length : 0
         const readTime = Math.max(1, Math.ceil(wordCount / 200))
 
@@ -177,10 +213,10 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
               </div>
               <div className="p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  {art.category && (
+                  {art.categoryData && (
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#00E5FF] flex items-center gap-1 font-mono">
                       <Folder className="w-3 h-3 text-[#FF2D8D]" />
-                      {(art.category as any).name}
+                      {art.categoryData.name}
                     </span>
                   )}
                   <span className="text-[10px] text-foreground/40 font-semibold font-mono flex items-center gap-1">

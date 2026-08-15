@@ -18,11 +18,15 @@ interface CharacterPageProps {
 
 export async function generateMetadata({ params }: CharacterPageProps): Promise<Metadata> {
   const supabase = createSupabaseServerClient()
-  const { data: char } = await supabase
+  const { data: char, error } = await supabase
     .from("characters")
     .select("name, biography")
     .eq("slug", params.slug)
     .maybeSingle()
+
+  if (error) {
+    console.error("[CharacterPage generateMetadata Error]:", error)
+  }
 
   if (!char) {
     return {
@@ -65,12 +69,16 @@ export default async function CharacterProfilePage({ params }: CharacterPageProp
   const supabase = createSupabaseServerClient()
 
   // Fetch character details where status = 'published'
-  const { data: char } = await supabase
+  const { data: char, error } = await supabase
     .from("characters")
     .select("id, name, slug, biography, featured_image, stats_json")
     .eq("slug", params.slug)
     .eq("status", "published")
     .maybeSingle()
+
+  if (error) {
+    console.error("[CharacterPage Fetch Error]:", error)
+  }
 
   if (!char) {
     notFound()
