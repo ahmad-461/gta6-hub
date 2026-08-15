@@ -532,7 +532,8 @@ export default async function HomePage() {
         </div>
       )}
 
-      {/* Featured Article Spotlight */}
+      {/* Featured Article Spotlight - Commented out per requirements */}
+      {/*
       {featuredArticle && (
         <section
           className="relative bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-12 lg:py-0 overflow-hidden z-20"
@@ -542,7 +543,6 @@ export default async function HomePage() {
         >
           <div className="max-w-7xl mx-auto w-full">
             <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[550px] items-stretch">
-              {/* Left Cinematic Image Block */}
               <div className="lg:col-span-7 relative overflow-hidden diagonal-split-left min-h-[350px] lg:min-h-full group">
                 <Image
                   src={getImageUrl(featuredArticle.featured_image)}
@@ -554,13 +554,11 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#150C1F] via-[#150C1F]/40 to-transparent lg:hidden" />
 
-                {/* Small bordered "Featured" tag overlay */}
                 <div className="absolute top-6 left-6 z-30 font-mono text-[10px] tracking-widest text-[#FF2E88] bg-[#0B0710]/90 border border-[#FF2E88] px-3 py-1 uppercase rounded-sm shadow-xl">
                   Featured Article
                 </div>
               </div>
 
-              {/* Right Typographic Content Block */}
               <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10 bg-[#150C1F]">
                 <div className="flex items-center space-x-3">
                   <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
@@ -602,6 +600,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+      */}
 
       {/* Main Editorial Content Area */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-16 space-y-24 z-10 relative">
