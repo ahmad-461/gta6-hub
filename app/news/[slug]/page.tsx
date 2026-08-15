@@ -102,7 +102,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       updated_at,
       author_id,
       seo_description,
-      category:categories(id, name, slug)
+      category:categories!left(id, name, slug)
     `)
     .eq("slug", params.slug)
     .eq("status", "published")

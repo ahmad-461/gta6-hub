@@ -83,7 +83,7 @@ export default async function TagArchivePage({ params }: TagPageProps) {
         excerpt,
         featured_image,
         published_at,
-        category:categories(id, name, slug)
+      category:categories!left(id, name, slug)
       `)
       .in("id", articleIds)
       .eq("status", "published")
