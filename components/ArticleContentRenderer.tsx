@@ -13,6 +13,17 @@ export default function ArticleContentRenderer({ content }: ArticleContentRender
     const container = containerRef.current
     if (!container) return
 
+    // Auto-wrap tables in overflow-x containers for mobile responsiveness
+    const tables = container.querySelectorAll("table")
+    tables.forEach((table) => {
+      if (!table.parentElement?.classList.contains("article-table-container")) {
+        const wrapper = document.createElement("div")
+        wrapper.className = "article-table-container"
+        table.parentNode?.insertBefore(wrapper, table)
+        wrapper.appendChild(table)
+      }
+    })
+
     const spoilers = container.querySelectorAll("[data-spoiler]")
     const handleSpoilerClick = (e: Event) => {
       const target = e.currentTarget as HTMLElement
