@@ -4,7 +4,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Calendar, User, Clock, ChevronRight, Share2, Twitter, MessageCircle, ArrowLeft, Check } from "lucide-react"
+import { Calendar, User, Clock, ChevronRight, Share2, Twitter, MessageCircle, ArrowLeft } from "lucide-react"
 import ReadingProgressBar from "@/components/ReadingProgressBar"
 import ArticleComments from "@/components/ArticleComments"
 import CopyLinkButton from "@/components/CopyLinkButton"
@@ -24,11 +24,15 @@ interface ArticlePageProps {
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const supabase = createSupabaseServerClient()
-  const { data: article } = await supabase
+  const { data: article, error } = await supabase
     .from("articles")
     .select("title, excerpt, seo_title, seo_description, featured_image")
     .eq("slug", params.slug)
     .maybeSingle()
+
+  if (error) {
+    console.error("[generateMetadata Supabase Error]:", error)
+  }
 
   if (!article) {
     return {
@@ -76,19 +80,25 @@ function getImageUrl(url?: string | null) {
   return url
 }
 
+const isUuid = (str: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str)
+
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const supabase = createSupabaseServerClient()
 
   // Fetch site setting for AdSense Publisher ID
-  const { data: adsenseSetting } = await supabase
+  const { data: adsenseSetting, error: adsenseError } = await supabase
     .from("site_settings")
     .select("value")
     .eq("key", "adsense_publisher_id")
     .maybeSingle()
+  if (adsenseError) {
+    console.error("[ArticlePage AdSense Setting Error]:", adsenseError)
+  }
   const publisherId = adsenseSetting?.value || null
 
-  // 1. Fetch current article + author profile + category
-  const { data: article } = await supabase
+  // 1. Fetch current article + author profile
+  const { data: article, error: articleError } = await supabase
     .from("articles")
     .select(`
       id,
@@ -101,25 +111,59 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       created_at,
       updated_at,
       author_id,
-      seo_description,
-      category:categories!left(id, name, slug)
+      category,
+      seo_description
     `)
     .eq("slug", params.slug)
     .eq("status", "published")
     .maybeSingle()
 
+  if (articleError) {
+    console.error("[ArticlePage Fetch Article Error]:", articleError)
+  }
+
   if (!article) {
     notFound()
+  }
+
+  // Fetch category info safely if article.category is present
+  let categoryData: { id: string; name: string; slug: string } | null = null
+  if (article.category) {
+    let catQuery = supabase.from("categories").select("id, name, slug")
+    if (isUuid(article.category)) {
+      catQuery = catQuery.or(`id.eq.${article.category},slug.eq.${article.category}`)
+    } else {
+      catQuery = catQuery.eq("slug", article.category)
+    }
+
+    const { data: catData, error: catError } = await catQuery.maybeSingle()
+
+    if (catError) {
+      console.error("[ArticlePage Category Fetch Error]:", catError)
+    }
+
+    if (catData) {
+      categoryData = catData
+    } else {
+      categoryData = {
+        id: article.category,
+        name: article.category,
+        slug: article.category.toLowerCase().replace(/\s+/g, "-"),
+      }
+    }
   }
 
   // 2. Fetch author profile
   let authorName = "GTA6 Hub Staff"
   if (article.author_id) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("name")
       .eq("id", article.author_id)
       .maybeSingle()
+    if (profileError) {
+      console.error("[ArticlePage Profile Fetch Error]:", profileError)
+    }
     if (profile?.name) {
       authorName = profile.name
     }
@@ -159,49 +203,73 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const readTime = Math.max(1, Math.ceil(wordCount / 200))
 
   // 4. Fetch comments (approved only)
-  const { data: comments } = await supabase
+  const { data: comments, error: commentsError } = await supabase
     .from("comments")
     .select("id, name, content, created_at")
     .eq("article_id", article.id)
     .eq("status", "approved")
     .order("created_at", { ascending: false })
 
+  if (commentsError) {
+    console.error("[ArticlePage Comments Fetch Error]:", commentsError)
+  }
+
   // 5. Get tag IDs for matching related articles
-  const { data: artTags } = await supabase
+  const { data: artTags, error: artTagsError } = await supabase
     .from("article_tags")
     .select("tag_id")
     .eq("article_id", article.id)
+
+  if (artTagsError) {
+    console.error("[ArticlePage Tag Fetch Error]:", artTagsError)
+  }
+
   const tagIds = (artTags || []).map((t) => t.tag_id)
 
   let related: any[] = []
   if (tagIds.length > 0) {
-    const { data: relArticles } = await supabase
+    const { data: relArticles, error: relError } = await supabase
       .from("article_tags")
       .select("article_id")
       .in("tag_id", tagIds)
       .neq("article_id", article.id)
       .limit(10)
+
+    if (relError) {
+      console.error("[ArticlePage Related Article Tags Error]:", relError)
+    }
+
     const relatedIds = (relArticles || []).map((r) => r.article_id)
     if (relatedIds.length > 0) {
-      const { data: arts } = await supabase
+      const { data: arts, error: artsError } = await supabase
         .from("articles")
         .select("id, title, slug, excerpt, featured_image, published_at")
         .in("id", relatedIds)
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(3)
+
+      if (artsError) {
+        console.error("[ArticlePage Related Articles Query Error]:", artsError)
+      }
+
       related = arts || []
     }
   }
 
   if (related.length < 3) {
-    const { data: fallback } = await supabase
+    const { data: fallback, error: fallbackError } = await supabase
       .from("articles")
       .select("id, title, slug, excerpt, featured_image, published_at")
       .neq("id", article.id)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(3 - related.length)
+
+    if (fallbackError) {
+      console.error("[ArticlePage Fallback Related Query Error]:", fallbackError)
+    }
+
     related = [...related, ...(fallback || [])]
   }
 
@@ -238,14 +306,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Link href="/news" className="hover:text-neon-pink transition-colors">
             News
           </Link>
-          {article.category && (
+          {categoryData && (
             <>
               <ChevronRight className="w-3 h-3 flex-shrink-0" />
               <Link
-                href={`/news?category=${(article.category as any).slug}`}
+                href={`/news?category=${categoryData.slug}`}
                 className="hover:text-neon-pink transition-colors"
               >
-                {(article.category as any).name}
+                {categoryData.name}
               </Link>
             </>
           )}
@@ -261,9 +329,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <main className="lg:col-span-8 space-y-8">
             {/* Header Content */}
             <div className="space-y-4">
-              {article.category && (
+              {categoryData && (
                 <span className="text-xs font-extrabold uppercase tracking-widest text-neon-pink bg-neon-pink/10 border border-neon-pink/25 rounded-md px-2.5 py-1 inline-block">
-                  {(article.category as any).name}
+                  {categoryData.name}
                 </span>
               )}
               <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">

@@ -14,11 +14,15 @@ interface TagPageProps {
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const supabase = createSupabaseServerClient()
-  const { data: tag } = await supabase
+  const { data: tag, error } = await supabase
     .from("tags")
     .select("name")
     .eq("slug", params.slug)
     .maybeSingle()
+
+  if (error) {
+    console.error("[TagPage generateMetadata Error]:", error)
+  }
 
   if (!tag) {
     return {
@@ -54,27 +58,44 @@ export default async function TagArchivePage({ params }: TagPageProps) {
   const supabase = createSupabaseServerClient()
 
   // 1. Fetch tag details
-  const { data: tag } = await supabase
+  const { data: tag, error: tagError } = await supabase
     .from("tags")
     .select("id, name, slug")
     .eq("slug", params.slug)
     .maybeSingle()
 
+  if (tagError) {
+    console.error("[TagPage Fetch Tag Error]:", tagError)
+  }
+
   if (!tag) {
     notFound()
   }
 
-  // 2. Fetch published articles associated with this tag
-  const { data: tagRelations } = await supabase
+  // 2. Fetch categories for name mapping
+  const { data: categories, error: catError } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+
+  if (catError) {
+    console.error("[TagPage Fetch Categories Error]:", catError)
+  }
+
+  // 3. Fetch published articles associated with this tag
+  const { data: tagRelations, error: tagRelError } = await supabase
     .from("article_tags")
     .select("article_id")
     .eq("tag_id", tag.id)
+
+  if (tagRelError) {
+    console.error("[TagPage Tag Relations Error]:", tagRelError)
+  }
 
   const articleIds = (tagRelations || []).map((r) => r.article_id)
 
   let articles: any[] = []
   if (articleIds.length > 0) {
-    const { data: arts } = await supabase
+    const { data: arts, error: artsError } = await supabase
       .from("articles")
       .select(`
         id,
@@ -83,13 +104,27 @@ export default async function TagArchivePage({ params }: TagPageProps) {
         excerpt,
         featured_image,
         published_at,
-      category:categories!left(id, name, slug)
+        category
       `)
       .in("id", articleIds)
       .eq("status", "published")
       .order("published_at", { ascending: false })
 
-    articles = arts || []
+    if (artsError) {
+      console.error("[TagPage Articles Fetch Error]:", artsError)
+    }
+
+    articles = (arts || []).map((art) => {
+      let categoryData = null
+      if (art.category) {
+        const match = (categories || []).find((c) => c.id === art.category || c.slug === art.category)
+        categoryData = match || { id: art.category, name: art.category, slug: art.category.toLowerCase().replace(/\s+/g, "-") }
+      }
+      return {
+        ...art,
+        categoryData,
+      }
+    })
   }
 
   return (
@@ -135,10 +170,10 @@ export default async function TagArchivePage({ params }: TagPageProps) {
                       Article
                     </span>
 
-                    {art.category && (
+                    {art.categoryData && (
                       <span className="text-[10px] font-bold uppercase tracking-wider text-neon-blue flex items-center gap-1">
                         <Folder className="w-3 h-3" />
-                        {(art.category as any).name}
+                        {art.categoryData.name}
                       </span>
                     )}
                   </div>

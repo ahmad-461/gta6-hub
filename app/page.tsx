@@ -53,44 +53,73 @@ export default async function HomePage() {
     try {
       const supabase = createSupabaseServerClient()
 
+      // Fetch categories map for safe resolving
+      const { data: categories, error: catErr } = await supabase
+        .from("categories")
+        .select("id, name, slug")
+
+      if (catErr) {
+        console.error("[HomePage Fetch Categories Error]:", catErr)
+      }
+
+      const resolveCategory = (catVal?: string | null) => {
+        if (!catVal) return null
+        const match = (categories || []).find((c) => c.id === catVal || c.slug === catVal)
+        return match || { id: catVal, name: catVal, slug: catVal.toLowerCase().replace(/\s+/g, "-") }
+      }
+
       // Fetch Site Depth Index counts safely
       try {
-        const { count: artCount } = await supabase
+        const { count: artCount, error: artCountErr } = await supabase
           .from("articles")
           .select("id", { count: "exact", head: true })
           .eq("status", "published")
+
+        if (artCountErr) console.error("[HomePage Article Count Error]:", artCountErr)
         newsCount = artCount
       } catch (e) {
         console.error("Error counting articles:", e)
       }
 
       try {
-        const { count: gdCount } = await supabase
+        const { count: gdCount, error: gdCountErr } = await supabase
           .from("guides")
           .select("id", { count: "exact", head: true })
           .eq("status", "published")
+
+        if (gdCountErr) console.error("[HomePage Guide Count Error]:", gdCountErr)
         guidesCount = gdCount
       } catch (e) {
         console.error("Error counting guides:", e)
       }
 
       try {
-        const { count: charCount } = await supabase
+        const { count: charCount, error: charCountErr } = await supabase
           .from("characters")
           .select("id", { count: "exact", head: true })
           .eq("status", "published")
-        const { count: topicCount } = await supabase
+
+        if (charCountErr) console.error("[HomePage Character Count Error]:", charCountErr)
+
+        const { count: topicCount, error: topicCountErr } = await supabase
           .from("lore_topics")
           .select("id", { count: "exact", head: true })
+
+        if (topicCountErr) console.error("[HomePage Lore Topics Count Error]:", topicCountErr)
+
         loreCount = (charCount || 0) + (topicCount || 0)
       } catch (e) {
         console.error("Error counting lore characters/topics:", e)
       }
 
       // 1. Fetch site settings
-      const { data: rawSettings } = await supabase
+      const { data: rawSettings, error: settingsError } = await supabase
         .from("site_settings")
         .select("key, value")
+
+      if (settingsError) {
+        console.error("[HomePage Site Settings Error]:", settingsError)
+      }
 
       if (rawSettings) {
         settings = rawSettings.reduce((acc, curr) => {
@@ -100,7 +129,7 @@ export default async function HomePage() {
       }
 
       // 2. Fetch latest news teaser
-      const { data: teaser } = await supabase
+      const { data: teaser, error: teaserError } = await supabase
         .from("articles")
         .select("id, title, slug")
         .eq("status", "published")
@@ -108,10 +137,14 @@ export default async function HomePage() {
         .limit(1)
         .maybeSingle()
 
+      if (teaserError) {
+        console.error("[HomePage Teaser Error]:", teaserError)
+      }
+
       latestTeaser = teaser
 
       // 3. Fetch featured article
-      let { data: featured } = await supabase
+      let { data: featured, error: featuredError } = await supabase
         .from("articles")
         .select(`
           id,
@@ -120,14 +153,18 @@ export default async function HomePage() {
           excerpt,
           featured_image,
           published_at,
-          category:categories!left(name, slug)
+          category
         `)
         .eq("status", "published")
         .eq("featured", true)
         .maybeSingle()
 
+      if (featuredError) {
+        console.error("[HomePage Featured Article Error]:", featuredError)
+      }
+
       if (!featured) {
-        const { data: fallbackArt } = await supabase
+        const { data: fallbackArt, error: fallbackArtError } = await supabase
           .from("articles")
           .select(`
             id,
@@ -136,19 +173,29 @@ export default async function HomePage() {
             excerpt,
             featured_image,
             published_at,
-            category:categories!left(name, slug)
+            category
           `)
           .eq("status", "published")
           .order("published_at", { ascending: false })
           .limit(1)
           .maybeSingle()
 
+        if (fallbackArtError) {
+          console.error("[HomePage Fallback Featured Article Error]:", fallbackArtError)
+        }
+
         featured = fallbackArt
       }
-      featuredArticle = featured
+
+      if (featured) {
+        featuredArticle = {
+          ...featured,
+          category: resolveCategory(featured.category),
+        }
+      }
 
       // 4. Fetch latest news grid (6 published articles)
-      const { data: news } = await supabase
+      const { data: news, error: newsError } = await supabase
         .from("articles")
         .select(`
           id,
@@ -157,16 +204,23 @@ export default async function HomePage() {
           excerpt,
           featured_image,
           published_at,
-          category:categories!left(name, slug)
+          category
         `)
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(6)
 
-      latestNews = news || []
+      if (newsError) {
+        console.error("[HomePage Latest News Query Error]:", newsError)
+      }
+
+      latestNews = (news || []).map((n) => ({
+        ...n,
+        category: resolveCategory(n.category),
+      }))
 
       // 5. Fetch latest guides (3 published guides)
-      const { data: guides } = await supabase
+      const { data: guides, error: guidesError } = await supabase
         .from("guides")
         .select(`
           id,
@@ -182,20 +236,28 @@ export default async function HomePage() {
         .order("published_at", { ascending: false })
         .limit(3)
 
+      if (guidesError) {
+        console.error("[HomePage Latest Guides Error]:", guidesError)
+      }
+
       latestGuides = guides || []
 
       // 6. Fetch 5 most recent content items (articles/guides) for sidebar
-      const { data: sidebarArts } = await supabase
+      const { data: sidebarArts, error: sidebarArtsError } = await supabase
         .from("articles")
         .select("id, title, slug, published_at")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(5)
 
+      if (sidebarArtsError) {
+        console.error("[HomePage Sidebar Articles Error]:", sidebarArtsError)
+      }
+
       sidebarArticles = sidebarArts || []
 
       // 7. Fetch 5 latest approved comments for sidebar
-      const { data: comments } = await supabase
+      const { data: comments, error: commentsError } = await supabase
         .from("comments")
         .select(`
           id,
@@ -209,16 +271,24 @@ export default async function HomePage() {
         .order("created_at", { ascending: false })
         .limit(5)
 
+      if (commentsError) {
+        console.error("[HomePage Sidebar Comments Error]:", commentsError)
+      }
+
       sidebarComments = comments || []
 
       // 8. Fetch community poll
-      const { data: poll } = await supabase
+      const { data: poll, error: pollError } = await supabase
         .from("polls")
         .select("id, question, options_json, votes_json")
         .eq("active", true)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle()
+
+      if (pollError) {
+        console.error("[HomePage Community Poll Error]:", pollError)
+      }
 
       activePoll = poll
     } catch (err) {
