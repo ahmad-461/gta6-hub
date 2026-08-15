@@ -1,8 +1,8 @@
 import React from "react"
-import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ShieldAlert } from "lucide-react"
 import CheatsClient from "@/components/CheatsClient"
+import Badge from "@/components/ui/Badge"
 
 export const revalidate = 3600
 
@@ -24,16 +24,24 @@ export default async function CheatsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-grow space-y-8">
       {/* Page Header */}
       <div className="space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white flex items-center gap-2">
-          <ShieldAlert className="w-8 h-8 sm:w-12 sm:h-12 text-neon-yellow" />
-          Cheat Codes Directory
+        <div className="flex items-center gap-2">
+          <Badge color="magenta" variant="subtle">
+            Bypass Protocols
+          </Badge>
+          <span className="text-xs font-mono text-paper-dim uppercase tracking-widest">
+            Multi-Platform Inputs
+          </span>
+        </div>
+        <h1 className="text-4xl sm:text-6xl font-anton uppercase tracking-wider text-white flex items-center gap-3">
+          <ShieldAlert className="w-9 h-9 sm:w-12 sm:h-12 text-[#FF2E88]" />
+          Cheat Codes Database
         </h1>
-        <p className="text-foreground/60 max-w-2xl leading-relaxed text-sm sm:text-base">
-          Unlock standard weapons, weather effects, player enhancements, and unique supercar spawns with our real-time verified inputs for PS5, Xbox, and PC.
+        <p className="text-paper-dim max-w-2xl leading-relaxed text-sm sm:text-base font-sans">
+          Unlock standard weapons, weather effects, player invincibility, and vehicle spawns with our verified input sequences for PS5, Xbox, and PC.
         </p>
       </div>
 
-      <div className="w-full h-[1px] bg-gradient-to-r from-card-border/60 via-transparent to-transparent" />
+      <div className="w-full h-[1px] bg-gradient-to-r from-[rgba(245,240,250,0.14)] via-transparent to-transparent" />
 
       {/* Interactive Cheats Client Component */}
       <CheatsClient initialCheats={cheats || []} />

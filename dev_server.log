@@ -6,17 +6,19 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1803ms
+ ✓ Ready in 1814ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1165ms (127 modules)
- ○ Compiling /timeline ...
- ✓ Compiled /timeline in 7.8s (836 modules)
+ ✓ Compiled /middleware in 1172ms (127 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 7.6s (899 modules)
+ HEAD / 200 in 8187ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET /timeline 200 in 15805ms
- ○ Compiling /tools/comparison ...
- ✓ Compiled /tools/comparison in 1172ms (835 modules)
- GET /timeline?_rsc=ivfw5 200 in 6930ms
- GET /tools/comparison 200 in 8374ms
- ✓ Compiled /trailers/compare in 491ms (842 modules)
- GET /trailers/compare 200 in 7617ms
+ ○ Compiling /characters ...
+ ✓ Compiled /characters in 2s (891 modules)
+ GET /characters 200 in 9524ms
+ GET /characters 200 in 7079ms
+ ○ Compiling /cheats ...
+ ✓ Compiled /cheats in 719ms (885 modules)
+ GET /cheats 200 in 8060ms
+ GET /characters 200 in 7085ms
