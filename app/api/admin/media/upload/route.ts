@@ -26,17 +26,37 @@ export async function POST(request: NextRequest) {
     // 3. Convert to WebP using sharp
     let webpBuffer: Buffer
     try {
-      // Convert to WebP with good default quality
-      webpBuffer = await sharp(buffer)
-        .webp({ quality: 80 })
-        .toBuffer()
+      // Check original image dimensions
+      const initialMeta = await sharp(buffer).metadata()
+      const isLargeAsset = (initialMeta.width || 0) >= 1000 || (initialMeta.height || 0) >= 1000
 
-      // If larger than 150KB, optimize further
-      if (webpBuffer.length > 150 * 1024) {
+      if (isLargeAsset) {
+        // High quality setting for hero character portraits and large feature visuals
         webpBuffer = await sharp(buffer)
-          .resize({ width: 1200, withoutEnlargement: true })
-          .webp({ quality: 65 })
+          .resize({ width: 1600, withoutEnlargement: true })
+          .webp({ quality: 85 })
           .toBuffer()
+
+        // If high-res buffer is excessively large (>350KB), gently tune quality to stay within target budget
+        if (webpBuffer.length > 350 * 1024) {
+          webpBuffer = await sharp(buffer)
+            .resize({ width: 1600, withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toBuffer()
+        }
+      } else {
+        // Standard quality setting for general UI icons/smaller media
+        webpBuffer = await sharp(buffer)
+          .resize({ width: 1000, withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toBuffer()
+
+        if (webpBuffer.length > 150 * 1024) {
+          webpBuffer = await sharp(buffer)
+            .resize({ width: 1000, withoutEnlargement: true })
+            .webp({ quality: 75 })
+            .toBuffer()
+        }
       }
     } catch (sharpErr) {
       console.error("Sharp conversion error:", sharpErr)

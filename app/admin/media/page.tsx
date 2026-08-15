@@ -243,7 +243,9 @@ export default function MediaLibraryPage() {
               <p className="text-sm font-semibold text-white">
                 Drag & drop image here, or <span className="text-[#FF2E88]">browse files</span>
               </p>
-              <p className="text-xs text-[#9C8FAE]/40 mt-1 font-bold">Supports PNG, JPG, JPEG, and WebP (max 5MB file size)</p>
+              <p className="text-xs text-[#9C8FAE]/60 mt-1 font-semibold">
+                Supports PNG, JPG, JPEG, and WebP (max 5MB). <span className="text-[#FF8A3D] font-bold">For best results, upload images at least 1200px wide for character portraits.</span>
+              </p>
             </div>
           </div>
         )}
