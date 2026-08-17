@@ -16,37 +16,37 @@ export async function revalidateGuidePathsAction({
 }) {
   try {
     // 1. Revalidate Guides directory root
-    revalidatePath("/guides")
+    revalidatePath("/guides", "page")
 
     // 2. Revalidate Homepage and other surfaces showing guides
-    revalidatePath("/")
+    revalidatePath("/", "page")
 
     // 3. Revalidate current category path
     if (category) {
       const catConfig = getCategoryConfig(category)
       const catSlug = catConfig ? catConfig.slug : category.toLowerCase().trim().replace(/\s+/g, "-")
-      revalidatePath(`/guides/${catSlug}`)
+      revalidatePath(`/guides/${catSlug}`, "page")
     }
 
     // 4. Revalidate current guide detail path
     if (category && slug) {
       const catConfig = getCategoryConfig(category)
       const catSlug = catConfig ? catConfig.slug : category.toLowerCase().trim().replace(/\s+/g, "-")
-      revalidatePath(`/guides/${catSlug}/${slug}`)
+      revalidatePath(`/guides/${catSlug}/${slug}`, "page")
     }
 
     // 5. Revalidate previous category path if category was changed
     if (previousCategory && previousCategory !== category) {
       const prevCatConfig = getCategoryConfig(previousCategory)
       const prevCatSlug = prevCatConfig ? prevCatConfig.slug : previousCategory.toLowerCase().trim().replace(/\s+/g, "-")
-      revalidatePath(`/guides/${prevCatSlug}`)
+      revalidatePath(`/guides/${prevCatSlug}`, "page")
     }
 
     // 6. Revalidate previous guide detail path if slug/category was changed
     if (previousCategory && previousSlug && (previousCategory !== category || previousSlug !== slug)) {
       const prevCatConfig = getCategoryConfig(previousCategory)
       const prevCatSlug = prevCatConfig ? prevCatConfig.slug : previousCategory.toLowerCase().trim().replace(/\s+/g, "-")
-      revalidatePath(`/guides/${prevCatSlug}/${previousSlug}`)
+      revalidatePath(`/guides/${prevCatSlug}/${previousSlug}`, "page")
     }
 
     return { success: true }
