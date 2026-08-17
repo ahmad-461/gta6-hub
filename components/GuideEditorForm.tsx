@@ -26,6 +26,7 @@ import {
 import { generateAIDraftAction } from "@/app/actions/draft"
 import { checkDuplicateSimilarityAction } from "@/app/actions/duplicate"
 import { triggerEmbeddingsGeneration } from "@/app/actions/publish"
+import { revalidateGuidePathsAction } from "@/app/actions/revalidate-guide"
 
 // Zod Schema for Guide Form
 const guideSchema = z.object({
@@ -62,10 +63,12 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
   // Form Fields State
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
+  const [initialSlug, setInitialSlug] = useState("")
   const [content, setContent] = useState("")
   const [categories, setCategories] = useState<any[]>([])
   const [category, setCategory] = useState("")
   const [guideCategory, setGuideCategory] = useState<"Getting Started" | "Story" | "Online" | "Cheats" | "Secrets">("Getting Started")
+  const [initialGuideCategory, setInitialGuideCategory] = useState<string>("")
   const [difficulty, setDifficulty] = useState<"Beginner" | "Intermediate" | "Advanced">("Beginner")
   const [status, setStatus] = useState<"draft" | "published" | "archived">("draft")
   const [publishedAt, setPublishedAt] = useState("")
@@ -160,9 +163,11 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
 
       setTitle(guide.title)
       setSlug(guide.slug)
+      setInitialSlug(guide.slug)
       setContent(guide.content)
       setCategory(guide.category || "")
       setGuideCategory(guide.guide_category || "Getting Started")
+      setInitialGuideCategory(guide.guide_category || "Getting Started")
       setDifficulty(guide.difficulty || "Beginner")
       setStatus(guide.status || "draft")
       setFeaturedImage(guide.featured_image || "")
@@ -312,6 +317,18 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
           entityId: savedGuideId,
           entityTitle: title
         })
+      }
+
+      // Trigger on-demand cache revalidation
+      try {
+        await revalidateGuidePathsAction({
+          category: guideCategory,
+          slug: slug,
+          previousCategory: initialGuideCategory || null,
+          previousSlug: initialSlug || null,
+        })
+      } catch (revalErr) {
+        console.error("Revalidation error:", revalErr)
       }
 
       toast.success(isEditing ? "Guide updated successfully!" : "Guide published/created successfully!")
