@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                 1. What We Collect
               </h2>
               <p>
-                To access the general features of GTA 6 Hub, including our news portal, interactive guides, cheats explorer, and lore connection mappings, you are not required to provide any personal data.
+                To access the general features of GTA 6 Hub, including our news portal, cheats explorer, and lore connection mappings, you are not required to provide any personal data.
               </p>
               <p className="text-[#F5F0FA]">
                 The only exceptions where we receive and process specific visitor telemetry are:
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc list-inside pl-4 space-y-2">
                 <li>
-                  <strong className="text-white">Saved Content:</strong> Handled entirely on your local machine to keep your bookmarked articles and guides readable.
+                  <strong className="text-white">Saved Content:</strong> Handled entirely on your local machine to keep your bookmarked articles readable.
                 </li>
                 <li>
                   <strong className="text-white">Wanted-Level Meter:</strong> Persists interactive telemetry states across pages.

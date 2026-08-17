@@ -27,13 +27,11 @@ export default function AdminDashboardPage() {
   const [recentActivities, setRecentActivities] = useState<any[]>([])
   const [activityTrends, setActivityTrends] = useState<Record<string, number[]>>({
     article: [0, 0, 0, 0, 0, 0, 0],
-    guide: [0, 0, 0, 0, 0, 0, 0],
     character: [0, 0, 0, 0, 0, 0, 0],
     cheat_code: [0, 0, 0, 0, 0, 0, 0]
   })
   const [trendDiffs, setTrendDiffs] = useState<Record<string, number>>({
     article: 0,
-    guide: 0,
     character: 0,
     cheat_code: 0
   })
@@ -48,13 +46,11 @@ export default function AdminDashboardPage() {
       // 1. Fetch counts
       const [
         articlesCount,
-        guidesCount,
         charactersCount,
         cheatsCount,
         commentsCount
       ] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }),
-        supabase.from("guides").select("*", { count: "exact", head: true }),
         supabase.from("characters").select("*", { count: "exact", head: true }),
         supabase.from("cheat_codes").select("*", { count: "exact", head: true }),
         supabase.from("comments").select("*", { count: "exact", head: true }).eq("status", "pending")
@@ -117,14 +113,12 @@ export default function AdminDashboardPage() {
 
       const counts: Record<string, number[]> = {
         article: [0, 0, 0, 0, 0, 0, 0],
-        guide: [0, 0, 0, 0, 0, 0, 0],
         character: [0, 0, 0, 0, 0, 0, 0],
         cheat_code: [0, 0, 0, 0, 0, 0, 0]
       }
 
       const diffs: Record<string, number> = {
         article: 0,
-        guide: 0,
         character: 0,
         cheat_code: 0
       }
@@ -162,18 +156,6 @@ export default function AdminDashboardPage() {
           borderColor: "hover:border-[#FF2E88]/40",
           bg: "bg-[#FF2E88]/10",
           entityKey: "article"
-        },
-        {
-          name: "Guides",
-          count: guidesCount.count || 0,
-          trend: counts.guide,
-          diff: diffs.guide,
-          icon: BookOpen,
-          href: "/admin/guides",
-          color: "#00E5FF",
-          borderColor: "hover:border-[#00E5FF]/40",
-          bg: "bg-[#00E5FF]/10",
-          entityKey: "guide"
         },
         {
           name: "Characters",
@@ -345,23 +327,6 @@ export default function AdminDashboardPage() {
                 <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-[#FF2E88] group-hover:translate-x-1 transition shrink-0 mt-1" />
               </Link>
 
-              {/* Shortcut 2: Guide */}
-              <Link
-                href="/admin/guides/new"
-                prefetch={false}
-                className="flex items-start justify-between p-4 bg-[#0B0710]/60 border border-[rgba(245,240,250,0.14)] rounded hover:border-[#00E5FF]/40 hover:bg-[#00E5FF]/5 transition duration-300 group"
-              >
-                <div className="flex space-x-3.5">
-                  <div className="p-2 bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20 rounded group-hover:bg-[#00E5FF]/20 transition shrink-0 mt-0.5">
-                    <Plus size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-white uppercase tracking-wider">Create Guide</p>
-                    <p className="text-[11px] text-[#9C8FAE] mt-1 font-medium leading-relaxed">Publish interactive game guides, mission steps, or map insights.</p>
-                  </div>
-                </div>
-                <ArrowRight size={14} className="text-[#9C8FAE]/30 group-hover:text-[#00E5FF] group-hover:translate-x-1 transition shrink-0 mt-1" />
-              </Link>
 
               {/* Shortcut 3: Character */}
               <Link
@@ -421,11 +386,10 @@ export default function AdminDashboardPage() {
             <div className="space-y-3.5">
               {[
                 { label: "Articles", count: stats[0]?.count || 0, color: "bg-[#FF2E88]" },
-                { label: "Guides", count: stats[1]?.count || 0, color: "bg-[#00E5FF]" },
-                { label: "Characters", count: stats[2]?.count || 0, color: "bg-[#FF8A3D]" },
-                { label: "Cheat Codes", count: stats[3]?.count || 0, color: "bg-[#A78BFA]" },
+                { label: "Characters", count: stats[1]?.count || 0, color: "bg-[#FF8A3D]" },
+                { label: "Cheat Codes", count: stats[2]?.count || 0, color: "bg-[#A78BFA]" },
               ].map((item) => {
-                const max = Math.max(stats[0]?.count || 1, stats[1]?.count || 1, stats[2]?.count || 1, stats[3]?.count || 1)
+                const max = Math.max(stats[0]?.count || 1, stats[1]?.count || 1, stats[2]?.count || 1)
                 const percentage = (item.count / max) * 100
                 return (
                   <div key={item.label} className="space-y-1.5">

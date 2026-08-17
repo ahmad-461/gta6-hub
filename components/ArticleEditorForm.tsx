@@ -462,7 +462,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
                 This draft looks extremely similar to the existing {duplicateWarning.contentType}: <strong>{duplicateWarning.title}</strong>. Review to ensure uniqueness.
               </p>
               <a
-                href={duplicateWarning.contentType === "article" ? `/news/${duplicateWarning.slug}` : `/guides/${duplicateWarning.slug}`}
+                href={`/news/${duplicateWarning.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-xs text-[#FF2E88] font-bold hover:underline mt-2"

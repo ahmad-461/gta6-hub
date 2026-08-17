@@ -14,7 +14,7 @@ export default async function AboutPage() {
   const isDummy = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("dummy-supabase-url.supabase.co")
 
   let newsCount: number | null = null
-  let guidesCount: number | null = null
+  let cheatsCount: number | null = null
   let loreCount: number | null = null
 
   if (!isDummy) {
@@ -32,13 +32,12 @@ export default async function AboutPage() {
       }
 
       try {
-        const { count: gdCount } = await supabase
-          .from("guides")
+        const { count: chCount } = await supabase
+          .from("cheat_codes")
           .select("id", { count: "exact", head: true })
-          .eq("status", "published")
-        guidesCount = gdCount
+        cheatsCount = chCount
       } catch (e) {
-        console.error("Error counting guides on about page:", e)
+        console.error("Error counting cheats on about page:", e)
       }
 
       try {
@@ -98,7 +97,7 @@ export default async function AboutPage() {
         {/* Section 2: Reusable Site Depth Index */}
         <SiteDepthIndex
           newsCount={newsCount}
-          guidesCount={guidesCount}
+          cheatsCount={cheatsCount}
           loreCount={loreCount}
         />
 
