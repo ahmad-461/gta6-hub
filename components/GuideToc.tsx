@@ -62,15 +62,15 @@ export default function GuideToc({ toc }: GuideTocProps) {
   if (!toc || toc.length === 0) return null
 
   return (
-    <div className="bg-card-bg border border-card-border rounded-xl p-5 shadow-md sticky top-24 max-h-[80vh] overflow-y-auto">
-      <div className="flex items-center gap-2 mb-4 border-b border-card-border pb-2 text-foreground/50">
-        <AlignLeft className="w-4 h-4 text-neon-blue" />
-        <h3 className="font-extrabold text-xs uppercase tracking-widest">
+    <div className="bg-[#16161B] border border-[rgba(245,245,247,0.14)] rounded-xl p-5 shadow-xl sticky top-24 max-h-[80vh] overflow-y-auto">
+      <div className="flex items-center gap-2 mb-4 border-b border-[rgba(245,245,247,0.14)] pb-2 text-[#9E9EA8]">
+        <AlignLeft className="w-4 h-4 text-[#FF8A3D]" />
+        <h3 className="font-mono font-bold text-xs uppercase tracking-widest text-[#F5F5F7]">
           Table Of Contents
         </h3>
       </div>
 
-      <nav className="space-y-1.5 text-xs">
+      <nav className="space-y-1.5 text-xs font-mono">
         {toc.map((item) => {
           const isActive = activeId === item.id
           return (
@@ -78,10 +78,10 @@ export default function GuideToc({ toc }: GuideTocProps) {
               key={item.id}
               href={`#${item.id}`}
               onClick={(e) => handleLinkClick(e, item.id)}
-              className={`block py-1 px-2.5 rounded transition-all duration-150 font-bold border-l-2 leading-relaxed ${
+              className={`block py-1.5 px-2.5 rounded transition-all duration-150 font-semibold border-l-2 leading-relaxed ${
                 isActive
-                  ? "border-neon-blue text-neon-blue bg-neon-blue/5"
-                  : "border-transparent text-foreground/60 hover:text-white hover:border-foreground/20"
+                  ? "border-[#FF8A3D] text-[#FF8A3D] bg-[#FF8A3D]/10 font-bold"
+                  : "border-transparent text-[#9E9EA8] hover:text-[#F5F5F7] hover:border-[#FF2D8D]/40"
               } ${item.level > 2 ? "pl-5" : ""}`}
             >
               {item.text}

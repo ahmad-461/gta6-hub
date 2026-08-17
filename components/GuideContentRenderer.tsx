@@ -59,18 +59,19 @@ export default function GuideContentRenderer({ content }: GuideContentRendererPr
   return (
     <div
       ref={containerRef}
-      className="guide-content prose prose-invert max-w-none
+      className="guide-content article-content prose prose-invert max-w-none
                  prose-headings:font-black
-                 [&_h2]:border-l-4 [&_h2]:border-neon-blue [&_h2]:pl-4 [&_h2]:my-6 [&_h2]:text-white [&_h2]:font-extrabold [&_h2]:text-2xl
-                 [&_p]:leading-relaxed [&_p]:text-foreground/90 [&_p]:mb-4
-                 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4
-                 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4
+                 [&_h2]:border-l-4 [&_h2]:border-[#FF8A3D] [&_h2]:pl-4 [&_h2]:my-6 [&_h2]:text-[#F5F5F7] [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:font-anton [&_h2]:tracking-wide
+                 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-[#F5F5F7] [&_h3]:my-4
+                 [&_p]:leading-relaxed [&_p]:text-[#F5F5F7]/90 [&_p]:mb-4
+                 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-1
+                 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-1
 
                  /* CSS Counter for Guide Steps on H2 headings */
                  [counter-reset:h2-counter]
                  [&_h2]:[counter-increment:h2-counter]
                  [&_h2]:before:content-['Step_'_counter(h2-counter)_':_']
-                 [&_h2]:before:text-neon-blue [&_h2]:before:font-black [&_h2]:before:mr-1
+                 [&_h2]:before:text-[#FF8A3D] [&_h2]:before:font-mono [&_h2]:before:font-black [&_h2]:before:mr-1
                  "
       dangerouslySetInnerHTML={{ __html: content }}
     />

@@ -2,9 +2,8 @@ import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ShieldCheck, HelpCircle, ShieldAlert } from "lucide-react"
 import CountdownTimer from "@/components/CountdownTimer"
-import CommunityPollWidget from "@/components/CommunityPollWidget"
 import ScrollReveal from "@/components/ScrollReveal"
 import SiteDepthIndex from "@/components/SiteDepthIndex"
 import Button from "@/components/ui/Button"
@@ -43,11 +42,13 @@ export default async function HomePage() {
   let latestNews: any[] = []
   let latestGuides: any[] = []
   let sidebarArticles: any[] = []
-  let sidebarComments: any[] = []
-  let activePoll: any = null
   let newsCount: number | null = null
   let guidesCount: number | null = null
   let loreCount: number | null = null
+
+  let confirmedCount = 0
+  let rumorCount = 0
+  let debunkedCount = 0
 
   if (!isDummy) {
     try {
@@ -110,6 +111,33 @@ export default async function HomePage() {
         loreCount = (charCount || 0) + (topicCount || 0)
       } catch (e) {
         console.error("Error counting lore characters/topics:", e)
+      }
+
+      // Real-time rumor_status counts directly from articles table
+      try {
+        const [confRes, rumorRes, debRes] = await Promise.all([
+          supabase
+            .from("articles")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "published")
+            .eq("rumor_status", "confirmed"),
+          supabase
+            .from("articles")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "published")
+            .eq("rumor_status", "rumor"),
+          supabase
+            .from("articles")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "published")
+            .eq("rumor_status", "debunked"),
+        ])
+
+        confirmedCount = confRes.count || 0
+        rumorCount = rumorRes.count || 0
+        debunkedCount = debRes.count || 0
+      } catch (e) {
+        console.error("Error counting rumor_status fields:", e)
       }
 
       // 1. Fetch site settings
@@ -255,47 +283,15 @@ export default async function HomePage() {
       }
 
       sidebarArticles = sidebarArts || []
-
-      // 7. Fetch 5 latest approved comments for sidebar
-      const { data: comments, error: commentsError } = await supabase
-        .from("comments")
-        .select(`
-          id,
-          article_id,
-          name,
-          content,
-          created_at,
-          articles:articles(title, slug)
-        `)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false })
-        .limit(5)
-
-      if (commentsError) {
-        console.error("[HomePage Sidebar Comments Error]:", commentsError)
-      }
-
-      sidebarComments = comments || []
-
-      // 8. Fetch community poll
-      const { data: poll, error: pollError } = await supabase
-        .from("polls")
-        .select("id, question, options_json, votes_json")
-        .eq("active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (pollError) {
-        console.error("[HomePage Community Poll Error]:", pollError)
-      }
-
-      activePoll = poll
     } catch (err) {
       console.error("Failed to query Supabase server side:", err)
     }
   } else {
-    // Set beautifully styled fallback mock data when DB is missing
+    // Fallback mock counts for dummy/disconnected mode
+    confirmedCount = 12
+    rumorCount = 18
+    debunkedCount = 5
+
     latestTeaser = {
       title: "Rockstar Games confirms GTA VI development target on schedule",
       slug: "development-target-on-schedule",
@@ -365,25 +361,9 @@ export default async function HomePage() {
       { id: "s1", title: "GTA VI confirmed for Fall 2025 release window", slug: "fall-2025-release-window", published_at: new Date().toISOString() },
       { id: "s2", title: "New police dispatch and AI pursuit routines analyzed", slug: "police-dispatch-ai", published_at: new Date().toISOString() },
     ]
-
-    sidebarComments = [
-      { id: "c1", name: "ViceCityLover", content: "Can't wait to explore the neon beaches!", created_at: new Date().toISOString() },
-      { id: "c2", name: "LeonidaRacer", content: "The driving physics look incredibly realistic.", created_at: new Date().toISOString() },
-    ]
-
-    activePoll = {
-      id: "poll-mock",
-      question: "Which gameplay feature are you most excited for in GTA VI?",
-      options_json: ["Dual Protagonist Switching", "Expanded Leonida Map", "Realistic Police AI", "Cooperative Heists"],
-      votes_json: {
-        "Dual Protagonist Switching": 142,
-        "Expanded Leonida Map": 311,
-        "Realistic Police AI": 95,
-        "Cooperative Heists": 204,
-      },
-    }
   }
 
+  const totalRumorStatusCount = confirmedCount + rumorCount + debunkedCount
   const countdownTarget = settings["countdown_target"] || "2026-11-19T00:00:00-05:00"
 
   // Duplicate items for seamless continuous ticker scroll
@@ -399,9 +379,9 @@ export default async function HomePage() {
 
       {/* Background Atmosphere - Polished to feel restrained and premium with reduced opacity */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Glow Blob 1 (magenta top-right) - Reduced from bg-[#FF2E88]/10 to bg-[#FF2E88]/05 */}
+        {/* Glow Blob 1 (magenta top-right) */}
         <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#FF2E88]/05 blur-[140px] z-0" />
-        {/* Glow Blob 2 (cyan bottom-left) - Reduced from bg-[#00E5FF]/8 to bg-[#00E5FF]/04 */}
+        {/* Glow Blob 2 (cyan bottom-left) */}
         <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00E5FF]/04 blur-[140px] z-0" />
       </div>
 
@@ -531,76 +511,6 @@ export default async function HomePage() {
           </div>
         </div>
       )}
-
-      {/* Featured Article Spotlight - Commented out per requirements */}
-      {/*
-      {featuredArticle && (
-        <section
-          className="relative bg-[#150C1F] border-b border-[rgba(245,240,250,0.14)] py-12 lg:py-0 overflow-hidden z-20"
-          style={{
-            clipPath: "polygon(0 0, 100% 0, 100% 93%, 0 100%)",
-          }}
-        >
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[550px] items-stretch">
-              <div className="lg:col-span-7 relative overflow-hidden diagonal-split-left min-h-[350px] lg:min-h-full group">
-                <Image
-                  src={getImageUrl(featuredArticle.featured_image)}
-                  alt={featuredArticle.title}
-                  fill
-                  className="object-cover group-hover:scale-[1.01] transition-transform duration-700 ease-out motion-reduce:group-hover:scale-100"
-                  priority
-                  sizes="(max-w-1024px) 100vw, 60vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#150C1F] via-[#150C1F]/40 to-transparent lg:hidden" />
-
-                <div className="absolute top-6 left-6 z-30 font-mono text-[10px] tracking-widest text-[#FF2E88] bg-[#0B0710]/90 border border-[#FF2E88] px-3 py-1 uppercase rounded-sm shadow-xl">
-                  Featured Article
-                </div>
-              </div>
-
-              <div className="lg:col-span-5 flex flex-col justify-center p-8 lg:p-12 space-y-6 relative z-10 bg-[#150C1F]">
-                <div className="flex items-center space-x-3">
-                  <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
-                    SPOTLIGHT INTEL
-                  </span>
-                  {featuredArticle.category && (
-                    <>
-                      <span className="text-[#9C8FAE] font-mono text-xs">/</span>
-                      <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
-                        {(featuredArticle.category as any).name}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <h2 className="text-3xl sm:text-5xl font-anton uppercase text-[#F5F0FA] tracking-normal leading-[0.95] hover:text-[#FF2E88] transition-colors">
-                  <Link href={`/news/${featuredArticle.slug}`}>
-                    {featuredArticle.title}
-                  </Link>
-                </h2>
-
-                <p className="text-[#9C8FAE] text-sm sm:text-base leading-relaxed line-clamp-4">
-                  {featuredArticle.excerpt}
-                </p>
-
-                <div className="flex items-center justify-between pt-6 border-t border-[rgba(245,240,250,0.1)]">
-                  <span className="text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase">
-                    PUBLISHED: {formatDate(featuredArticle.published_at)}
-                  </span>
-                  <Link
-                    href={`/news/${featuredArticle.slug}`}
-                    className="inline-flex items-center gap-2 text-xs font-bold text-[#FF2E88] hover:underline uppercase tracking-wider font-mono"
-                  >
-                    READ ARTICLE <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-      */}
 
       {/* Main Editorial Content Area */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-16 space-y-24 z-10 relative">
@@ -761,72 +671,118 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* Asymmetrical Staggered Segment: Community Poll, Recent updates & Social hubs */}
+        {/* Asymmetrical Staggered Segment: Intel Confidence Snapshot & Quick Updates */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pt-6">
 
-          {/* Asymmetrical Column 1: Community Voice */}
+          {/* Asymmetrical Column 1: Intel Confidence Snapshot */}
           <div className="lg:col-span-7 space-y-8">
             <ScrollReveal>
-              <div className="space-y-1 mb-6">
-                <span className="text-xs font-bold font-mono text-[#FF2E88] uppercase tracking-widest">
-                  Have Your Say
-                </span>
-                <h3 className="text-3xl font-anton uppercase text-[#F5F0FA] tracking-normal">
-                  Player Opinion
-                </h3>
-              </div>
-              {activePoll && (
-                <div className="transform hover:scale-[1.01] transition-transform duration-300 motion-reduce:transform-none">
-                  <CommunityPollWidget
-                    initialPoll={{
-                      id: activePoll.id,
-                      question: activePoll.question,
-                      options_json: activePoll.options_json as string[],
-                      votes_json: activePoll.votes_json as Record<string, number>,
-                    }}
-                  />
+              <Card variant="standard" padding="lg" showCornerBrackets className="space-y-6">
+                {/* Header Copy */}
+                <div className="space-y-1.5 border-b border-[rgba(245,245,247,0.14)] pb-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span className="text-xs font-bold font-mono text-[#FF8A3D] uppercase tracking-widest flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#FF8A3D] animate-pulse inline-block" />
+                      INTEL CONFIDENCE
+                    </span>
+                    <span className="text-[10px] font-mono text-[#9E9EA8] uppercase tracking-wider">
+                      LIVE TELEMETRY
+                    </span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-anton uppercase text-[#F5F5F7] tracking-wide leading-tight">
+                    INTEL CONFIDENCE
+                  </h3>
+                  <p className="text-xs font-mono text-[#9E9EA8] leading-relaxed">
+                    Live breakdown of confirmed vs. speculative coverage
+                  </p>
                 </div>
-              )}
-            </ScrollReveal>
 
-            {/* Live Comments Stream */}
-            <ScrollReveal>
-              <Card variant="standard" padding="lg" className="space-y-6">
-                <div className="border-b border-[rgba(245,240,250,0.1)] pb-4">
-                  <h4 className="font-bold text-xs font-mono uppercase tracking-widest text-[#9C8FAE]">
-                    Latest Intel / Comment Stream
-                  </h4>
-                </div>
-                {sidebarComments && sidebarComments.length > 0 ? (
-                  <ul className="space-y-6 divide-y divide-[rgba(245,240,250,0.1)]">
-                    {sidebarComments.map((com) => (
-                      <li key={com.id} className="space-y-2 pt-4 first:pt-0">
-                        <div className="flex justify-between items-center text-xs">
-                          <span className="font-bold font-mono text-[#00E5FF]">{com.name}</span>
-                          <span className="text-[10px] font-mono text-[#9C8FAE]/60 font-bold">{formatDate(com.created_at)}</span>
-                        </div>
-                        <p className="text-[#F5F0FA]/85 text-sm italic leading-relaxed">
-                          &ldquo;{com.content}&rdquo;
-                        </p>
-                        {com.articles && (
-                          <div className="text-[10px] font-mono text-[#9C8FAE]/60">
-                            on{" "}
-                            <Link href={`/news/${(com.articles as any).slug}`} className="hover:underline text-[#FF2E88] font-bold uppercase tracking-wider">
-                              {(com.articles as any).title}
-                            </Link>
-                          </div>
+                {/* Horizontal Segmented Bar */}
+                <div className="space-y-4">
+                  <div className="h-4 w-full bg-[#0B0B0F] border border-[rgba(245,245,247,0.14)] rounded-full overflow-hidden flex p-0.5 shadow-inner">
+                    {totalRumorStatusCount > 0 ? (
+                      <>
+                        {confirmedCount > 0 && (
+                          <div
+                            style={{ width: `${(confirmedCount / totalRumorStatusCount) * 100}%` }}
+                            className="h-full bg-emerald-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                            title={`Confirmed: ${confirmedCount}`}
+                          />
                         )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs font-mono text-[#9C8FAE]">No live comments stream.</p>
-                )}
+                        {rumorCount > 0 && (
+                          <div
+                            style={{ width: `${(rumorCount / totalRumorStatusCount) * 100}%` }}
+                            className="h-full bg-amber-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                            title={`Unverified Rumors: ${rumorCount}`}
+                          />
+                        )}
+                        {debunkedCount > 0 && (
+                          <div
+                            style={{ width: `${(debunkedCount / totalRumorStatusCount) * 100}%` }}
+                            className="h-full bg-rose-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                            title={`Debunked: ${debunkedCount}`}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <div className="h-full w-full bg-[#9E9EA8]/20 rounded-full" />
+                    )}
+                  </div>
+
+                  {/* Raw Counts Labels */}
+                  <div className="grid grid-cols-3 gap-3 font-mono text-center">
+                    <div className="p-3 rounded bg-[#0B0B0F] border border-emerald-500/25 space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        Confirmed
+                      </div>
+                      <div className="text-2xl font-black text-white">{confirmedCount}</div>
+                      <div className="text-[10px] text-[#9E9EA8]">
+                        {totalRumorStatusCount > 0 ? `${Math.round((confirmedCount / totalRumorStatusCount) * 100)}%` : '0%'}
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded bg-[#0B0B0F] border border-amber-500/25 space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+                        <HelpCircle className="w-3.5 h-3.5" />
+                        Rumor
+                      </div>
+                      <div className="text-2xl font-black text-white">{rumorCount}</div>
+                      <div className="text-[10px] text-[#9E9EA8]">
+                        {totalRumorStatusCount > 0 ? `${Math.round((rumorCount / totalRumorStatusCount) * 100)}%` : '0%'}
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded bg-[#0B0B0F] border border-rose-500/25 space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-rose-400 font-bold uppercase tracking-wider">
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        Debunked
+                      </div>
+                      <div className="text-2xl font-black text-white">{debunkedCount}</div>
+                      <div className="text-[10px] text-[#9E9EA8]">
+                        {totalRumorStatusCount > 0 ? `${Math.round((debunkedCount / totalRumorStatusCount) * 100)}%` : '0%'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Link to /intelligence */}
+                <div className="pt-2 border-t border-[rgba(245,245,247,0.14)] flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-[10px] font-mono text-[#9E9EA8] uppercase tracking-wider">
+                    TOTAL LOGGED REPORTS: <strong className="text-white font-bold">{totalRumorStatusCount}</strong>
+                  </span>
+                  <Link
+                    href="/intelligence"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#FF8A3D] hover:text-[#FF2D8D] uppercase tracking-wider transition-colors"
+                  >
+                    View Intelligence Dashboard <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </Card>
             </ScrollReveal>
           </div>
 
-          {/* Asymmetrical Column 2: Recent Updates List & High-Impact Social Cards */}
+          {/* Asymmetrical Column 2: Recent Updates List */}
           <div className="lg:col-span-5 space-y-8">
             <ScrollReveal>
               <Card variant="standard" padding="lg" className="space-y-6">
