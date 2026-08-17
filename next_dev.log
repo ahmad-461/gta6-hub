@@ -1,26 +1,7 @@
 
-> gta6-hub@0.1.0 dev
+> gta6-hub@0.1.0 dev /app
 > next dev
 
-  ▲ Next.js 14.2.16
-  - Local:        http://localhost:3000
-
- ✓ Starting...
- ✓ Ready in 1770ms
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1025ms (127 modules)
- ○ Compiling / ...
- ✓ Compiled / in 6.8s (850 modules)
- HEAD / 200 in 7362ms
-<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
-<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 107ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1849ms (835 modules)
- GET /og-image.jpg 404 in 2115ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 279ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- ○ Compiling /map ...
- ✓ Compiled /map in 547ms (841 modules)
- GET /map 200 in 824ms
+sh: 1: next: not found
+ ELIFECYCLE  Command failed.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?
