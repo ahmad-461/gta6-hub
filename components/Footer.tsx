@@ -47,6 +47,7 @@ export default function Footer() {
 
   const legalLinks = [
     { name: "About Us", href: "/about" },
+    { name: "FAQ", href: "/faq" },
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Contact", href: "/contact" },
   ]

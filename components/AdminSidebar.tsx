@@ -24,7 +24,8 @@ import {
   MapPin,
   Video,
   Clock,
-  Folder
+  Folder,
+  HelpCircle
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -79,6 +80,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     { name: "Trailers", href: "/admin/trailers", icon: Video, roles: ["admin", "editor"] },
     { name: "Lore Topics", href: "/admin/lore-topics", icon: Compass, roles: ["admin", "editor"] },
     { name: "Cheat Codes", href: "/admin/cheats", icon: Key, roles: ["admin", "editor"] },
+    { name: "FAQ", href: "/admin/faq", icon: HelpCircle, roles: ["admin", "editor"] },
     { name: "Media Library", href: "/admin/media", icon: ImageIcon, roles: ["admin", "editor"] },
     { name: "Comments", href: "/admin/comments", icon: MessageSquare, roles: ["admin", "editor"] },
     { name: "Site Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },

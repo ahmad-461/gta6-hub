@@ -164,6 +164,7 @@ export default function Header() {
     { name: "Cheats", href: "/cheats", icon: ShieldAlert },
     { name: "Tools", href: "/tools", icon: Wrench },
     { name: "About", href: "/about", icon: HelpCircle },
+    { name: "FAQ", href: "/faq", icon: HelpCircle },
     { name: "Contact", href: "/contact", icon: MessageSquare },
     { name: "Privacy", href: "/privacy", icon: FileText },
   ]
