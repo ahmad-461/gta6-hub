@@ -3,7 +3,7 @@ import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ChevronRight } from "lucide-react"
 import PageBanner from "@/components/PageBanner"
-import CategoryBadge, { CATEGORY_CONFIGS } from "@/components/ui/CategoryBadge"
+import CategoryBadge, { CATEGORY_CONFIGS, getCategoryConfig } from "@/components/ui/CategoryBadge"
 import GuideCard from "@/components/GuideCard"
 import Card from "@/components/ui/Card"
 
@@ -36,10 +36,12 @@ export default async function GuidesHubPage() {
 
   const allGuides = guides || []
 
-  // Count published guides per category
+  // Count published guides per category using normalized getCategoryConfig
   const counts = allGuides.reduce((acc, curr) => {
-    const cat = curr.guide_category
-    acc[cat] = (acc[cat] || 0) + 1
+    const cfg = getCategoryConfig(curr.guide_category)
+    if (cfg) {
+      acc[cfg.name] = (acc[cfg.name] || 0) + 1
+    }
     return acc
   }, {} as Record<string, number>)
 

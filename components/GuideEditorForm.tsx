@@ -26,6 +26,8 @@ import {
 import { generateAIDraftAction } from "@/app/actions/draft"
 import { checkDuplicateSimilarityAction } from "@/app/actions/duplicate"
 import { triggerEmbeddingsGeneration } from "@/app/actions/publish"
+import { revalidateGuidePathsAction } from "@/app/actions/revalidate-guide"
+import { getCategoryConfig } from "@/components/ui/CategoryBadge"
 
 // Zod Schema for Guide Form
 const guideSchema = z.object({
@@ -323,6 +325,15 @@ export default function GuideEditorForm({ guideId }: GuideEditorFormProps) {
         } catch (embErr) {
           console.error("Embeddings trigger error:", embErr)
         }
+      }
+
+      // On-demand cache revalidation for /guides, /guides/[category], and /guides/[category]/[slug]
+      try {
+        const catCfg = getCategoryConfig(guideCategory)
+        const catSlug = catCfg ? catCfg.slug : undefined
+        await revalidateGuidePathsAction(catSlug, slug)
+      } catch (revErr) {
+        console.error("Cache revalidation error:", revErr)
       }
 
       router.push("/admin/guides")
