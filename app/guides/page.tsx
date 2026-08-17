@@ -1,7 +1,8 @@
 import React from "react"
 import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Compass, BookOpen, Globe, Zap, EyeOff, Award, ChevronRight } from "lucide-react"
+import { Compass, BookOpen, Users, Key, Eye, Award, ChevronRight } from "lucide-react"
+import GuideCategoryBadge from "@/components/GuideCategoryBadge"
 
 export const revalidate = 3600
 
@@ -29,21 +30,21 @@ const CATEGORIES = [
     name: "Online",
     slug: "online",
     description: "Cooperative jobs guides, multiplayer business setups, rankings, and crew strategies.",
-    icon: Globe,
+    icon: Users,
     color: "border-purple-500/30 text-purple-400 hover:border-purple-500/60 hover:bg-purple-500/5",
   },
   {
     name: "Cheats",
     slug: "cheats",
     description: "Detailed input directories and spawn mechanics for PS5, Xbox Series X/S, and PC.",
-    icon: Zap,
+    icon: Key,
     color: "border-yellow-500/30 text-yellow-400 hover:border-yellow-500/60 hover:bg-yellow-500/5",
   },
   {
     name: "Secrets",
     slug: "secrets",
     description: "Collectible item locations, unique vehicle spawns, and Easter eggs hidden across Leonida.",
-    icon: EyeOff,
+    icon: Eye,
     color: "border-rose-500/30 text-rose-400 hover:border-rose-500/60 hover:bg-rose-500/5",
   },
 ]
@@ -99,10 +100,10 @@ export default async function GuidesPage() {
                   </span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg sm:text-xl font-extrabold text-white group-hover:text-inherit">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed">
+                  <div className="flex items-center gap-2">
+                    <GuideCategoryBadge category={cat.name} variant="filled" />
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed pt-1">
                     {cat.description}
                   </p>
                 </div>

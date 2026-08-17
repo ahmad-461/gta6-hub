@@ -6,6 +6,7 @@ import type { Metadata } from "next"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { Calendar, Clock, ChevronRight, ArrowLeft, Eye } from "lucide-react"
 import GuideToc from "@/components/GuideToc"
+import GuideCategoryBadge from "@/components/GuideCategoryBadge"
 import GuideContentRenderer from "@/components/GuideContentRenderer"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
@@ -229,13 +230,11 @@ export default async function GuidePage({ params }: GuidePageProps) {
         <main className="lg:col-span-8 space-y-6">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-neon-blue bg-neon-blue/10 border border-neon-blue/25 rounded-md px-2.5 py-1">
-                {guide.guide_category}
-              </span>
-              <span className={`text-[10px] font-black uppercase tracking-widest rounded-md px-2.5 py-1 ${
-                guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25" :
-                guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border border-amber-500/25" :
-                "bg-rose-500/10 text-rose-400 border border-rose-500/25"
+              <GuideCategoryBadge category={guide.guide_category} />
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider rounded px-2 py-0.5 border ${
+                guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
+                "bg-rose-500/10 text-rose-400 border-rose-500/20"
               }`}>
                 {guide.difficulty}
               </span>

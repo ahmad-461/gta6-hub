@@ -6,19 +6,22 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1814ms
+ ✓ Ready in 1874ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1172ms (127 modules)
+ ✓ Compiled /middleware in 1184ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.6s (899 modules)
- HEAD / 200 in 8187ms
+ ✓ Compiled / in 8.7s (905 modules)
+ HEAD / 200 in 9319ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ○ Compiling /characters ...
- ✓ Compiled /characters in 2s (891 modules)
- GET /characters 200 in 9524ms
- GET /characters 200 in 7079ms
- ○ Compiling /cheats ...
- ✓ Compiled /cheats in 719ms (885 modules)
- GET /cheats 200 in 8060ms
- GET /characters 200 in 7085ms
+ GET / 200 in 135ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.3s (890 modules)
+ GET /og-image.jpg 404 in 2596ms
+ ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
+ GET /?_rsc=r3yhw 200 in 154ms
+ ✓ Compiled /guides in 369ms (881 modules)
+ GET /guides 200 in 7583ms
+ ○ Compiling /guides/[category] ...
+ ✓ Compiled /guides/[category] in 502ms (894 modules)
+ GET /guides/getting-started 200 in 8816ms

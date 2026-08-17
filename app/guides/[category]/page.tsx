@@ -3,8 +3,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { Compass, BookOpen, Globe, Zap, EyeOff, Calendar, ArrowLeft, Award } from "lucide-react"
+import { Calendar, ArrowLeft, Award } from "lucide-react"
 import EmptyState from "@/components/ui/EmptyState"
+import GuideCategoryBadge, { getCategoryConfig } from "@/components/GuideCategoryBadge"
 
 export const revalidate = 3600
 
@@ -15,19 +16,21 @@ interface CategoryPageProps {
 }
 
 function getCategoryMeta(slug: string) {
-  switch (slug) {
-    case "getting-started":
-      return { name: "Getting Started", icon: Compass, color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" }
-    case "story":
-      return { name: "Story", icon: BookOpen, color: "text-blue-400 border-blue-500/20 bg-blue-500/5" }
-    case "online":
-      return { name: "Online", icon: Globe, color: "text-purple-400 border-purple-500/20 bg-purple-500/5" }
-    case "cheats":
-      return { name: "Cheats", icon: Zap, color: "text-yellow-400 border-yellow-500/20 bg-yellow-500/5" }
-    case "secrets":
-      return { name: "Secrets", icon: EyeOff, color: "text-rose-400 border-rose-500/20 bg-rose-500/5" }
-    default:
-      return null
+  const config = getCategoryConfig(slug)
+  if (config.color === "gray") return null
+
+  const colorStyles: Record<string, string> = {
+    green: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+    cyan: "text-cyan border-cyan/20 bg-cyan/5",
+    violet: "text-purple-400 border-purple-500/20 bg-purple-500/5",
+    yellow: "text-amber-400 border-amber-500/20 bg-amber-500/5",
+    magenta: "text-magenta border-magenta/20 bg-magenta/5",
+  }
+
+  return {
+    name: config.name,
+    icon: config.icon,
+    color: colorStyles[config.color] || "text-foreground/80 border-card-border bg-card-bg",
   }
 }
 
@@ -137,13 +140,16 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
                   />
                 </div>
                 <div className="p-5 space-y-3">
-                  <span className={`inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
-                    guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400" :
-                    guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400" :
-                    "bg-rose-500/10 text-rose-400"
-                  }`}>
-                    {guide.difficulty}
-                  </span>
+                  <div className="flex items-center justify-between text-[10px] font-bold font-mono uppercase tracking-wider">
+                    <GuideCategoryBadge category={meta.name} />
+                    <span className={`px-2 py-0.5 rounded ${
+                      guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                      guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
+                      "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                    }`}>
+                      {guide.difficulty}
+                    </span>
+                  </div>
                   <h2 className="text-lg sm:text-xl font-extrabold text-white group-hover:text-neon-blue transition-colors line-clamp-2 leading-snug">
                     <Link href={`/guides/${params.category}/${guide.slug}`}>{guide.title}</Link>
                   </h2>

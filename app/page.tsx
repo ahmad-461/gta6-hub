@@ -9,6 +9,7 @@ import ScrollReveal from "@/components/ScrollReveal"
 import SiteDepthIndex from "@/components/SiteDepthIndex"
 import Button from "@/components/ui/Button"
 import Card from "@/components/ui/Card"
+import GuideCategoryBadge from "@/components/GuideCategoryBadge"
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return ""
@@ -194,7 +195,7 @@ export default async function HomePage() {
         }
       }
 
-      // 4. Fetch latest news grid (6 published articles)
+      // 4. Fetch latest news grid (3 published articles)
       const { data: news, error: newsError } = await supabase
         .from("articles")
         .select(`
@@ -208,7 +209,7 @@ export default async function HomePage() {
         `)
         .eq("status", "published")
         .order("published_at", { ascending: false })
-        .limit(6)
+        .limit(3)
 
       if (newsError) {
         console.error("[HomePage Latest News Query Error]:", newsError)
@@ -219,7 +220,7 @@ export default async function HomePage() {
         category: resolveCategory(n.category),
       }))
 
-      // 5. Fetch latest guides (3 published guides)
+      // 5. Fetch latest single guide (1 published guide)
       const { data: guides, error: guidesError } = await supabase
         .from("guides")
         .select(`
@@ -234,7 +235,7 @@ export default async function HomePage() {
         `)
         .eq("status", "published")
         .order("published_at", { ascending: false })
-        .limit(3)
+        .limit(1)
 
       if (guidesError) {
         console.error("[HomePage Latest Guides Error]:", guidesError)
@@ -347,15 +348,6 @@ export default async function HomePage() {
         slug: "rookie-to-kingpin-tips",
         guide_category: "Getting Started",
         difficulty: "Beginner",
-        featured_image: "/og-image.jpg",
-        published_at: new Date().toISOString(),
-      },
-      {
-        id: "g2",
-        title: "Leonida Hidden Packages: All 100 location coordinates",
-        slug: "hidden-packages-locations",
-        guide_category: "Secrets",
-        difficulty: "Advanced",
         featured_image: "/og-image.jpg",
         published_at: new Date().toISOString(),
       },
@@ -722,7 +714,7 @@ export default async function HomePage() {
                       </div>
                       <div className="p-6 space-y-3">
                         <div className="flex items-center justify-between text-[10px] font-bold font-mono uppercase tracking-wider">
-                          <span className="text-[#FF2E88]">{guide.guide_category}</span>
+                          <GuideCategoryBadge category={guide.guide_category} />
                           <span className={`px-2 py-0.5 rounded ${
                             guide.difficulty === "Beginner" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                             guide.difficulty === "Intermediate" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
