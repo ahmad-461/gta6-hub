@@ -25,6 +25,7 @@ import {
 import { generateAIDraftAction } from "@/app/actions/draft"
 import { checkDuplicateSimilarityAction } from "@/app/actions/duplicate"
 import { triggerEmbeddingsGeneration } from "@/app/actions/publish"
+import { revalidateArticlePathsAction } from "@/app/actions/revalidate-article"
 
 // Zod Schema for Article Form
 const articleSchema = z.object({
@@ -62,6 +63,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
   // Form Fields State
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
+  const [initialSlug, setInitialSlug] = useState("")
   const [content, setContent] = useState("")
   const [excerpt, setExcerpt] = useState("")
   const [category, setCategory] = useState("")
@@ -132,6 +134,7 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
 
       setTitle(article.title)
       setSlug(article.slug)
+      setInitialSlug(article.slug)
       setContent(article.content)
       setExcerpt(article.excerpt || "")
       setCategory(article.category || "")
@@ -349,6 +352,16 @@ export default function ArticleEditorForm({ articleId }: ArticleEditorFormProps)
           entityId: savedArticleId,
           entityTitle: title
         })
+      }
+
+      // Trigger on-demand cache revalidation
+      try {
+        await revalidateArticlePathsAction({
+          slug: slug,
+          previousSlug: initialSlug || null,
+        })
+      } catch (revalErr) {
+        console.error("Revalidation error:", revalErr)
       }
 
       toast.success(isEditing ? "Article updated successfully!" : "Article published/created successfully!")
