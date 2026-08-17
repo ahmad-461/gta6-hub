@@ -17,7 +17,7 @@ import FaqAccordion, { FaqItem } from "@/components/FaqAccordion"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
 
-export const revalidate = 3600
+export const revalidate = 60
 
 interface GuidePageProps {
   params: {
@@ -28,11 +28,15 @@ interface GuidePageProps {
 
 export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
   const supabase = createSupabaseServerClient()
-  const { data: guide } = await supabase
+  const { data: guide, error } = await supabase
     .from("guides")
     .select("title, guide_category, seo_title, seo_description, featured_image")
     .eq("slug", params.slug)
     .maybeSingle()
+
+  if (error) {
+    console.error("[Guide Detail Metadata] Supabase query error:", error)
+  }
 
   if (!guide) {
     return {
@@ -88,15 +92,20 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const supabase = createSupabaseServerClient()
 
   // Fetch site setting for AdSense Publisher ID
-  const { data: adsenseSetting } = await supabase
+  const { data: adsenseSetting, error: adsenseError } = await supabase
     .from("site_settings")
     .select("value")
     .eq("key", "adsense_publisher_id")
     .maybeSingle()
+
+  if (adsenseError) {
+    console.error("[Guide Detail] AdSense settings fetch error:", adsenseError)
+  }
+
   const publisherId = adsenseSetting?.value || null
 
   // Fetch guide detail
-  const { data: guide } = await supabase
+  const { data: guide, error: guideError } = await supabase
     .from("guides")
     .select(`
       id,
@@ -120,6 +129,10 @@ export default async function GuidePage({ params }: GuidePageProps) {
     .eq("status", "published")
     .maybeSingle()
 
+  if (guideError) {
+    console.error("[Guide Detail] Supabase fetch error:", guideError)
+  }
+
   if (!guide) {
     notFound()
   }
@@ -127,18 +140,23 @@ export default async function GuidePage({ params }: GuidePageProps) {
   // Fetch author
   let authorName = "GTA6 Hub Staff"
   if (guide.author_id) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("name")
       .eq("id", guide.author_id)
       .maybeSingle()
+
+    if (profileError) {
+      console.error("[Guide Detail] Profile fetch error:", profileError)
+    }
+
     if (profile?.name) {
       authorName = profile.name
     }
   }
 
   // Related Guides Query (Same category first, fill up to 3 with latest published overall)
-  const { data: sameCatGuides } = await supabase
+  const { data: sameCatGuides, error: sameCatError } = await supabase
     .from("guides")
     .select("id, title, slug, guide_category, difficulty, excerpt, featured_image, published_at, updated_at")
     .eq("guide_category", catConfig.name)
@@ -147,17 +165,25 @@ export default async function GuidePage({ params }: GuidePageProps) {
     .order("published_at", { ascending: false })
     .limit(3)
 
+  if (sameCatError) {
+    console.error("[Guide Detail] Same category guides fetch error:", sameCatError)
+  }
+
   let relatedGuides: GuideCardItem[] = sameCatGuides || []
 
   if (relatedGuides.length < 3) {
     const existingIds = [guide.id, ...relatedGuides.map((g) => g.id)]
-    const { data: fallbackGuides } = await supabase
+    const { data: fallbackGuides, error: fallbackError } = await supabase
       .from("guides")
       .select("id, title, slug, guide_category, difficulty, excerpt, featured_image, published_at, updated_at")
       .eq("status", "published")
       .not("id", "in", `(${existingIds.join(",")})`)
       .order("published_at", { ascending: false })
       .limit(3 - relatedGuides.length)
+
+    if (fallbackError) {
+      console.error("[Guide Detail] Fallback related guides fetch error:", fallbackError)
+    }
 
     if (fallbackGuides) {
       relatedGuides = [...relatedGuides, ...fallbackGuides]
@@ -222,7 +248,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
   return (
     <div className="w-full flex-grow flex flex-col space-y-6 pb-12">
-      {/* Mini-Hero Page Banner (Phase 15) */}
+      {/* Mini-Hero Page Banner */}
       <PageBanner pathname={`/guides/${catConfig.slug}/${params.slug}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
