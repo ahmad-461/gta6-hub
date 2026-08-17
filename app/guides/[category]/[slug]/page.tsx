@@ -95,7 +95,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
     .maybeSingle()
   const publisherId = adsenseSetting?.value || null
 
-  // Fetch guide detail
+  // Fetch guide detail by slug and status, validating guide_category flexibly
   const { data: guide } = await supabase
     .from("guides")
     .select(`
@@ -116,11 +116,15 @@ export default async function GuidePage({ params }: GuidePageProps) {
       faq
     `)
     .eq("slug", params.slug)
-    .eq("guide_category", catConfig.name)
     .eq("status", "published")
     .maybeSingle()
 
   if (!guide) {
+    notFound()
+  }
+
+  const guideCatConfig = getCategoryConfig(guide.guide_category)
+  if (!guideCatConfig || guideCatConfig.slug !== catConfig.slug) {
     notFound()
   }
 
@@ -138,16 +142,19 @@ export default async function GuidePage({ params }: GuidePageProps) {
   }
 
   // Related Guides Query (Same category first, fill up to 3 with latest published overall)
-  const { data: sameCatGuides } = await supabase
+  const { data: allPubGuides } = await supabase
     .from("guides")
     .select("id, title, slug, guide_category, difficulty, excerpt, featured_image, published_at, updated_at")
-    .eq("guide_category", catConfig.name)
     .eq("status", "published")
     .neq("id", guide.id)
     .order("published_at", { ascending: false })
-    .limit(3)
 
-  let relatedGuides: GuideCardItem[] = sameCatGuides || []
+  const sameCatGuides = (allPubGuides || []).filter((g) => {
+    const cfg = getCategoryConfig(g.guide_category)
+    return cfg && cfg.slug === catConfig.slug
+  }).slice(0, 3)
+
+  let relatedGuides: GuideCardItem[] = sameCatGuides
 
   if (relatedGuides.length < 3) {
     const existingIds = [guide.id, ...relatedGuides.map((g) => g.id)]

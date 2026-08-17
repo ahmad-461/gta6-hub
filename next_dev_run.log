@@ -6,25 +6,17 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1846ms
+ ✓ Ready in 1806ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1285ms (127 modules)
+ ✓ Compiled /middleware in 1054ms (127 modules)
  ○ Compiling / ...
- ✓ Compiled / in 8s (899 modules)
- HEAD / 200 in 8581ms
+ ✓ Compiled / in 7.4s (891 modules)
+ HEAD / 200 in 7923ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- GET / 200 in 151ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 2s (884 modules)
- GET /og-image.jpg 404 in 2296ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 1351ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET / 200 in 143ms
- GET /og-image.jpg 404 in 55ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- GET /og-image.jpg 404 in 63ms
- ⨯ The requested resource isn't a valid image for /og-image.jpg received text/html; charset=utf-8
- ✓ Compiled /news in 425ms (880 modules)
- GET /news 200 in 21707ms
+ ○ Compiling /guides ...
+ ✓ Compiled /guides in 1715ms (887 modules)
+ GET /guides 200 in 9157ms
+ ✓ Compiled /guides/[category] in 467ms (883 modules)
+ GET /guides/getting-started 200 in 8873ms
+ GET /guides/story 200 in 7072ms

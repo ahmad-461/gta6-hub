@@ -38,8 +38,8 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
 
   const supabase = createSupabaseServerClient()
 
-  // Fetch guides in this category where status = 'published'
-  const { data: guides } = await supabase
+  // Fetch all published guides and filter flexibly by category (matching name or slug via getCategoryConfig)
+  const { data: allPublishedGuides } = await supabase
     .from("guides")
     .select(`
       id,
@@ -52,9 +52,13 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
       published_at,
       updated_at
     `)
-    .eq("guide_category", catConfig.name)
     .eq("status", "published")
     .order("published_at", { ascending: false })
+
+  const guides = (allPublishedGuides || []).filter((g) => {
+    const config = getCategoryConfig(g.guide_category)
+    return config && config.slug === catConfig.slug
+  })
 
   const IconComp = catConfig.icon
 
