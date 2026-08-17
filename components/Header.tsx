@@ -33,7 +33,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState<any>({
     articles: [],
-    guides: [],
     characters: [],
     locations: [],
   })
@@ -95,29 +94,23 @@ export default function Header() {
   useEffect(() => {
     if (!isSearchOpen) {
       setSearchQuery("")
-      setSearchResults({ articles: [], guides: [], characters: [], locations: [] })
+      setSearchResults({ articles: [], characters: [], locations: [] })
       return
     }
 
     const trimmed = searchQuery.trim()
     if (trimmed.length < 2) {
-      setSearchResults({ articles: [], guides: [], characters: [], locations: [] })
+      setSearchResults({ articles: [], characters: [], locations: [] })
       return
     }
 
     setIsSearchLoading(true)
     const delayDebounce = setTimeout(async () => {
       try {
-        const [articlesRes, guidesRes, charactersRes, locationsRes] = await Promise.all([
+        const [articlesRes, charactersRes, locationsRes] = await Promise.all([
           supabase
             .from("articles")
             .select("id, title, slug, excerpt")
-            .eq("status", "published")
-            .textSearch("search_vector", trimmed, { type: "websearch", config: "english" })
-            .limit(5),
-          supabase
-            .from("guides")
-            .select("id, title, slug, guide_category")
             .eq("status", "published")
             .textSearch("search_vector", trimmed, { type: "websearch", config: "english" })
             .limit(5),
@@ -136,7 +129,6 @@ export default function Header() {
 
         setSearchResults({
           articles: articlesRes.data || [],
-          guides: guidesRes.data || [],
           characters: charactersRes.data || [],
           locations: locationsRes.data || [],
         })
@@ -156,7 +148,6 @@ export default function Header() {
     { name: "Intelligence", href: "/intelligence", icon: Cpu },
     { name: "Map", href: "/map", icon: Compass },
     { name: "Investigate", href: "/investigate", icon: Sparkles },
-    { name: "Guides", href: "/guides", icon: Award },
     { name: "Community", href: "/community", icon: MessageSquare },
   ]
 
@@ -165,7 +156,6 @@ export default function Header() {
     { name: "Intelligence", href: "/intelligence", icon: Cpu },
     { name: "Map", href: "/map", icon: Compass },
     { name: "Investigate", href: "/investigate", icon: Sparkles },
-    { name: "Guides", href: "/guides", icon: Award },
   ]
 
   const secondaryNavItems = [
@@ -186,7 +176,6 @@ export default function Header() {
 
   const hasAnySearchResults =
     searchResults.articles.length > 0 ||
-    searchResults.guides.length > 0 ||
     searchResults.characters.length > 0 ||
     searchResults.locations.length > 0
 
@@ -338,7 +327,7 @@ export default function Header() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles, guides, character bios, or map locations..."
+                placeholder="Search articles, character bios, or map locations..."
                 className="w-full bg-[#150C1F] border border-[rgba(245,240,250,0.14)] focus:border-[#FF2E88] focus:ring-1 focus:ring-[#FF2E88] rounded-xl pl-12 pr-12 py-4 text-base text-white placeholder-foreground/30 font-mono outline-none shadow-2xl"
               />
               {isSearchLoading && (
@@ -381,37 +370,6 @@ export default function Header() {
                       </div>
                     )}
 
-                    {/* Guides Category */}
-                    {searchResults.guides.length > 0 && (
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-[#9C8FAE] border-b border-[rgba(245,240,250,0.1)] pb-2">
-                          <Award className="w-4 h-4 text-[#00E5FF]" />
-                          <h3 className="font-bold uppercase text-[10px] tracking-widest font-mono">
-                            Guides ({searchResults.guides.length})
-                          </h3>
-                        </div>
-                        <div className="space-y-2">
-                          {searchResults.guides.map((g: any) => {
-                            const catSlug = g.guide_category ? g.guide_category.toLowerCase().replace(/\s+/g, "-") : "getting-started"
-                            return (
-                              <Link
-                                key={g.id}
-                                href={`/guides/${catSlug}/${g.slug}`}
-                                onClick={() => setIsSearchOpen(false)}
-                                className="block p-3 rounded bg-[#150C1F]/60 border border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/40 transition group"
-                              >
-                                <h4 className="font-bold text-sm text-white group-hover:text-[#00E5FF] truncate">
-                                  {g.title}
-                                </h4>
-                                <span className="text-[9px] font-black tracking-widest uppercase text-[#FF2E88] font-mono block mt-1">
-                                  {g.guide_category || "GETTING STARTED"}
-                                </span>
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
 
                     {/* Characters Category */}
                     {searchResults.characters.length > 0 && (

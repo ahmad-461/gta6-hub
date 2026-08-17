@@ -360,7 +360,7 @@ export default function LoreMapPage() {
         <div className="bg-[#121016] border border-card-border px-4 py-3 rounded-lg text-xs flex items-center space-x-3 text-foreground/60 max-w-sm">
           <Info size={18} className="text-neon-pink shrink-0" />
           <span>
-            <strong>Drag</strong> nodes to rearrange, <strong>Hover</strong> to preview links, and <strong>Click</strong> to unlock associated content guides!
+            <strong>Drag</strong> nodes to rearrange, <strong>Hover</strong> to preview links, and <strong>Click</strong> to unlock associated content articles!
           </span>
         </div>
       </div>
@@ -452,7 +452,7 @@ export default function LoreMapPage() {
                                 {articles.map(item => (
                                   <a
                                     key={item.id}
-                                    href={item.type === "article" ? `/news/${item.slug}` : `/guides/${item.slug}`}
+                                    href={`/news/${item.slug}`}
                                     className="flex items-center text-xs text-neon-pink hover:underline group py-0.5"
                                   >
                                     <FileText size={12} className="mr-1.5 shrink-0 opacity-60" />
@@ -483,7 +483,7 @@ export default function LoreMapPage() {
                 <div className="space-y-1.5 max-w-xs">
                   <h4 className="text-sm font-black text-white uppercase tracking-wider">Inspect connections</h4>
                   <p className="text-xs text-foreground/40 leading-relaxed">
-                    Click any node in the force graph map to focus on its connections and unlock matching strategy guides or news breakdowns.
+                    Click any node in the force graph map to focus on its connections and unlock matching news breakdowns.
                   </p>
                 </div>
               </div>
@@ -492,7 +492,7 @@ export default function LoreMapPage() {
             {/* Quick tips footer */}
             <div className="pt-4 border-t border-card-border/45 text-[10px] text-foreground/40 leading-normal flex items-center space-x-2">
               <Compass size={14} className="shrink-0 text-neon-pink opacity-50" />
-              <span>Data automatically updates on publish cycles. Select any connection to jump right to the guides!</span>
+              <span>Data automatically updates on publish cycles. Select any connection to jump right to the articles!</span>
             </div>
           </div>
         </div>

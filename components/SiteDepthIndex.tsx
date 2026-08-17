@@ -1,23 +1,23 @@
 import React from "react"
 import Link from "next/link"
-import { ArrowRight, Newspaper, BookOpen, Cpu, Compass } from "lucide-react"
+import { ArrowRight, Newspaper, Key, Cpu, Compass } from "lucide-react"
 import Card from "@/components/ui/Card"
 import Badge from "@/components/ui/Badge"
 
 interface SiteDepthIndexProps {
   newsCount: number | null
-  guidesCount: number | null
+  cheatsCount?: number | null
   toolsCount?: number
   loreCount: number | null
 }
 
 export default function SiteDepthIndex({
   newsCount,
-  guidesCount,
+  cheatsCount,
   toolsCount = 5,
   loreCount,
 }: SiteDepthIndexProps) {
-  const formatCount = (count: number | null) => {
+  const formatCount = (count: number | null | undefined) => {
     if (count === null || count === undefined) return "—"
     return count.toString()
   }
@@ -34,13 +34,13 @@ export default function SiteDepthIndex({
       accent: "magenta" as const,
     },
     {
-      title: "Strategy Guides",
-      label: "Expert Walkthroughs",
-      icon: <BookOpen className="w-5 h-5 text-[#00E5FF]" />,
-      count: formatCount(guidesCount),
-      suffix: "Guides Available",
-      description: "Tactical breakdown of missions, mechanics, and open world secrets in Leonida.",
-      link: "/guides",
+      title: "Cheat Codes",
+      label: "System Exploits",
+      icon: <Key className="w-5 h-5 text-[#00E5FF]" />,
+      count: formatCount(cheatsCount),
+      suffix: "Codes Cataloged",
+      description: "Database of confirmed button combinations, cell phone numbers, and gameplay modifiers.",
+      link: "/cheats",
       accent: "cyan" as const,
     },
     {

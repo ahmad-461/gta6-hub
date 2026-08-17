@@ -39,7 +39,6 @@ export default function Footer() {
 
   const navLinks = [
     { name: "News", href: "/news" },
-    { name: "Guides", href: "/guides" },
     { name: "Characters", href: "/characters" },
     { name: "Map", href: "/map" },
     { name: "Cheats", href: "/cheats" },

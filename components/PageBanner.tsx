@@ -26,8 +26,6 @@ export default function PageBanner({ pathname: propPathname }: PageBannerProps) 
   let label = "INTEL"
   if (pathname.startsWith("/news") || pathname.startsWith("/category") || pathname.startsWith("/tag")) {
     label = "NEWS"
-  } else if (pathname.startsWith("/guides")) {
-    label = "GUIDES"
   } else if (pathname.startsWith("/characters")) {
     label = "CHARACTERS"
   } else if (pathname.startsWith("/cheats")) {

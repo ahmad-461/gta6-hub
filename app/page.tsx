@@ -42,10 +42,9 @@ export default async function HomePage() {
   let latestTeaser: any = null
   let featuredArticle: any = null
   let latestNews: any[] = []
-  let latestGuides: any[] = []
   let sidebarArticles: any[] = []
   let newsCount: number | null = null
-  let guidesCount: number | null = null
+  let cheatsCount: number | null = null
   let loreCount: number | null = null
 
   let confirmedCount = 0
@@ -85,15 +84,14 @@ export default async function HomePage() {
       }
 
       try {
-        const { count: gdCount, error: gdCountErr } = await supabase
-          .from("guides")
+        const { count: chCount, error: chCountErr } = await supabase
+          .from("cheat_codes")
           .select("id", { count: "exact", head: true })
-          .eq("status", "published")
 
-        if (gdCountErr) console.error("[HomePage Guide Count Error]:", gdCountErr)
-        guidesCount = gdCount
+        if (chCountErr) console.error("[HomePage Cheats Count Error]:", chCountErr)
+        cheatsCount = chCount
       } catch (e) {
-        console.error("Error counting guides:", e)
+        console.error("Error counting cheats:", e)
       }
 
       try {
@@ -249,30 +247,7 @@ export default async function HomePage() {
         category: resolveCategory(n.category),
       }))
 
-      // 5. Fetch latest guides (1 published guide)
-      const { data: guides, error: guidesError } = await supabase
-        .from("guides")
-        .select(`
-          id,
-          title,
-          slug,
-          guide_category,
-          difficulty,
-          featured_image,
-          published_at,
-          updated_at
-        `)
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .limit(1)
-
-      if (guidesError) {
-        console.error("[HomePage Latest Guides Error]:", guidesError)
-      }
-
-      latestGuides = guides || []
-
-      // 6. Fetch 5 most recent content items (articles/guides) for sidebar
+      // 5. Fetch 5 most recent articles for sidebar
       const { data: sidebarArts, error: sidebarArtsError } = await supabase
         .from("articles")
         .select("id, title, slug, published_at")
@@ -338,17 +313,7 @@ export default async function HomePage() {
       },
     ]
 
-    latestGuides = [
-      {
-        id: "g1",
-        title: "Rookie to Kingpin: 10 essential tips for getting started",
-        slug: "rookie-to-kingpin-tips",
-        guide_category: "Getting Started",
-        difficulty: "Beginner",
-        featured_image: "/og-image.jpg",
-        published_at: new Date().toISOString(),
-      },
-    ]
+    cheatsCount = 15
 
     sidebarArticles = [
       { id: "s1", title: "GTA VI confirmed for Fall 2025 release window", slug: "fall-2025-release-window", published_at: new Date().toISOString() },
@@ -580,96 +545,6 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* Dynamic Walkthroughs section */}
-        <section className="space-y-10">
-          <ScrollReveal>
-            <div className="flex items-end justify-between border-b border-[rgba(245,240,250,0.14)] pb-4">
-              <div className="space-y-1">
-                <span className="text-xs font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
-                  Pro Walkthroughs
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-anton uppercase tracking-normal text-[#F5F0FA]">
-                  Expert Guides
-                </h2>
-              </div>
-              <Link
-                href="/guides"
-                className="text-xs font-bold font-mono text-[#00E5FF] hover:underline uppercase tracking-wider flex items-center gap-1.5"
-              >
-                Browse All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </ScrollReveal>
-
-          {latestGuides && latestGuides.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestGuides.map((guide, index) => (
-                <ScrollReveal key={guide.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <Card
-                    padding="none"
-                    variant="standard"
-                    hoverGlow="cyan"
-                    interactive
-                    className="group flex flex-col justify-between h-full shadow-lg"
-                  >
-                    <div>
-                      <div className="relative w-full h-48 overflow-hidden bg-[#0B0710]">
-                        <Image
-                          src={getImageUrl(guide.featured_image)}
-                          alt={guide.title}
-                          fill
-                          className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out motion-reduce:group-hover:scale-100"
-                          sizes="(max-w-768px) 100vw, 30vw"
-                        />
-                      </div>
-                      <div className="p-6 space-y-3">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <CategoryBadge category={guide.guide_category} size="sm" variant="subtle" />
-                          {guide.difficulty && (
-                            <Badge
-                              color={
-                                guide.difficulty === "Beginner"
-                                  ? "green"
-                                  : guide.difficulty === "Intermediate"
-                                  ? "yellow"
-                                  : "magenta"
-                              }
-                              variant="filled"
-                              className="text-[9px]"
-                            >
-                              {guide.difficulty}
-                            </Badge>
-                          )}
-                        </div>
-                        <h4 className="text-lg font-bold text-[#F5F0FA] group-hover:text-[#00E5FF] transition-colors line-clamp-2 leading-snug">
-                          <Link href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}>
-                            {guide.title}
-                          </Link>
-                        </h4>
-                      </div>
-                    </div>
-                    <div className="p-6 pt-0 mt-2">
-                      <div className="text-[10px] text-[#9C8FAE]/60 font-mono tracking-widest uppercase mb-4 text-center">
-                        Last Verified: {formatDate(guide.updated_at || guide.published_at)}
-                      </div>
-                      <Link
-                        href={`/guides/${guide.guide_category.toLowerCase().replace(/\s+/g, "-")}/${guide.slug}`}
-                        className="block text-center w-full py-2.5 rounded bg-[#0B0710] border border-[rgba(245,240,250,0.14)] text-xs font-bold font-mono uppercase tracking-wider hover:bg-[#00E5FF]/5 hover:border-[#00E5FF] text-[#00E5FF] transition-all duration-200"
-                      >
-                        Read Walkthrough
-                      </Link>
-                    </div>
-                  </Card>
-                </ScrollReveal>
-              ))}
-            </div>
-          ) : (
-            <div className="p-12 text-center border border-dashed border-[rgba(245,240,250,0.14)] rounded text-[#9C8FAE] text-sm font-mono space-y-2 max-w-xl mx-auto">
-              <p className="font-bold text-white uppercase tracking-widest text-sm">TACTICAL ENCRYPTIONS DECONSTRUCTED</p>
-              <p className="text-xs text-[#9C8FAE]/80 leading-relaxed">Walkthrough directories are currently offline. Awaiting secure manual database seeding via seed.sql.</p>
-            </div>
-          )}
-        </section>
 
         {/* Asymmetrical Staggered Segment: Intel Confidence Snapshot & Quick Updates */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pt-6">
@@ -817,7 +692,7 @@ export default async function HomePage() {
         <ScrollReveal>
           <SiteDepthIndex
             newsCount={newsCount}
-            guidesCount={guidesCount}
+            cheatsCount={cheatsCount}
             loreCount={loreCount}
           />
         </ScrollReveal>

@@ -27,7 +27,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      text: "Hi! I'm the Hub RAG Assistant. Ask me anything about GTA 6 characters, guides, cheats, or map locations, and I will search our verified pages for you!"
+      text: "Hi! I'm the Hub RAG Assistant. Ask me anything about GTA 6 characters, cheats, or map locations, and I will search our verified pages for you!"
     }
   ])
   const [inputValue, setInputValue] = useState("")

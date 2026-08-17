@@ -26,10 +26,10 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "GTA 6 Hub - Ultimate Guides, Cheats & Community News",
+    default: "GTA 6 Hub - Ultimate Intelligence, Cheats & Community News",
     template: "%s | GTA 6 Hub",
   },
-  description: "The ultimate resource for Grand Theft Auto VI. Find dynamic cheat codes, comprehensive character guides, news, and custom modding tools.",
+  description: "The ultimate resource for Grand Theft Auto VI. Find dynamic cheat codes, comprehensive character bios, news, and custom modding tools.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"),
   openGraph: {
     title: "GTA 6 Hub",

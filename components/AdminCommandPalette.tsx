@@ -19,12 +19,10 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<{
     articles: any[]
-    guides: any[]
     characters: any[]
     cheats: any[]
   }>({
     articles: [],
-    guides: [],
     characters: [],
     cheats: []
   })
@@ -33,7 +31,7 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50)
       setQuery("")
-      setResults({ articles: [], guides: [], characters: [], cheats: [] })
+      setResults({ articles: [], characters: [], cheats: [] })
     }
   }, [isOpen])
 
@@ -52,7 +50,7 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
   useEffect(() => {
     const term = query.trim().toLowerCase()
     if (term.length < 2) {
-      setResults({ articles: [], guides: [], characters: [], cheats: [] })
+      setResults({ articles: [], characters: [], cheats: [] })
       setLoading(false)
       return
     }
@@ -60,14 +58,9 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
     const delayDebounce = setTimeout(async () => {
       setLoading(true)
       try {
-        const [artRes, guideRes, charRes, cheatRes] = await Promise.all([
+        const [artRes, charRes, cheatRes] = await Promise.all([
           supabase
             .from("articles")
-            .select("id, title")
-            .ilike("title", `%${term}%`)
-            .limit(5),
-          supabase
-            .from("guides")
             .select("id, title")
             .ilike("title", `%${term}%`)
             .limit(5),
@@ -85,7 +78,6 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
 
         setResults({
           articles: artRes.data || [],
-          guides: guideRes.data || [],
           characters: charRes.data || [],
           cheats: cheatRes.data || []
         })
@@ -108,7 +100,6 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
 
   const hasResults =
     results.articles.length > 0 ||
-    results.guides.length > 0 ||
     results.characters.length > 0 ||
     results.cheats.length > 0
 
@@ -130,7 +121,7 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search Articles, Guides, CharactersWiki, or Cheats by name/title..."
+            placeholder="Search Articles, Characters, or Cheats by name/title..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent border-none text-white text-xs font-bold placeholder-[#9C8FAE]/30 outline-none focus:ring-0"
@@ -175,27 +166,6 @@ export default function AdminCommandPalette({ isOpen, onClose }: CommandPaletteP
                 </div>
               )}
 
-              {/* Guides */}
-              {results.guides.length > 0 && (
-                <div className="space-y-1.5">
-                  <div className="flex items-center space-x-1.5 text-[10px] font-black text-[#00E5FF] uppercase tracking-widest pl-1">
-                    <Award size={12} />
-                    <span>Guides ({results.guides.length})</span>
-                  </div>
-                  <div className="space-y-1">
-                    {results.guides.map((guide) => (
-                      <button
-                        key={guide.id}
-                        onClick={() => handleSelect(`/admin/guides/${guide.id}`)}
-                        className="w-full text-left p-2.5 rounded bg-[#0B0710]/40 hover:bg-[#00E5FF]/5 border border-[rgba(245,240,250,0.06)] hover:border-[#00E5FF]/20 text-xs font-bold text-white transition-all flex items-center justify-between"
-                      >
-                        <span className="truncate">{guide.title}</span>
-                        <span className="text-[9px] font-bold text-[#9C8FAE]/40 uppercase tracking-widest">EDIT</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Characters */}
               {results.characters.length > 0 && (

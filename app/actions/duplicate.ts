@@ -45,8 +45,8 @@ export async function checkDuplicateSimilarityAction({ content, ignoreId }: Dupl
       return { isDuplicate: false }
     }
 
-    // 3. Find the best match that is not the ignored current ID
-    const bestMatch = matches.find((m: any) => m.content_id !== ignoreId)
+    // 3. Find the best match that is an article and not the ignored current ID
+    const bestMatch = matches.find((m: any) => m.content_id !== ignoreId && m.content_type === "article")
 
     if (!bestMatch) {
       return { isDuplicate: false }
@@ -56,28 +56,15 @@ export async function checkDuplicateSimilarityAction({ content, ignoreId }: Dupl
     let title = ""
     let slug = ""
 
-    if (bestMatch.content_type === "article") {
-      const { data: article } = await supabaseAdmin
-        .from("articles")
-        .select("title, slug")
-        .eq("id", bestMatch.content_id)
-        .single()
+    const { data: article } = await supabaseAdmin
+      .from("articles")
+      .select("title, slug")
+      .eq("id", bestMatch.content_id)
+      .single()
 
-      if (article) {
-        title = article.title
-        slug = article.slug
-      }
-    } else {
-      const { data: guide } = await supabaseAdmin
-        .from("guides")
-        .select("title, slug")
-        .eq("id", bestMatch.content_id)
-        .single()
-
-      if (guide) {
-        title = guide.title
-        slug = guide.slug
-      }
+    if (article) {
+      title = article.title
+      slug = article.slug
     }
 
     if (title && slug) {
