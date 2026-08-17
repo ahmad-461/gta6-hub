@@ -1,8 +1,0 @@
-INFO:     Started server process [303400]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-Warning: Supabase credentials missing in Python service environment. Running in sandbox/fallback mode.
-INFO:     127.0.0.1:40078 - "HEAD / HTTP/1.1" 404 Not Found
-Using high-quality mock data for content stats (local fallback mode).
-INFO:     127.0.0.1:35522 - "GET /api/content-stats HTTP/1.1" 200 OK
