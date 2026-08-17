@@ -44,6 +44,8 @@ export default function PageBanner({ pathname: propPathname }: PageBannerProps) 
     label = "COMMUNITY"
   } else if (pathname.startsWith("/about")) {
     label = "ABOUT"
+  } else if (pathname.startsWith("/faq")) {
+    label = "FAQ"
   } else if (pathname.startsWith("/privacy")) {
     label = "PRIVACY"
   } else if (pathname.startsWith("/contact")) {
