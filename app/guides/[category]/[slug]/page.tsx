@@ -10,7 +10,10 @@ import GuideToc from "@/components/GuideToc"
 import GuideContentRenderer from "@/components/GuideContentRenderer"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
+import CategoryBadge, { getCategoryConfig } from "@/components/ui/CategoryBadge"
 import Badge from "@/components/ui/Badge"
+import GuideCard, { GuideCardItem } from "@/components/GuideCard"
+import FaqAccordion, { FaqItem } from "@/components/FaqAccordion"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
 
@@ -21,23 +24,6 @@ interface GuidePageProps {
     category: string
     slug: string
   }
-}
-
-// Convert guide_category name to slug
-function getCategorySlug(name: string) {
-  return name.toLowerCase().replace(/\s+/g, "-")
-}
-
-// Map slug to category name
-function getCategoryName(slug: string) {
-  const map: Record<string, string> = {
-    "getting-started": "Getting Started",
-    "story": "Story",
-    "online": "Online",
-    "cheats": "Cheats",
-    "secrets": "Secrets",
-  }
-  return map[slug] || null
 }
 
 export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
@@ -71,11 +57,11 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
       title,
       description,
       images: [ogImage],
-    }
+    },
   }
 }
 
-function formatDate(dateStr?: string) {
+function formatDate(dateStr?: string | null) {
   if (!dateStr) return ""
   try {
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -94,8 +80,8 @@ function getImageUrl(url?: string | null) {
 }
 
 export default async function GuidePage({ params }: GuidePageProps) {
-  const categoryName = getCategoryName(params.category)
-  if (!categoryName) {
+  const catConfig = getCategoryConfig(params.category)
+  if (!catConfig) {
     notFound()
   }
 
@@ -123,13 +109,14 @@ export default async function GuidePage({ params }: GuidePageProps) {
       toc,
       featured_image,
       published_at,
+      updated_at,
       author_id,
       seo_title,
       seo_description,
       faq
     `)
     .eq("slug", params.slug)
-    .eq("guide_category", categoryName)
+    .eq("guide_category", catConfig.name)
     .eq("status", "published")
     .maybeSingle()
 
@@ -150,42 +137,70 @@ export default async function GuidePage({ params }: GuidePageProps) {
     }
   }
 
+  // Related Guides Query (Same category first, fill up to 3 with latest published overall)
+  const { data: sameCatGuides } = await supabase
+    .from("guides")
+    .select("id, title, slug, guide_category, difficulty, excerpt, featured_image, published_at, updated_at")
+    .eq("guide_category", catConfig.name)
+    .eq("status", "published")
+    .neq("id", guide.id)
+    .order("published_at", { ascending: false })
+    .limit(3)
+
+  let relatedGuides: GuideCardItem[] = sameCatGuides || []
+
+  if (relatedGuides.length < 3) {
+    const existingIds = [guide.id, ...relatedGuides.map((g) => g.id)]
+    const { data: fallbackGuides } = await supabase
+      .from("guides")
+      .select("id, title, slug, guide_category, difficulty, excerpt, featured_image, published_at, updated_at")
+      .eq("status", "published")
+      .not("id", "in", `(${existingIds.join(",")})`)
+      .order("published_at", { ascending: false })
+      .limit(3 - relatedGuides.length)
+
+    if (fallbackGuides) {
+      relatedGuides = [...relatedGuides, ...fallbackGuides]
+    }
+  }
+
   // Construct JSON-LD Structured Schemas
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": guide.title,
-    "description": guide.seo_description || `Expert walkthrough and strategies for ${guide.title} on GTA VI Hub.`,
-    "image": getImageUrl(guide.featured_image),
-    "datePublished": guide.published_at,
-    "dateModified": guide.published_at,
-    "author": {
+    headline: guide.title,
+    description: guide.seo_description || `Expert walkthrough and strategies for ${guide.title} on GTA VI Hub.`,
+    image: getImageUrl(guide.featured_image),
+    datePublished: guide.published_at,
+    dateModified: guide.updated_at || guide.published_at,
+    author: {
       "@type": "Person",
-      "name": authorName,
+      name: authorName,
     },
-    "publisher": {
+    publisher: {
       "@type": "Organization",
-      "name": "GTA 6 Hub",
-      "logo": {
+      name: "GTA 6 Hub",
+      logo: {
         "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/logo.png`
-      }
-    }
+        url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/logo.png`,
+      },
+    },
   }
 
+  const faqItems: FaqItem[] = Array.isArray(guide.faq) ? (guide.faq as FaqItem[]) : []
   let faqSchema: any = null
-  if (Array.isArray(guide.faq) && guide.faq.length > 0) {
+  if (faqItems.length > 0) {
     faqSchema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "mainEntity": guide.faq.map((item: any) => ({
+      mainEntity: faqItems.map((item) => ({
         "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
+        name: item.question,
+        acceptedAnswer: {
           "@type": "Answer",
-          "text": item.answer
-        }
-      }))
+          text: item.answer,
+        },
+      })),
     }
   }
 
@@ -207,8 +222,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
   return (
     <div className="w-full flex-grow flex flex-col space-y-6 pb-12">
-      {/* Mini-Hero Page Banner */}
-      <PageBanner pathname={`/guides/${params.category}/${params.slug}`} />
+      {/* Mini-Hero Page Banner (Phase 15) */}
+      <PageBanner pathname={`/guides/${catConfig.slug}/${params.slug}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
         {/* Google AdSense Initializer */}
@@ -228,7 +243,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
             Guides
           </Link>
           <ChevronRight className="w-3 h-3 flex-shrink-0 text-[#9E9EA8]/50" />
-          <Link href={`/guides/${params.category}`} className="hover:text-[#FF8A3D] transition-colors">
+          <Link href={`/guides/${catConfig.slug}`} className="hover:text-[#FF8A3D] transition-colors">
             {guide.guide_category}
           </Link>
           <ChevronRight className="w-3 h-3 flex-shrink-0 text-[#9E9EA8]/50" />
@@ -237,52 +252,56 @@ export default async function GuidePage({ params }: GuidePageProps) {
           </span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Guide Article Column */}
-          <main className="lg:col-span-8 space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge color="magenta" variant="subtle">
-                  {guide.guide_category}
-                </Badge>
+        {/* Clean Image-Above-Content Hero Layout */}
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <CategoryBadge category={guide.guide_category} size="md" variant="subtle" />
+              {guide.difficulty && (
                 <Badge color={difficultyBadgeColor} variant="filled">
                   {guide.difficulty}
                 </Badge>
-              </div>
-
-              <h1 className="text-3xl sm:text-5xl font-anton uppercase text-[#F5F5F7] leading-[1.05] tracking-wide">
-                {guide.title}
-              </h1>
-
-              {/* Metadata Section */}
-              <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs font-mono font-bold uppercase tracking-wider text-[#9E9EA8] border-y border-[rgba(245,245,247,0.14)] py-3">
-                <span>By {authorName}</span>
-                <span className="text-[rgba(245,245,247,0.2)]">|</span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-[#FF8A3D]" />
-                  {formatDate(guide.published_at)}
-                </span>
-                <span className="text-[rgba(245,245,247,0.2)]">|</span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#FF8A3D]" />
-                  {readTime} Min Read ({guide.word_count || 0} words)
-                </span>
-              </div>
+              )}
             </div>
 
-            {/* Featured Image - High Quality standard with quality={90} */}
-            <div className="relative w-full h-[260px] sm:h-[420px] rounded-xl overflow-hidden shadow-2xl border border-[rgba(245,245,247,0.14)] bg-[#16161B]">
-              <Image
-                src={getImageUrl(guide.featured_image)}
-                alt={guide.title}
-                fill
-                quality={90}
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 100vw, 70vw"
-              />
-            </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-anton uppercase text-[#F5F5F7] leading-[1.05] tracking-wide">
+              {guide.title}
+            </h1>
 
+            {/* Metadata Bar */}
+            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs font-mono font-bold uppercase tracking-wider text-[#9E9EA8] border-y border-[rgba(245,245,247,0.14)] py-3">
+              <span>By {authorName}</span>
+              <span className="text-[rgba(245,245,247,0.2)]">|</span>
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-[#FF8A3D]" />
+                Last Verified: {formatDate(guide.updated_at || guide.published_at)}
+              </span>
+              <span className="text-[rgba(245,245,247,0.2)]">|</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-[#FF8A3D]" />
+                {readTime} Min Read ({guide.word_count || 0} words)
+              </span>
+            </div>
+          </div>
+
+          {/* Full-width High-Res Featured Image */}
+          <div className="relative w-full h-[280px] sm:h-[450px] lg:h-[500px] rounded-xl overflow-hidden shadow-2xl border border-[rgba(245,245,247,0.14)] bg-[#16161B]">
+            <Image
+              src={getImageUrl(guide.featured_image)}
+              alt={guide.title}
+              fill
+              quality={90}
+              className="object-cover"
+              priority
+              sizes="(max-width: 1280px) 100vw, 1200px"
+            />
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Main Article Body Column */}
+          <main className="lg:col-span-8 space-y-8">
             {/* Affiliate Disclosure Notice */}
             {hasAffiliate && (
               <div className="bg-[#FF8A3D]/10 border border-[#FF8A3D]/25 p-4 rounded-xl text-xs font-mono text-[#F5F5F7] flex items-start space-x-2.5 leading-relaxed">
@@ -293,14 +312,40 @@ export default async function GuidePage({ params }: GuidePageProps) {
               </div>
             )}
 
-            {/* Guide Content with spoiler clicks & step numbers */}
+            {/* Guide Body Content with H2 Step Numbers & Spoiler mark clicks */}
             <GuideContentRenderer content={guideContentWithAffiliate} />
+
+            {/* FAQ Accordion Section (Only rendered if faq has entries) */}
+            <FaqAccordion items={faqItems} />
+
+            {/* Related Guides Section */}
+            {relatedGuides.length > 0 && (
+              <section className="space-y-4 pt-8 border-t border-[rgba(245,245,247,0.14)]">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl sm:text-2xl font-anton uppercase text-[#F5F5F7] tracking-wide">
+                    Related Strategy Guides
+                  </h2>
+                  <Link
+                    href={`/guides/${catConfig.slug}`}
+                    className="text-xs font-mono font-bold uppercase text-[#FF8A3D] hover:underline"
+                  >
+                    View All {guide.guide_category} &rarr;
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {relatedGuides.map((relGuide) => (
+                    <GuideCard key={relGuide.id} guide={relGuide} />
+                  ))}
+                </div>
+              </section>
+            )}
           </main>
 
           {/* Sidebar Column (with sticky table of contents) */}
           <aside className="lg:col-span-4 space-y-6">
             <Link
-              href={`/guides/${params.category}`}
+              href={`/guides/${catConfig.slug}`}
               className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#FF8A3D] hover:text-[#FF2D8D] bg-[#16161B] border border-[rgba(245,245,247,0.14)] hover:border-[#FF8A3D]/40 rounded-lg px-4 py-3 w-full justify-center transition-all duration-200 shadow-md"
             >
               <ArrowLeft className="w-4 h-4" /> Back To {guide.guide_category}
@@ -323,7 +368,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
               </div>
             )}
 
-            {/* Table of Contents Widget */}
+            {/* Sticky Table of Contents Widget */}
             <GuideToc toc={(guide.toc || []) as any[]} />
           </aside>
         </div>
