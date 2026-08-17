@@ -11,21 +11,21 @@ export async function revalidateArticlePathsAction({
 }) {
   try {
     // 1. Revalidate News directory root
-    revalidatePath("/news")
+    revalidatePath("/news", "page")
 
     // 2. Revalidate Homepage, Intelligence, and Timeline surfaces displaying news/rumors
-    revalidatePath("/")
-    revalidatePath("/intelligence")
-    revalidatePath("/timeline")
+    revalidatePath("/", "page")
+    revalidatePath("/intelligence", "page")
+    revalidatePath("/timeline", "page")
 
     // 3. Revalidate current article detail path
     if (slug) {
-      revalidatePath(`/news/${slug}`)
+      revalidatePath(`/news/${slug}`, "page")
     }
 
     // 4. Revalidate previous article detail path if slug changed
     if (previousSlug && previousSlug !== slug) {
-      revalidatePath(`/news/${previousSlug}`)
+      revalidatePath(`/news/${previousSlug}`, "page")
     }
 
     return { success: true }
