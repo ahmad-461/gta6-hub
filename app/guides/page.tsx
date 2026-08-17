@@ -3,11 +3,11 @@ import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ChevronRight } from "lucide-react"
 import PageBanner from "@/components/PageBanner"
-import CategoryBadge, { CATEGORY_CONFIGS } from "@/components/ui/CategoryBadge"
+import { CATEGORY_CONFIGS } from "@/components/ui/CategoryBadge"
 import GuideCard from "@/components/GuideCard"
 import Card from "@/components/ui/Card"
 
-export const revalidate = 3600
+export const revalidate = 60
 
 export const metadata = {
   title: "Walkthroughs & Guides | GTA VI Hub",
@@ -18,7 +18,7 @@ export default async function GuidesHubPage() {
   const supabase = createSupabaseServerClient()
 
   // Fetch all published guides
-  const { data: guides } = await supabase
+  const { data: guides, error } = await supabase
     .from("guides")
     .select(`
       id,
@@ -34,6 +34,10 @@ export default async function GuidesHubPage() {
     .eq("status", "published")
     .order("published_at", { ascending: false })
 
+  if (error) {
+    console.error("[Guides Directory] Supabase query error:", error)
+  }
+
   const allGuides = guides || []
 
   // Count published guides per category
@@ -47,7 +51,7 @@ export default async function GuidesHubPage() {
 
   return (
     <div className="w-full flex-grow flex flex-col space-y-8 pb-12">
-      {/* Mini-Hero Page Banner (Phase 15) */}
+      {/* Mini-Hero Page Banner */}
       <PageBanner pathname="/guides" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">

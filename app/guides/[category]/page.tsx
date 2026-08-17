@@ -8,7 +8,7 @@ import CategoryBadge, { getCategoryConfig } from "@/components/ui/CategoryBadge"
 import GuideCard from "@/components/GuideCard"
 import EmptyState from "@/components/ui/EmptyState"
 
-export const revalidate = 3600
+export const revalidate = 60
 
 interface CategoryPageProps {
   params: {
@@ -39,7 +39,7 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
   const supabase = createSupabaseServerClient()
 
   // Fetch guides in this category where status = 'published'
-  const { data: guides } = await supabase
+  const { data: guides, error } = await supabase
     .from("guides")
     .select(`
       id,
@@ -56,11 +56,15 @@ export default async function CategoryGuidesPage({ params }: CategoryPageProps) 
     .eq("status", "published")
     .order("published_at", { ascending: false })
 
+  if (error) {
+    console.error("[Category Guides Page] Supabase query error:", error)
+  }
+
   const IconComp = catConfig.icon
 
   return (
     <div className="w-full flex-grow flex flex-col space-y-8 pb-12">
-      {/* Mini-Hero Page Banner (Phase 15) */}
+      {/* Mini-Hero Page Banner */}
       <PageBanner pathname={`/guides/${catConfig.slug}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
