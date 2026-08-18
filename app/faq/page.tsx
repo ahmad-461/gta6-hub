@@ -53,10 +53,10 @@ export default async function FaqPage() {
         <div className="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#FF8A3D]/5 blur-[140px] z-0" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 space-y-10 w-full flex-grow">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 relative z-10 space-y-10 w-full flex-grow">
         {/* Page Header */}
         <div className="space-y-3 border-b border-[rgba(245,245,247,0.14)] pb-8">
-          <div className="flex items-center space-x-2 text-xs font-black tracking-widest text-[#FF8A3D] uppercase">
+          <div className="flex items-center space-x-2 text-xs font-mono font-bold tracking-widest text-[#FF8A3D] uppercase">
             <HelpCircle className="w-4 h-4 text-[#FF8A3D]" />
             <span>KNOWLEDGE BASE & SUPPORT</span>
           </div>
@@ -65,7 +65,7 @@ export default async function FaqPage() {
             Frequently Asked Questions
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#9E9EA8] leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-sm text-[#9E9EA8] leading-relaxed max-w-xl font-mono">
             Get quick, accurate answers regarding GTA 6 Hub, release timelines, rumor verification confidence tiers, and interactive tools.
           </p>
         </div>
