@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
             GTA 6 Hub <span className="text-neon-pink">Admin</span>
           </h2>
           <p className="mt-2 text-sm text-foreground/60">
-            Sign in to manage articles, guides, cheats and settings.
+            Sign in to manage articles, cheats and settings.
           </p>
         </div>
 

@@ -176,7 +176,7 @@ export default function CategoryManagerPage() {
   const handleDelete = async (category: Category) => {
     if (
       !confirm(
-        `Are you sure you want to permanently delete the category "${category.name}"? This may affect any articles or guides associated with it.`
+        `Are you sure you want to permanently delete the category "${category.name}"? This may affect any articles associated with it.`
       )
     ) {
       return
@@ -273,7 +273,7 @@ export default function CategoryManagerPage() {
             Category Manager
           </h1>
           <p className="mt-2 text-xs text-[#9C8FAE]">
-            Manage site-wide content directories for articles and walkthrough guides.
+            Manage site-wide content directories for articles.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -496,7 +496,7 @@ export default function CategoryManagerPage() {
         <EmptyState
           icon={<Folder className="w-12 h-12 text-[#FF2D8D]/30 mx-auto" />}
           title="No Categories Found"
-          description="Create shared categories under this panel to classify all articles and strategy guides."
+          description="Create shared categories under this panel to classify all articles."
         />
       )}
     </div>

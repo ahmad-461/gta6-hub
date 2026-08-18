@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers"
 
-export async function triggerEmbeddingsGeneration(contentId: string, contentType: "article" | "guide") {
+export async function triggerEmbeddingsGeneration(contentId: string, contentType: "article") {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
     const cookieStore = cookies()

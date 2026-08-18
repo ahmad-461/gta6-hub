@@ -17,7 +17,7 @@ export default function SearchPage() {
           Hub Search
         </h1>
         <p className="text-foreground/60 leading-relaxed text-sm sm:text-base">
-          Full-text index lookup across standard articles, guides, and character profiles.
+          Full-text index lookup across standard articles and character profiles.
         </p>
       </div>
 

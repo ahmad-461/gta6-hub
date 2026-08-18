@@ -140,7 +140,7 @@ const FALLBACK_ARTICLES: Record<string, any> = {
 
 <p>GTA V's Los Santos boasted a landmass of approximately 29 square miles. However, a significant portion comprised mountainous terrain and empty hillsides. While visually stunning, interior access was largely restricted to specific story missions and buyable properties.</p>
 
-<p>Reliable community mapping project telemetry and official footage confirm that GTA VI's Leonida is substantially larger and far more accessible. Buildings feature unprecedented interior density, with accessible convenience stores, clubs, pawn shops, and hotels. Environmental features such as tidal water dynamics, weather cycles, and dense foliage elevate world exploration to next-gen standards. Read more about open-world exploration in our <a href="/guides">GTA 6 Strategy Guides</a>.</p>
+<p>Reliable community mapping project telemetry and official footage confirm that GTA VI's Leonida is substantially larger and far more accessible. Buildings feature unprecedented interior density, with accessible convenience stores, clubs, pawn shops, and hotels. Environmental features such as tidal water dynamics, weather cycles, and dense foliage elevate world exploration to next-gen standards.</p>
 
 <h2>4. Graphics & Visuals</h2>
 

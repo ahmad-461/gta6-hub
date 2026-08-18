@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 
 interface GenerateDraftParams {
   notes: string
-  contentType: "article" | "guide"
+  contentType: "article"
   categoryName?: string
 }
 
@@ -25,10 +25,10 @@ Style Guidelines:
 1. **Tone/Voice**: Knowledgeable-friend voice. Excited, conversational, immersive, yet authoritative. Talk directly to the reader ("you").
 2. **Structure**: Organize the content logically with clear, descriptive sections. Use proper HTML H2 headings (i.e. <h2>Section Title</h2>) for the main sections. DO NOT use H1 (reserved for page title).
 3. **Format**: Output STRICTLY in standard HTML suitable for a rich-text Tiptap editor. Only use standard tags: <h2>, <p>, <strong>, <em>, <ul>, <li>, <br>. Do not wrap the output in markdown block codes or \`\`\`html.
-4. **Internal Link Suggestions**: Suggest placehoders for internal links to characters, guides, or cheats where relevant, formatted like: <a>[Internal Link: link target]</a>.
+4. **Internal Link Suggestions**: Suggest placehoders for internal links to characters or cheats where relevant, formatted like: <a>[Internal Link: link target]</a>.
 5. **Quality**: Ensure the content is descriptive, deep, and reads like a professional publication rather than simple notes.
 
-Target Content Type: ${contentType === "article" ? "News Article Update" : "Walkthrough Strategy Guide"}
+Target Content Type: News Article Update
 Target Category: ${categoryName || "General / Getting Started"}
 
 Raw Input Notes:

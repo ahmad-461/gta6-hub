@@ -14,7 +14,6 @@ function getBreadcrumbs(pathname: string) {
   const dictionary: Record<string, string> = {
     admin: "Admin",
     articles: "Articles",
-    guides: "Guides",
     characters: "Characters",
     "map-locations": "Map Locations",
     trailers: "Trailers",

@@ -35,7 +35,6 @@ const locationSchema = z.object({
 export default function MapLocationManagerPage() {
   const [locations, setLocations] = useState<any[]>([])
   const [articles, setArticles] = useState<any[]>([])
-  const [guides, setGuides] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
@@ -57,7 +56,7 @@ export default function MapLocationManagerPage() {
   const [status, setStatus] = useState<"confirmed" | "speculated">("speculated")
   const [selectedContentIds, setSelectedContentIds] = useState<string[]>([])
 
-  // Search inside related articles / guides
+  // Search inside related articles
   const [contentSearch, setContentSearch] = useState("")
 
   // Media Picker state
@@ -90,9 +89,7 @@ export default function MapLocationManagerPage() {
   const fetchRelatedOptions = async () => {
     try {
       const { data: articlesData } = await supabase.from("articles").select("id, title, slug")
-      const { data: guidesData } = await supabase.from("guides").select("id, title, slug")
       setArticles(articlesData || [])
-      setGuides(guidesData || [])
     } catch (err) {
       console.error("Failed to load options", err)
     }
@@ -254,7 +251,6 @@ export default function MapLocationManagerPage() {
 
   const allContentOptions = [
     ...articles.map((a) => ({ id: a.id, title: `[Article] ${a.title}`, slug: a.slug, type: "article" })),
-    ...guides.map((g) => ({ id: g.id, title: `[Guide] ${g.title}`, slug: g.slug, type: "guide" })),
   ]
 
   const filteredContentOptions = allContentOptions.filter((opt) =>
@@ -556,10 +552,10 @@ export default function MapLocationManagerPage() {
 
               {/* Related content Searchable Multi-Select */}
               <div className="space-y-2 border-t border-card-border/40 pt-4">
-                <label className="block text-xs font-semibold text-foreground/80">Link Related Articles & Guides</label>
+                <label className="block text-xs font-semibold text-foreground/80">Link Related Articles</label>
                 <input
                   type="text"
-                  placeholder="Filter articles & guides by title..."
+                  placeholder="Filter articles by title..."
                   value={contentSearch}
                   onChange={(e) => setContentSearch(e.target.value)}
                   className="w-full px-3 py-1.5 bg-[#100e16] border border-card-border rounded text-xs text-white placeholder-foreground/30 focus:outline-none"

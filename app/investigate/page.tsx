@@ -294,7 +294,7 @@ export default function InvestigatePage() {
               AI INVESTIGATOR TERMINAL
             </h1>
             <p className="text-sm text-[#9C8FAE] max-w-xl">
-              Submit query keywords, leaked files, or story nodes to crawl through verified walkthrough guides and articles database records.
+              Submit query keywords, leaked files, or story nodes to crawl through verified articles and database records.
             </p>
           </div>
 

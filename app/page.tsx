@@ -324,8 +324,11 @@ export default async function HomePage() {
   const totalRumorStatusCount = confirmedCount + rumorCount + debunkedCount
   const countdownTarget = settings["countdown_target"] || "2026-11-19T00:00:00-05:00"
 
-  // Duplicate items for seamless continuous ticker scroll
-  const tickerItems = latestNews && latestNews.length > 0 ? [...latestNews, ...latestNews] : []
+  // Only duplicate items for continuous marquee animation if there are multiple distinct articles
+  const tickerItems =
+    latestNews && latestNews.length > 1
+      ? [...latestNews, ...latestNews]
+      : latestNews || []
 
   const gridNews = latestNews || []
 
@@ -572,74 +575,79 @@ export default async function HomePage() {
                   </p>
                 </div>
 
-                {/* Horizontal Segmented Bar */}
-                <div className="space-y-4">
-                  <div className="h-4 w-full bg-[#0B0B0F] border border-[rgba(245,245,247,0.14)] rounded-full overflow-hidden flex p-0.5 shadow-inner">
-                    {totalRumorStatusCount > 0 ? (
-                      <>
-                        {confirmedCount > 0 && (
-                          <div
-                            style={{ width: `${(confirmedCount / totalRumorStatusCount) * 100}%` }}
-                            className="h-full bg-emerald-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
-                            title={`Confirmed: ${confirmedCount}`}
-                          />
-                        )}
-                        {rumorCount > 0 && (
-                          <div
-                            style={{ width: `${(rumorCount / totalRumorStatusCount) * 100}%` }}
-                            className="h-full bg-amber-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
-                            title={`Unverified Rumors: ${rumorCount}`}
-                          />
-                        )}
-                        {debunkedCount > 0 && (
-                          <div
-                            style={{ width: `${(debunkedCount / totalRumorStatusCount) * 100}%` }}
-                            className="h-full bg-rose-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
-                            title={`Debunked: ${debunkedCount}`}
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <div className="h-full w-full bg-[#9E9EA8]/20 rounded-full" />
-                    )}
-                  </div>
-
-                  {/* Raw Counts Labels */}
-                  <div className="grid grid-cols-3 gap-3 font-mono text-center">
-                    <div className="p-3 rounded bg-[#0B0B0F] border border-emerald-500/25 space-y-1">
-                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        Confirmed
-                      </div>
-                      <div className="text-2xl font-black text-white">{confirmedCount}</div>
-                      <div className="text-[10px] text-[#9E9EA8]">
-                        {totalRumorStatusCount > 0 ? `${Math.round((confirmedCount / totalRumorStatusCount) * 100)}%` : '0%'}
-                      </div>
+                {/* Horizontal Segmented Bar & Telemetry Status */}
+                {totalRumorStatusCount > 0 ? (
+                  <div className="space-y-4">
+                    <div className="h-4 w-full bg-[#0B0B0F] border border-[rgba(245,245,247,0.14)] rounded-full overflow-hidden flex p-0.5 shadow-inner">
+                      {confirmedCount > 0 && (
+                        <div
+                          style={{ width: `${(confirmedCount / totalRumorStatusCount) * 100}%` }}
+                          className="h-full bg-emerald-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                          title={`Confirmed: ${confirmedCount}`}
+                        />
+                      )}
+                      {rumorCount > 0 && (
+                        <div
+                          style={{ width: `${(rumorCount / totalRumorStatusCount) * 100}%` }}
+                          className="h-full bg-amber-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                          title={`Unverified Rumors: ${rumorCount}`}
+                        />
+                      )}
+                      {debunkedCount > 0 && (
+                        <div
+                          style={{ width: `${(debunkedCount / totalRumorStatusCount) * 100}%` }}
+                          className="h-full bg-rose-500 transition-all duration-500 first:rounded-l-full last:rounded-r-full"
+                          title={`Debunked: ${debunkedCount}`}
+                        />
+                      )}
                     </div>
 
-                    <div className="p-3 rounded bg-[#0B0B0F] border border-amber-500/25 space-y-1">
-                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-                        <HelpCircle className="w-3.5 h-3.5" />
-                        Rumor
+                    {/* Raw Counts Labels */}
+                    <div className="grid grid-cols-3 gap-3 font-mono text-center">
+                      <div className="p-3 rounded bg-[#0B0B0F] border border-emerald-500/25 space-y-1">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                          Confirmed
+                        </div>
+                        <div className="text-2xl font-black text-white">{confirmedCount}</div>
+                        <div className="text-[10px] text-[#9E9EA8]">
+                          {`${Math.round((confirmedCount / totalRumorStatusCount) * 100)}%`}
+                        </div>
                       </div>
-                      <div className="text-2xl font-black text-white">{rumorCount}</div>
-                      <div className="text-[10px] text-[#9E9EA8]">
-                        {totalRumorStatusCount > 0 ? `${Math.round((rumorCount / totalRumorStatusCount) * 100)}%` : '0%'}
-                      </div>
-                    </div>
 
-                    <div className="p-3 rounded bg-[#0B0B0F] border border-rose-500/25 space-y-1">
-                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-rose-400 font-bold uppercase tracking-wider">
-                        <ShieldAlert className="w-3.5 h-3.5" />
-                        Debunked
+                      <div className="p-3 rounded bg-[#0B0B0F] border border-amber-500/25 space-y-1">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+                          <HelpCircle className="w-3.5 h-3.5" />
+                          Rumor
+                        </div>
+                        <div className="text-2xl font-black text-white">{rumorCount}</div>
+                        <div className="text-[10px] text-[#9E9EA8]">
+                          {`${Math.round((rumorCount / totalRumorStatusCount) * 100)}%`}
+                        </div>
                       </div>
-                      <div className="text-2xl font-black text-white">{debunkedCount}</div>
-                      <div className="text-[10px] text-[#9E9EA8]">
-                        {totalRumorStatusCount > 0 ? `${Math.round((debunkedCount / totalRumorStatusCount) * 100)}%` : '0%'}
+
+                      <div className="p-3 rounded bg-[#0B0B0F] border border-rose-500/25 space-y-1">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] text-rose-400 font-bold uppercase tracking-wider">
+                          <ShieldAlert className="w-3.5 h-3.5" />
+                          Debunked
+                        </div>
+                        <div className="text-2xl font-black text-white">{debunkedCount}</div>
+                        <div className="text-[10px] text-[#9E9EA8]">
+                          {`${Math.round((debunkedCount / totalRumorStatusCount) * 100)}%`}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="p-6 rounded bg-[#0B0B0F]/60 border border-dashed border-[rgba(245,245,247,0.14)] text-center font-mono space-y-2">
+                    <p className="text-xs font-bold text-white uppercase tracking-wider">
+                      CONFIDENCE TELEMETRY OFFLINE
+                    </p>
+                    <p className="text-[11px] text-[#9E9EA8] leading-relaxed max-w-md mx-auto">
+                      Confidence tracking will populate as more intel is verified across Leonida report registries.
+                    </p>
+                  </div>
+                )}
 
                 {/* Footer Link to /intelligence */}
                 <div className="pt-2 border-t border-[rgba(245,245,247,0.14)] flex items-center justify-between flex-wrap gap-2">

@@ -316,7 +316,7 @@ export default function AdminInsightsPage() {
       labels,
       datasets: [
         {
-          label: "Average Words Per Article/Guide",
+          label: "Average Words Per Article",
           data: values,
           backgroundColor: "rgba(236, 72, 153, 0.7)", // pink
           borderColor: "#ec4899",
@@ -798,7 +798,7 @@ export default function AdminInsightsPage() {
                     <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto" />
                     <h4 className="text-sm font-bold text-white uppercase">Squeaky Clean!</h4>
                     <p className="text-xs text-foreground/40 leading-relaxed">
-                      All published guides and articles comply 100% with word thresholds, alt-text references, and SEO descriptors. Zero flags.
+                      All published articles comply 100% with word thresholds, alt-text references, and SEO descriptors. Zero flags.
                     </p>
                   </div>
                 )}

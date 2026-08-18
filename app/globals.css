@@ -46,7 +46,7 @@ body {
   border-color: #00E5FF;
 }
 
-/* Guide Content Spoiler Styling */
+/* Content Spoiler Styling */
 span[data-spoiler] {
   background-color: rgba(255, 46, 136, 0.2) !important;
   color: transparent !important;

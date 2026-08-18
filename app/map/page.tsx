@@ -13,7 +13,6 @@ export default function LeonidaMapPage() {
   // Premium visual polish matching Part A Card and Badge primitives
   const [locations, setLocations] = useState<any[]>([])
   const [articles, setArticles] = useState<any[]>([])
-  const [guides, setGuides] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   // Filters
@@ -31,11 +30,9 @@ export default function LeonidaMapPage() {
     try {
       const { data: locationsData } = await supabase.from("map_locations").select("*")
       const { data: articlesData } = await supabase.from("articles").select("id, title, slug, excerpt, status")
-      const { data: guidesData } = await supabase.from("guides").select("id, title, slug, status, guide_category")
 
       setLocations(locationsData || [])
       setArticles(articlesData || [])
-      setGuides(guidesData || [])
     } catch (err) {
       console.error("Failed to fetch map data", err)
     } finally {
@@ -96,7 +93,7 @@ export default function LeonidaMapPage() {
     return loc.category === activeCategory
   })
 
-  // Get matching article/guide details for a location
+  // Get matching article details for a location
   const getRelatedContent = (location: any) => {
     const ids = location?.related_article_ids || []
     const results: any[] = []
@@ -105,11 +102,6 @@ export default function LeonidaMapPage() {
       const art = articles.find((a) => a.id === id)
       if (art && art.status === "published") {
         results.push({ ...art, type: "article", href: `/news/${art.slug}` })
-      }
-      const gd = guides.find((g) => g.id === id)
-      if (gd && gd.status === "published") {
-        const catSlug = gd.guide_category ? gd.guide_category.toLowerCase().replace(/\s+/g, "-") : "getting-started"
-        results.push({ ...gd, type: "guide", href: `/guides/${catSlug}/${gd.slug}` })
       }
     })
 

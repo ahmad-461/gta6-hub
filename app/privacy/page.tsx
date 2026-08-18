@@ -2,7 +2,6 @@
 
 import React from "react"
 import Link from "next/link"
-import GuideToc from "@/components/GuideToc"
 import { ShieldCheck, Mail, ArrowRight } from "lucide-react"
 
 export default function PrivacyPage() {
@@ -154,7 +153,19 @@ export default function PrivacyPage() {
 
           {/* Sticky Table of Contents Sidebar (4 cols) */}
           <div className="lg:col-span-4 lg:sticky lg:top-24">
-            <GuideToc toc={privacyToc} />
+            {/* Table of contents */}
+            <div className="bg-[#150C1F]/60 border border-[rgba(245,240,250,0.1)] rounded-lg p-4 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#FF2E88]">Contents</span>
+              <ul className="space-y-1 text-xs text-[#9C8FAE]">
+                {privacyToc.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`} className="hover:text-white transition">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
         </div>
