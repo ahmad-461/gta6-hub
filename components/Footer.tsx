@@ -48,6 +48,8 @@ export default function Footer() {
 
   const legalLinks = [
     { name: "About Us", href: "/about" },
+    { name: "Author Dossier", href: "/author" },
+    { name: "Editorial Standards", href: "/editorial-standards" },
     { name: "FAQ", href: "/faq" },
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Contact", href: "/contact" },
@@ -203,10 +205,11 @@ export default function Footer() {
 
         {/* Bottom Sub-row */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-[11px] text-[#9C8FAE]/50 space-y-3 sm:space-y-0">
-          <div>
+          <div className="space-y-1">
+            <span className="block text-[#9C8FAE]/80 font-bold">Independently researched and fact-checked GTA VI coverage</span>
             <span>&copy; {currentYear} GTA6 HUB. All rights reserved.</span>
           </div>
-          <div className="text-center sm:text-right">
+          <div className="text-center sm:text-right max-w-md">
             <span>Fan-made, unofficial project. Grand Theft Auto, Vice City, Rockstar Games are trademarks of Take-Two Interactive.</span>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { ArrowLeft, Clock, Video, Calendar, Sparkles, Play, ShieldAlert } from "lucide-react"
 import Card from "@/components/ui/Card"
 import Badge from "@/components/ui/Badge"
+import JsonLd from "@/components/JsonLd"
 
 export const revalidate = 3600
 
@@ -60,8 +61,36 @@ export default async function TrailerDetailPage({ params }: TrailerDetailPagePro
   const videoId = getYoutubeEmbedID(tb.trailer_source_url)
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Trailers",
+        "item": `${siteUrl}/trailers`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": tb.title,
+        "item": `${siteUrl}/trailers/${tb.slug}`,
+      },
+    ],
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow space-y-10 animate-fade-in">
+      <JsonLd data={breadcrumbSchema} />
       {/* Back to Trailers */}
       <div>
         <Link

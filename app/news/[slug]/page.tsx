@@ -10,6 +10,7 @@ import ArticleComments from "@/components/ArticleComments"
 import CopyLinkButton from "@/components/CopyLinkButton"
 import JsonLd from "@/components/JsonLd"
 import AdSenseInitializer from "@/components/AdSenseInitializer"
+import AuthorCard from "@/components/AuthorCard"
 import ArticleContentRenderer from "@/components/ArticleContentRenderer"
 import { injectAdSenseAds } from "@/lib/adsense"
 import { parseAffiliateLinks } from "@/lib/affiliate"
@@ -216,6 +217,15 @@ const FALLBACK_ARTICLES: Record<string, any> = {
     <a href="/news" class="px-2.5 py-1 bg-[#FF2D8D]/10 border border-[#FF2D8D]/30 text-[#FF2D8D] rounded hover:bg-[#FF2D8D]/20">Latest News & Intelligence</a>
     <a href="/map" class="px-2.5 py-1 bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[#00E5FF] rounded hover:bg-[#00E5FF]/20">Explore Leonida Map</a>
   </div>
+</div>
+
+<div class="sources-card">
+  <h3>🔗 Primary Sources & Further Reading</h3>
+  <ul>
+    <li><a href="https://www.rockstargames.com/newswire/article/ak73a38o128228/grand-theft-auto-vi-is-coming-2025" target="_blank" rel="noopener noreferrer">Rockstar Games Official Announcement — Grand Theft Auto VI Announcement</a></li>
+    <li><a href="https://www.take2games.com/ir" target="_blank" rel="noopener noreferrer">Take-Two Interactive Software — Official Investor Relations Filings</a></li>
+    <li><a href="https://www.youtube.com/watch?v=QdBZY2fkU-0" target="_blank" rel="noopener noreferrer">Grand Theft Auto VI Trailer 1 — Official Rockstar Games YouTube Channel</a></li>
+  </ul>
 </div>`
   }
 }
@@ -390,6 +400,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // Parse Affiliate Links in content
   const { parsedContent: articleContentWithAffiliate, hasAffiliate } = parseAffiliateLinks(articleContentWithAds)
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"
+
   // Construct JSON-LD Article Schema
   const articleSchema = {
     "@context": "https://schema.org",
@@ -401,14 +413,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     "dateModified": article.updated_at || article.published_at || article.created_at,
     "author": {
       "@type": "Person",
-      "name": authorName,
+      "@id": `${siteUrl}/author#person`,
+      "name": "Ahmad Khan",
+      "jobTitle": "Founder & Editor",
+      "url": `${siteUrl}/author`,
+      "sameAs": [
+        "https://github.com/ahmad-461",
+        "https://www.linkedin.com/in/ahmad-khan-77441833a"
+      ]
     },
     "publisher": {
       "@type": "Organization",
       "name": "GTA 6 Hub",
+      "url": siteUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"}/logo.png`
+        "url": `${siteUrl}/logo.png`
       }
     }
   }
@@ -628,6 +648,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             {/* Article Content Area */}
             <ArticleContentRenderer content={articleContentWithAffiliate} />
+
+            {/* Author Profile Card */}
+            <AuthorCard compact className="my-6" />
 
             {/* Social Share Row */}
             <div className="flex flex-wrap items-center gap-3 border-y border-card-border/60 py-4">
