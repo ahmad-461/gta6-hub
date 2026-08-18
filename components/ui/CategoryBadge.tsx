@@ -51,7 +51,7 @@ export const CATEGORY_CONFIGS: Record<
     borderClass: "border-purple-500/30",
     bgClass: "bg-purple-500/10",
     textClass: "text-purple-400",
-    description: "Cooperative jobs guides, multiplayer business setups, rankings, and crew strategies.",
+    description: "Cooperative jobs, multiplayer business setups, rankings, and crew strategies.",
   },
   cheats: {
     name: "Cheats",

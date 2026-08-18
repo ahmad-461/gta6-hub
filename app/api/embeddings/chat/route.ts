@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 // Cleared on server restart, but highly robust for session cookies
 const sessionStore = new Map<string, number>()
 
-// Premium Polish Pass: Ensured clean telemetry, precise RAG scoring, and strict guide category routing mapping.
+// Premium Polish Pass: Ensured clean telemetry and precise RAG scoring.
 
 export async function POST(request: Request) {
   try {
@@ -99,12 +99,10 @@ export async function POST(request: Request) {
       return response
     }
 
-    // Fetch the articles/guides details to build context and links
+    // Fetch the articles details to build context and links
     const articleIds = matches.filter((m: any) => m.content_type === "article").map((m: any) => m.content_id)
-    const guideIds = matches.filter((m: any) => m.content_type === "guide").map((m: any) => m.content_id)
 
     const articlesMap = new Map<string, { title: string; slug: string }>()
-    const guidesMap = new Map<string, { title: string; slug: string; guide_category?: string }>()
 
     if (articleIds.length > 0) {
       const { data: articles } = await supabaseAdmin
@@ -117,30 +115,17 @@ export async function POST(request: Request) {
       })
     }
 
-    if (guideIds.length > 0) {
-      const { data: guides } = await supabaseAdmin
-        .from("guides")
-        .select("id, title, slug, guide_category")
-        .in("id", guideIds)
-
-      guides?.forEach((g: any) => {
-        guidesMap.set(g.id, { title: g.title, slug: g.slug, guide_category: g.guide_category })
-      })
-    }
-
     // 5. Construct Gemini system/user prompt
     const contextSegments = matches.map((m: any) => {
-      const source = m.content_type === "article" ? articlesMap.get(m.content_id) : guidesMap.get(m.content_id)
-      const path = m.content_type === "article"
-        ? `/news/${source?.slug || ""}`
-        : `/guides/${(source as any)?.guide_category?.toLowerCase()?.replace(/\s+/g, "-") || "getting-started"}/${source?.slug || ""}`
+      const source = articlesMap.get(m.content_id)
+      const path = `/news/${source?.slug || ""}`
       return `Source: ${source?.title || "GTA 6 Hub Content"}\nURL: ${path}\nText: ${m.chunk_text}`
     }).join("\n\n---\n\n")
 
     const systemPrompt = `You are the GTA 6 Hub RAG Assistant. Your job is to answer user questions using the provided source segments.
 - You MUST answer questions solely using the facts provided in the source segments.
 - If the sources do not contain enough facts to answer, respond exactly with "I don't have information about that." and nothing else. Do not make things up.
-- You MUST include inline links to the source articles or guides in markdown format: [Source Title](URL) (e.g. [Lucia Trailer Details](/news/lucia-trailer-breakdown)) where appropriate when referencing information.
+- You MUST include inline links to the source articles in markdown format: [Source Title](URL) (e.g. [Lucia Trailer Details](/news/lucia-trailer-breakdown)) where appropriate when referencing information.
 - Write in a knowledgeable, friendly tone. Use bold text for emphasis where appropriate, but keep the response concise.`
 
     const userPrompt = `Context:\n${contextSegments}\n\nQuestion: ${question}`
@@ -148,10 +133,8 @@ export async function POST(request: Request) {
     // Compile max similarity score and unique sources metadata
     const maxScore = matches && matches.length > 0 ? Math.max(...matches.map((m: any) => m.similarity || 0)) : 0
     const sourceDocuments = matches.map((m: any) => {
-      const source = m.content_type === "article" ? articlesMap.get(m.content_id) : guidesMap.get(m.content_id)
-      const path = m.content_type === "article"
-        ? `/news/${source?.slug || ""}`
-        : `/guides/${(source as any)?.guide_category?.toLowerCase()?.replace(/\s+/g, "-") || "getting-started"}/${source?.slug || ""}`
+      const source = articlesMap.get(m.content_id)
+      const path = `/news/${source?.slug || ""}`
       return {
         title: source?.title || "Classified Intel",
         url: path,

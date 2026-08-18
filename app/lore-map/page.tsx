@@ -24,7 +24,7 @@ interface ContentItem {
   id: string
   title: string
   slug: string
-  type: "article" | "guide"
+  type: "article"
 }
 
 export default function LoreMapPage() {
@@ -60,21 +60,15 @@ export default function LoreMapPage() {
           .from("lore_connections")
           .select("id, source_id, target_id, article_ids")
 
-        // 4. Fetch all published articles and guides
+        // 4. Fetch all published articles
         const { data: articles } = await supabase
           .from("articles")
-          .select("id, title, slug")
-          .eq("status", "published")
-
-        const { data: guides } = await supabase
-          .from("guides")
           .select("id, title, slug")
           .eq("status", "published")
 
         // 5. Build lookup maps
         const tempContentMap = new Map<string, ContentItem>()
         articles?.forEach(a => tempContentMap.set(a.id, { id: a.id, title: a.title, slug: a.slug, type: "article" }))
-        guides?.forEach(g => tempContentMap.set(g.id, { id: g.id, title: g.title, slug: g.slug, type: "guide" }))
         setContentMap(tempContentMap)
 
         // Compile Nodes

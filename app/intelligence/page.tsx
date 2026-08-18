@@ -26,7 +26,6 @@ import LoadingSkeleton from "@/components/ui/LoadingSkeleton"
 export default function IntelligencePage() {
   const [rumors, setRumors] = useState<any[]>([])
   const [allArticles, setAllArticles] = useState<any[]>([])
-  const [allGuides, setAllGuides] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -68,15 +67,6 @@ export default function IntelligencePage() {
       // Filter rumor status specific articles for main display feed
       const rumorArticles = publishedArticles.filter((r) => r.rumor_status !== null)
       setRumors(rumorArticles)
-
-      // 3. Fetch all published guides to search related content in memory
-      const { data: guidesData } = await supabase
-        .from("guides")
-        .select("id, title, slug, category, guide_category, difficulty, published_at, featured_image")
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-
-      setAllGuides(guidesData || [])
     } catch (err) {
       console.error("Failed to load intelligence records:", err)
     } finally {
@@ -139,18 +129,7 @@ export default function IntelligencePage() {
       relatedList.push({ id: a.id, title: a.title, href: `/news/${a.slug}`, type: "article" })
     })
 
-    // 2. Same category guides
-    const sameCategoryGuides = allGuides.filter((g) => g.category === articleCategory)
-    sameCategoryGuides.forEach((g) => {
-      relatedList.push({
-        id: g.id,
-        title: g.title,
-        href: `/guides/${g.guide_category.toLowerCase().replace(/\s+/g, "-")}/${g.slug}`,
-        type: "guide"
-      })
-    })
-
-    // 3. Fallback to latest published articles
+    // 2. Fallback to latest published articles
     if (relatedList.length < 3) {
       const latestArticles = allArticles.filter(
         (a) => a.id !== article.id && !relatedList.some((r) => r.id === a.id)

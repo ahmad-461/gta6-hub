@@ -24,7 +24,8 @@ import {
   MoreHorizontal,
   MapPin,
   ChevronRight,
-  Terminal
+  Terminal,
+  Video
 } from "lucide-react"
 
 export default function Header() {
@@ -145,6 +146,7 @@ export default function Header() {
   const primaryNavItems = [
     { name: "Home", href: "/", icon: Flame },
     { name: "News", href: "/news", icon: FileText },
+    { name: "Trailers", href: "/trailers", icon: Video },
     { name: "Intelligence", href: "/intelligence", icon: Cpu },
     { name: "Map", href: "/map", icon: Compass },
     { name: "Investigate", href: "/investigate", icon: Sparkles },
@@ -153,6 +155,7 @@ export default function Header() {
 
   const mobileBottomNavItems = [
     { name: "Home", href: "/", icon: Flame },
+    { name: "Trailers", href: "/trailers", icon: Video },
     { name: "Intelligence", href: "/intelligence", icon: Cpu },
     { name: "Map", href: "/map", icon: Compass },
     { name: "Investigate", href: "/investigate", icon: Sparkles },

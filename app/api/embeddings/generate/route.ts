@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     const { contentId, contentType } = await request.json()
 
-    if (!contentId || !contentType || !["article", "guide"].includes(contentType)) {
+    if (!contentId || !contentType || contentType !== "article") {
       return NextResponse.json(
         { success: false, error: "Missing or invalid parameters" },
         { status: 400 }
@@ -55,18 +55,6 @@ export async function POST(request: Request) {
         content = article.content || ""
         title = article.title || ""
         isPublished = article.status === "published"
-      }
-    } else {
-      const { data: guide } = await supabaseAdmin
-        .from("guides")
-        .select("content, title, status")
-        .eq("id", contentId)
-        .single()
-
-      if (guide) {
-        content = guide.content || ""
-        title = guide.title || ""
-        isPublished = guide.status === "published"
       }
     }
 
@@ -174,24 +162,18 @@ async function rebuildLoreConnections(supabaseAdmin: any) {
       .from("lore_topics")
       .select("id, name, type")
 
-    // 3. Fetch all published articles and guides
+    // 3. Fetch all published articles
     const { data: articles } = await supabaseAdmin
       .from("articles")
       .select("id, title, content")
       .eq("status", "published")
 
-    const { data: guides } = await supabaseAdmin
-      .from("guides")
-      .select("id, title, content")
-      .eq("status", "published")
-
-    if (!characters || !topics || (!articles && !guides)) {
+    if (!characters || !topics || !articles) {
       return
     }
 
     const allContent = [
-      ...(articles || []).map((a: any) => ({ id: a.id, title: a.title, content: a.content, type: "article" })),
-      ...(guides || []).map((g: any) => ({ id: g.id, title: g.title, content: g.content, type: "guide" }))
+      ...(articles || []).map((a: any) => ({ id: a.id, title: a.title, content: a.content, type: "article" }))
     ]
 
     // Clear previous connections

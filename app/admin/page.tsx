@@ -524,9 +524,7 @@ export default function AdminDashboardPage() {
               <div className="space-y-4">
                 {recentActivities.map((item, idx) => {
                   let badgeColor = "text-[#FF2E88] bg-[#FF2E88]/10 border border-[#FF2E88]/15"
-                  if (item.entityType === "guide") {
-                    badgeColor = "text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/15"
-                  } else if (item.entityType === "character") {
+                  if (item.entityType === "character") {
                     badgeColor = "text-[#FF8A3D] bg-[#FF8A3D]/10 border border-[#FF8A3D]/15"
                   } else if (item.entityType === "cheat_code") {
                     badgeColor = "text-[#A78BFA] bg-[#A78BFA]/10 border border-[#A78BFA]/15"
