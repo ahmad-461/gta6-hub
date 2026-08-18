@@ -2,8 +2,9 @@ import React from "react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { ArrowRight, Github, Linkedin, Shield } from "lucide-react"
+import { ArrowRight, Shield } from "lucide-react"
 import SiteDepthIndex from "@/components/SiteDepthIndex"
+import AuthorCard from "@/components/AuthorCard"
 
 export const metadata: Metadata = {
   title: "About the Intelligence Hub",
@@ -104,48 +105,7 @@ export default async function AboutPage() {
         {/* Section 3: Creator Section & Standing Disclaimer Side-by-Side */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-4 items-stretch">
           {/* Creator Profile */}
-          <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 flex flex-col justify-between shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#00E5FF]/10 to-transparent blur-xl pointer-events-none" />
-
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold font-mono text-[#00E5FF] uppercase tracking-widest">
-                  CORE DEVELOPER
-                </span>
-                <h3 className="text-2xl font-anton uppercase text-[#F5F0FA]">
-                  Ahmad Khan
-                </h3>
-              </div>
-              <p className="text-sm text-[#9C8FAE] leading-relaxed">
-                Computer Science student and builder of GTA6 Hub — designed, built, and shipped as a full-stack portfolio project utilizing a modern React server framework, real-time database architecture, and advanced visual mapping.
-              </p>
-            </div>
-
-            {/* Developer Social Treatment (reusing footer style) */}
-            <div className="pt-6 mt-8 border-t border-[rgba(245,240,250,0.08)] flex flex-wrap gap-6 font-mono text-xs">
-              <a
-                href="https://github.com/ahmad-461"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative flex items-center space-x-2 text-[#9C8FAE] hover:text-white transition-colors py-1 group"
-              >
-                <Github className="w-4 h-4 text-[#00E5FF]" />
-                <span>GitHub</span>
-                <span className="absolute bottom-0 left-0 h-[1.5px] bg-[#FF2E88] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/ahmad-khan-77441833a"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative flex items-center space-x-2 text-[#9C8FAE] hover:text-white transition-colors py-1 group"
-              >
-                <Linkedin className="w-4 h-4 text-[#00E5FF]" />
-                <span>LinkedIn</span>
-                <span className="absolute bottom-0 left-0 h-[1.5px] bg-[#FF2E88] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-              </a>
-            </div>
-          </div>
+          <AuthorCard className="h-full" />
 
           {/* Credibility / Standing Fan Disclaimer */}
           <div className="bg-[#150C1F] border border-[rgba(245,240,250,0.14)] rounded p-8 flex flex-col justify-between shadow-xl relative overflow-hidden">

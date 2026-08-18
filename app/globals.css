@@ -247,6 +247,50 @@ span[data-redacted].is-revealed {
   margin: 2rem 0;
 }
 
+/* Sources & Citations Block */
+.sources-card,
+.sources-block {
+  background: #0B0710;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-left: 4px solid #00E5FF;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0 1rem 0;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+}
+
+.sources-card h3,
+.sources-block h3 {
+  margin-top: 0 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #00E5FF !important;
+  font-size: 0.875rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sources-card ul,
+.sources-block ul {
+  margin-bottom: 0 !important;
+  padding-left: 1.25rem !important;
+  font-size: 0.8125rem;
+}
+
+.sources-card li,
+.sources-block li {
+  margin-bottom: 0.5rem;
+  color: rgba(245, 240, 250, 0.85);
+}
+
+.sources-card li:last-child,
+.sources-block li:last-child {
+  margin-bottom: 0;
+}
+
 .what-we-know-box {
   background: #16161B;
   border: 1px solid rgba(245, 245, 247, 0.12);

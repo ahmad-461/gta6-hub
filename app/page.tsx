@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button"
 import Card from "@/components/ui/Card"
 import CategoryBadge from "@/components/ui/CategoryBadge"
 import Badge from "@/components/ui/Badge"
+import JsonLd from "@/components/JsonLd"
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return ""
@@ -332,8 +333,32 @@ export default async function HomePage() {
 
   const gridNews = latestNews || []
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gta6-hub-liard.vercel.app"
+
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    "name": "GTA 6 Hub",
+    "url": siteUrl,
+    "logo": `${siteUrl}/logo.png`,
+    "description": "The ultimate independent fan ecosystem, database, and telemetry hub for Grand Theft Auto VI.",
+    "foundingDate": "2024",
+    "founder": {
+      "@type": "Person",
+      "@id": `${siteUrl}/author#person`,
+      "name": "Ahmad Khan",
+      "url": `${siteUrl}/author`
+    },
+    "sameAs": [
+      "https://github.com/ahmad-461",
+      "https://www.linkedin.com/in/ahmad-khan-77441833a"
+    ]
+  }
+
   return (
     <div className="flex-grow flex flex-col relative bg-[#0B0710] overflow-hidden text-[#F5F0FA]">
+      <JsonLd data={orgSchema} />
       {/* Cinematic Global Noise Texture */}
       <div className="film-grain" />
 
